@@ -1,0 +1,7 @@
+{
+  "label.framerate": "frame rate (fps)",
+  "label.grayscale": "gray scale",
+  "label.fake": "fake video",
+  "label.ui-port": "sample UI port",
+  "label.gstreamer-port": "gstreamer service port"
+}
