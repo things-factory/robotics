@@ -1,7 +1,12 @@
 {
+  "button.next": "다음 단계",
+  "button.prev": "이전 단계",
+  "button.done": "완료",
   "label.framerate": "프레임레이트(fps)",
   "label.grayscale": "그레이 스케일",
   "label.fake": "가짜영상",
   "label.ui-port": "샘플 페이지용 서비스 포트",
-  "label.gstreamer-port": "gstreamer 서비스 포트"
+  "label.gstreamer-port": "gstreamer 서비스 포트",
+  "text.camera calibration": "카메라 미세조정",
+  "text.handeye calibration": "핸드아이 미세조정"
 }

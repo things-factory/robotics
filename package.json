@@ -30,12 +30,22 @@
     "stop": "things-factory-stop vision-base"
   },
   "dependencies": {
+    "@things-factory/integration-base": "^2.3.0",
+    "@things-factory/node-librealsense2": "^0.1.0",
     "@things-factory/shell": "*",
     "dicer": "^0.3.0",
+    "koa-stream": "^0.2.0",
+    "koa-websocket": "^6.0.0",
+    "sharp": "^0.25.3",
     "socket.io": "^2.3.0",
-    "tree-kill": "^1.2.2"
+    "tree-kill": "^1.2.2",
+    "ws": "^7.3.0"
   },
   "devDependencies": {
-    "@things-factory/operato-ecs": "^2.0.27"
+    "@things-factory/operato-ecs": "^2.0.27",
+    "websocket": "^1.0.31"
+  },
+  "resolutions": {
+    "@things-factory/auth-base": "2.5.0-beta.5"
   }
 }
