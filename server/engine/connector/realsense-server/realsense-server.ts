@@ -1,5 +1,7 @@
 import rs2 from '@things-factory/node-librealsense2'
 import { ResponseTag } from './common'
+import Debug from 'debug'
+const debug = Debug('things-factory:vision-base:realsense-stream-driver')
 
 import sharp from 'sharp'
 
@@ -28,9 +30,11 @@ export class RealsenseServer {
     this.decimate = new rs2.DecimationFilter()
     this.context = new rs2.Context()
 
-    var devices = this.context.queryDevices()
+    var devices = this.context.queryDevices().devices
     this.device = devices[dev]
-    this.sensors = this.device.querySensors()
+
+    this.sensors = this.device?.querySensors()
+    console.log('sensors', this.sensors)
   }
 
   cleanup() {
@@ -146,23 +150,27 @@ export class RealsenseServer {
     } = command
 
     const sensor = this._findSensorByName(sensorName)
+    console.log('sensor&&&&&&&&&&&&&&&&', sensor)
     const profiles = this._findMatchingProfiles(sensor, streams)
 
     if (profiles && sensor) {
       console.log('open profiles:', profiles)
 
       sensor.open(profiles)
+      var count = 0
       sensor.start(async frame => {
         const frameInfo = await this._processFrameBeforeSend(frame)
-        this.sendFrame(frameInfo)
+        this.sendFrame(frameInfo, count++ == 0)
       })
     }
   }
 
   handleStopStream(command) {
-    const { tag, data } = command
-
-    let sensor = this._findSensorByName(data.sensor)
+    const {
+      tag,
+      data: { sensor: sensorName }
+    } = command
+    let sensor = this._findSensorByName(sensorName)
 
     if (sensor) {
       sensor.stop()
@@ -251,15 +259,23 @@ export class RealsenseServer {
     return opts
   }
 
-  // find an array of streamProfiles that matches the input streamArray data.
-  _findMatchingProfiles(sensor, streamArray) {
+  // find an array of streamProfiles that matches the input streams data.
+  _findMatchingProfiles(sensor, streams) {
     var profiles = sensor.getStreamProfiles()
     var results = []
 
-    console.log(streamArray)
-    streamArray.forEach(s => {
+    console.log(streams)
+    streams.forEach(s => {
       profiles.forEach(p => {
         if (p instanceof rs2.VideoStreamProfile) {
+          console.log(
+            '@@@@@@@@ profile @@@@@@@@',
+            rs2.stream.streamToString(p.streamValue),
+            rs2.format.formatToString(p.format),
+            p.fps,
+            `${p.width}*${p.height}`,
+            p.streamIndex
+          )
           if (
             rs2.stream.streamToString(p.streamValue) === s.stream &&
             rs2.format.formatToString(p.format) === s.format &&
@@ -278,6 +294,7 @@ export class RealsenseServer {
 
   _findSensorByName(sensorName) {
     for (let sensor of this.sensors) {
+      console.log('*$$$$$$$$$$$$$$$$$$', sensor.getCameraInfo(rs2.camera_info.camera_info_name))
       if (sensor.getCameraInfo(rs2.camera_info.camera_info_name) === sensorName) {
         return sensor
       }
@@ -352,10 +369,10 @@ export class RealsenseServer {
     }
   }
 
-  sendFrame(frameInfo) {
+  sendFrame(frameInfo, withFrameInfo) {
     const { meta, data } = frameInfo
 
-    this.socket.send(JSON.stringify(meta))
+    withFrameInfo && this.socket.send(JSON.stringify(meta))
     this.socket.send(data)
   }
 

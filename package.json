@@ -27,13 +27,16 @@
     "migration:run": "node ./node_modules/typeorm/cli.js migration:run",
     "migration:revert": "node ./node_modules/typeorm/cli.js migration:revert",
     "stop:dev": "kill $(lsof -t -i:3000,3001)",
-    "stop": "things-factory-stop vision-base"
+    "stop": "things-factory-stop vision-base",
+    "test": "DEBUG=things-factory:* npx mocha -r ts-node/register ./test/**/*spec.ts ./test/**/test-*.js"
   },
   "dependencies": {
     "@things-factory/integration-base": "^2.3.0",
     "@things-factory/node-librealsense2": "^0.1.0",
     "@things-factory/shell": "*",
+    "debug": "^4.1.1",
     "dicer": "^0.3.0",
+    "koa-easy-ws": "^1.1.3",
     "koa-stream": "^0.2.0",
     "koa-websocket": "^6.0.0",
     "sharp": "^0.25.3",
@@ -42,10 +45,17 @@
     "ws": "^7.3.0"
   },
   "devDependencies": {
+    "@microsoft/tsdoc": "^0.12.20",
     "@things-factory/operato-ecs": "^2.0.27",
+    "@types/chai": "^4.2.11",
+    "@types/http-server": "^0.10.0",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^14.0.6",
+    "@types/should": "^13.0.0",
+    "chai": "^4.2.0",
+    "mocha": "^7.2.0",
+    "request-promise": "^4.2.5",
+    "should": "^13.2.3",
     "websocket": "^1.0.31"
-  },
-  "resolutions": {
-    "@things-factory/auth-base": "2.5.0-beta.5"
   }
 }

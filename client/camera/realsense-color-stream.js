@@ -6,6 +6,11 @@ export class RealsenseColorStream {
 
   configure(setting) {
     this.setting = setting
+
+    var { format, width, height, index, stream } = setting
+
+    this.canvas.width = width
+    this.canvas.height = height
   }
 
   stream(data) {

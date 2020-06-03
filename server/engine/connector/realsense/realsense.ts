@@ -1,354 +1,204 @@
 import rs2 from '@things-factory/node-librealsense2'
+import sharp from 'sharp'
 
-const { ResponseTag, CommandTag, CommonNames } = require('./common')
-const sharp = require('sharp')
+import { SENSOR, STREAM, Profile } from './realsense-const'
+import { RealsenseCamera } from './realsense-camera'
+import { RealsenseCameraSensor } from './realsense-camera-sensor'
 
-const jpegQuality = 40
+import Debug from 'debug'
+const debug = Debug('things-factory:vision-base:realsense')
+
+const JPEG_QUALITY = 40
 
 export class Realsense {
-  wrapper
-  connectMgr
-  sendCount
-  ctx
-  colorizer
-  decimate
-  sensors
+  static colorizer
+  static decimate
+  static context
+  static _devices
+  static _subscriptions: {
+    [channel: string]: { id: string; device: string | number; sensor: string; callback: any }[]
+  } = {}
 
-  constructor(connectMgr) {
-    this.connectMgr = connectMgr
-    this.sendCount = {}
-
-    for (let name of [
-      CommonNames.colorStreamName,
-      CommonNames.stereoStreamName,
-      CommonNames.infraredStream1Name,
-      CommonNames.infraredStream2Name
-    ]) {
-      this.sendCount[name] = 0
+  static get devices(): rs2.Device[] {
+    if (!Realsense._devices) {
+      Realsense._devices = Realsense.context
+        .queryDevices()
+        .devices.map((device, index) => new RealsenseCamera(index, device))
     }
+    return Realsense._devices
   }
 
-  init() {
-    this.ctx = new rs2.Context()
-    this.colorizer = new rs2.Colorizer()
-    this.decimate = new rs2.DecimationFilter()
-    this.sensors = this.ctx.querySensors()
+  static init() {
+    Realsense.colorizer = new rs2.Colorizer()
+    Realsense.decimate = new rs2.DecimationFilter()
+    Realsense.context = new rs2.Context()
   }
 
-  stop() {}
+  static cleanup() {
+    Realsense.devices.forEach(device => device.dispose())
+    delete Realsense._devices
 
-  get isReady() {
-    return this.sensors
-  }
-
-  cleanup() {
-    this.ctx = null
-    this.sensors = null
     rs2.cleanup()
   }
 
-  // return the presets response
-  getPresets() {
-    let presets = {
-      tag: ResponseTag.presets,
-      data: []
-    }
+  static get presets() {
+    var presets = []
+
     for (let p in rs2.rs400_visual_preset) {
       if (typeof rs2.rs400_visual_preset[p] === 'string') {
-        presets.data.push(rs2.rs400_visual_preset[p])
+        presets.push(rs2.rs400_visual_preset[p])
       }
     }
+
     return presets
   }
 
-  // return the sensorInfo response
-  getAllSensorInfo() {
-    if (!this.sensors) {
-      return undefined
+  static getDevice(index): RealsenseCamera {
+    return Realsense.devices[index]
+  }
+
+  static _buildChannel(device, sensor, stream, index) {
+    return `${device}:${sensor}:${stream}:${index}`
+  }
+
+  static async _callback(frame, context: { device: string | number; sensor: RealsenseCameraSensor }) {
+    var info = await Realsense.buildFrameInfo(frame)
+    var { stream, index } = info.meta
+    var channel = Realsense._buildChannel(context.device, context.sensor.name, stream, index)
+
+    debug('callback', channel)
+
+    var subscriptionsForChannel = Realsense._subscriptions[channel]
+    if (!subscriptionsForChannel) {
+      return
     }
-    let info = {
-      tag: ResponseTag.sensorInfo,
-      data: []
+
+    subscriptionsForChannel.forEach(subscription => subscription.callback(info))
+  }
+
+  static subscribe(device: string | number, profile: Profile, callback): string {
+    var sensor = Realsense.getDevice(device).findSensorSupportingStream(profile.stream)
+
+    if (!sensor) {
+      debug(`no sensor for the profile(${profile.stream}:${profile.index}) of the device(${device})`)
+      return
     }
-    this.sensors.forEach(s => {
-      info.data.push(this._getSensorInfo(s))
+
+    sensor.start(profile, Realsense._callback)
+
+    var channel = Realsense._buildChannel(device, sensor.name, profile.stream, profile.index)
+    var id = channel + ':' + Date.now()
+
+    var subscriptionsForChannel = Realsense._subscriptions[channel]
+    if (!subscriptionsForChannel) {
+      Realsense._subscriptions[channel] = subscriptionsForChannel = []
+    }
+
+    subscriptionsForChannel.push({
+      id,
+      device,
+      sensor: sensor.name,
+      callback
     })
-    return info
+
+    return id
   }
 
-  // return the options response
-  getOptions() {
-    if (!this.sensors) {
-      return undefined
-    }
-    let options = {
-      tag: ResponseTag.options,
-      data: {}
-    }
-    this.sensors.forEach(s => {
-      let sensorName = s.getCameraInfo(rs2.camera_info.camera_info_name)
-      options.data[sensorName] = this._getSensorOptions(s)
-    })
-    return options
-  }
+  static unsubscribe(subscription: string) {
+    var [device, sensor, stream, index] = subscription.split(':')
+    var channel = Realsense._buildChannel(device, sensor, stream, index)
 
-  // return the defaultCfg response
-  getDefaultConfig() {
-    let cfg = {
-      tag: ResponseTag.defaultCfg,
-      data: {
-        preset: 'custom',
-        resolution: [
-          [CommonNames.stereoSensorName, '1280*720'],
-          [CommonNames.colorSensorName, '1280*720']
-        ],
-        fps: [
-          [CommonNames.stereoSensorName, 30],
-          [CommonNames.colorSensorName, 30]
-        ],
-        format: [
-          [CommonNames.stereoStreamName, 'z16'],
-          [CommonNames.infraredStream1Name, 'y8'],
-          [CommonNames.infraredStream2Name, 'y8'],
-          [CommonNames.colorStreamName, 'rgb8']
-        ],
-        streams: [CommonNames.stereoStreamName, CommonNames.colorStreamName, CommonNames.infraredStream1Name]
+    var subscriptionsForChannel = Realsense._subscriptions[channel]
+    if (!subscriptionsForChannel) {
+      debug(`FIX-YOURS - no channels for given subscription(${subscription})`)
+      return
+    }
+
+    subscriptionsForChannel = subscriptionsForChannel.filter(s => s.id != subscription)
+    if (subscriptionsForChannel.length == 0) {
+      delete Realsense._subscriptions[channel]
+
+      if (Object.keys(Realsense._subscriptions).filter(key => key.indexOf('device:sensor') == 0).length == 0) {
+        debug(`stop sensor(${device}:${sensor})`)
+        Realsense.getDevice(device)?.getSensorByName(sensor).stop()
       }
-    }
-    return cfg
-  }
-
-  // process commands from browser
-  processCommand(cmd) {
-    switch (cmd.tag) {
-      case CommandTag.start:
-        console.log('start command')
-        console.log(cmd)
-        this._handleStart(cmd)
-        break
-      case CommandTag.setOption:
-        console.log('Set option command')
-        console.log(cmd)
-        this._handleSetOption(cmd)
-        break
-      default:
-        console.log(`Unrecognized command ${cmd}`)
-        break
     }
   }
 
-  _getSensorInfo(sensor) {
-    let info = {
-      name: sensor.getCameraInfo(rs2.camera_info.camera_info_name),
-      resolutions: [],
-      fpses: [],
-      streams: []
+  static publish(message, channel) {
+    var subscriptionsForChannel = Realsense._subscriptions[channel]
+    if (!subscriptionsForChannel) {
+      Realsense._subscriptions[channel] = subscriptionsForChannel = []
     }
-    let streamMap = new Map()
-    let profiles = sensor.getStreamProfiles()
-    profiles.forEach(p => {
-      // only cares about video stream profile
-      if (!(p instanceof rs2.VideoStreamProfile)) {
-        return
-      }
 
-      let found = info.resolutions.find(e => {
-        return e.w === p.width && e.h === p.height
-      })
-      if (!found) {
-        info.resolutions.push({ w: p.width, h: p.height })
-      }
-      found = info.fpses.find(fps => {
-        return fps === p.fps
-      })
-      if (!found) {
-        info.fpses.push(p.fps)
-      }
-
-      let streamName = rs2.stream.streamToString(p.streamType)
-      let formatName = rs2.format.formatToString(p.format)
-      let index = p.streamIndex
-      let key = streamName + index
-
-      if (!streamMap.has(key)) {
-        streamMap.set(key, {
-          index: index,
-          name: streamName,
-          formats: [formatName]
-        })
-      } else {
-        let entry = streamMap.get(key)
-        found = entry.formats.find(f => {
-          return f === formatName
-        })
-        if (!found) {
-          entry.formats.push(formatName)
-        }
-      }
-    })
-    streamMap.forEach((val, key) => {
-      info.streams.push({
-        index: val.index,
-        name: val.name,
-        formats: val.formats
-      })
-    })
-    return info
+    subscriptionsForChannel.forEach(subscription => subscription.callback(message))
   }
 
-  _getSensorOptions(sensor) {
-    let opts = {
-      sensor: sensor.getCameraInfo(rs2.camera_info.camera_info_name),
-      options: []
-    }
-    for (let opt in rs2.option) {
-      if (typeof rs2.option[opt] === 'string') {
-        if (sensor.supportsOption(rs2.option[opt])) {
-          console.log(`getoption: ${opt}`)
-          let obj = {
-            option: rs2.option[opt],
-            value: sensor.getOption(rs2.option[opt]),
-            range: sensor.getOptionRange(rs2.option[opt])
-          }
-          opts.options.push(obj)
-        }
-      }
-    }
-    return opts
-  }
+  static async buildFrameInfo(frame) {
+    const { streamType, width, height, streamIndex, format } = frame
 
-  // find an array of streamProfiles that matches the input streamArray data.
-  _findMatchingProfiles(sensorName, streamArray) {
-    let sensor = this._findSensorByName(sensorName)
-    let profiles = sensor.getStreamProfiles()
-    let results = []
-
-    console.log(streamArray)
-    streamArray.forEach(s => {
-      profiles.forEach(p => {
-        if (p instanceof rs2.VideoStreamProfile) {
-          if (
-            rs2.stream.streamToString(p.streamValue) === s.stream &&
-            rs2.format.formatToString(p.format) === s.format &&
-            p.fps == s.fps &&
-            `${p.width}*${p.height}` === s.resolution &&
-            (s.index === undefined || p.streamIndex == s.index)
-          ) {
-            results.push(p)
-          }
+    if (streamType === rs2.stream.STREAM_COLOR) {
+      const data = await sharp(Buffer.from(frame.data.buffer), {
+        raw: {
+          width: width,
+          height: height,
+          channels: 3
         }
       })
-    })
-    return results
-  }
+        .jpeg({
+          quality: JPEG_QUALITY
+        })
+        .toBuffer()
 
-  _findSensorByName(sensorName) {
-    for (let sensor of this.sensors) {
-      if (sensor.getCameraInfo(rs2.camera_info.camera_info_name) === sensorName) {
-        return sensor
+      return {
+        meta: {
+          stream: rs2.stream.streamToString(streamType),
+          index: frame.profile.streamIndex,
+          format: rs2.format.formatToString(format),
+          width: width,
+          height: height
+        },
+        data
       }
-    }
-    return undefined
-  }
+    } else if (streamType === rs2.stream.STREAM_DEPTH) {
+      const depthMap = this.colorizer.colorize(frame)
 
-  _processFrameBeforeSend(sensor, frame) {
-    const streamType = frame.streamType
-    const width = frame.width
-    const height = frame.height
-    const streamIndex = frame.profile.streamIndex
-    const format = frame.format
-
-    return new Promise((resolve, reject) => {
-      if (streamType === rs2.stream.STREAM_COLOR) {
-        sharp(Buffer.from(frame.data.buffer), {
-          raw: {
-            width: width,
-            height: height,
-            channels: 3
-          }
-        })
-          .jpeg({
-            quality: jpegQuality
-          })
-          .toBuffer()
-          .then(data => {
-            let result = {
-              meta: {
-                stream: rs2.stream.streamToString(streamType),
-                index: frame.profile.streamIndex,
-                format: rs2.format.formatToString(format),
-                width: width,
-                height: height
-              },
-              data: data
-            }
-            resolve(result)
-          })
-      } else if (streamType === rs2.stream.STREAM_DEPTH) {
-        const depthMap = this.colorizer.colorize(frame)
-        sharp(Buffer.from(depthMap.data.buffer), {
-          raw: {
-            width: width,
-            height: height,
-            channels: 3
-          }
-        })
-          .jpeg({
-            quality: jpegQuality
-          })
-          .toBuffer()
-          .then(data => {
-            let result = {
-              meta: {
-                stream: rs2.stream.streamToString(streamType),
-                index: frame.profile.streamIndex,
-                format: rs2.format.formatToString(format),
-                width: width,
-                height: height
-              },
-              data: data
-            }
-            resolve(result)
-          })
-      } else if (streamType === rs2.stream.STREAM_INFRARED) {
-        const infraredFrame = this.decimate.process(frame)
-        // const infraredFrame = frame;
-        let result = {
-          meta: {
-            stream: rs2.stream.streamToString(streamType) + streamIndex,
-            index: frame.profile.streamIndex,
-            format: rs2.format.formatToString(format),
-            width: infraredFrame.width,
-            height: infraredFrame.height
-          },
-          data: infraredFrame.data,
-          frame: infraredFrame
+      const data = await sharp(Buffer.from(depthMap.data.buffer), {
+        raw: {
+          width: width,
+          height: height,
+          channels: 3
         }
-        resolve(result)
-      }
-    })
-  }
-
-  // process the start command
-  _handleStart(cmd) {
-    let profiles = this._findMatchingProfiles(cmd.data.sensor, cmd.data.streams)
-    let sensor = this._findSensorByName(cmd.data.sensor)
-    if (profiles && sensor) {
-      console.log('open profiles:')
-      console.log(profiles)
-      sensor.open(profiles)
-      sensor.start(frame => {
-        this._processFrameBeforeSend(sensor, frame).then(output => {
-          // connectMgr.sendProcessedFrameData(output)
-          // this.sendCount[output.meta.stream]++
-        })
       })
-    }
-  }
+        .jpeg({
+          quality: JPEG_QUALITY
+        })
+        .toBuffer()
 
-  // process set option command
-  _handleSetOption(cmd) {
-    let sensor = this._findSensorByName(cmd.data.sensor)
-    sensor.setOption(cmd.data.option, Number(cmd.data.value))
+      return {
+        meta: {
+          stream: rs2.stream.streamToString(streamType),
+          index: frame.profile.streamIndex,
+          format: rs2.format.formatToString(format),
+          width: width,
+          height: height
+        },
+        data
+      }
+    } else if (streamType === rs2.stream.STREAM_INFRARED) {
+      const infraredFrame = this.decimate.process(frame)
+
+      return {
+        meta: {
+          stream: rs2.stream.streamToString(streamType),
+          index: frame.profile.streamIndex,
+          format: rs2.format.formatToString(format),
+          width: infraredFrame.width,
+          height: infraredFrame.height
+        },
+        data: infraredFrame.data,
+        frame: infraredFrame
+      }
+    }
   }
 }

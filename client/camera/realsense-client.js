@@ -3,18 +3,24 @@ export class RealsenseClient {
   url
   socket
   callback
+  deviceId
 
-  constructor(cameraId, callback) {
-    this.url = 'ws://' + window.location.host + '/camera-stream/' + cameraId
+  constructor(deviceId, callback) {
+    var protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
+    // this.url = `${protocol}//${window.location.host}/camera-stream/${deviceId}`
+    this.url = `${protocol}//localhost:3001/camera-stream/${deviceId}`
 
     this.socket = null
+    this.deviceId = deviceId
     this.callback = callback
   }
 
   connect() {
     this.socket = new WebSocket(this.url)
 
-    this.socket.addEventListener('open', event => {})
+    this.socket.addEventListener('open', event => {
+      console.log('websocket open', event)
+    })
 
     this.socket.addEventListener('message', event => {
       var { data } = event
