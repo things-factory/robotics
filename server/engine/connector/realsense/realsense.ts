@@ -1,7 +1,7 @@
 import rs2 from '@things-factory/node-librealsense2'
 import sharp from 'sharp'
 
-import { SENSOR, STREAM, Profile } from './realsense-const'
+import { Profile } from './realsense-const'
 import { RealsenseCamera } from './realsense-camera'
 import { RealsenseCameraSensor } from './realsense-camera-sensor'
 
@@ -17,7 +17,7 @@ export class Realsense {
   static decimate
   static context
   static _devices
-  static _subscriptions: {
+  static subscriptions: {
     [channel: string]: SUBSCRIPTION[]
   } = {}
 
@@ -64,24 +64,27 @@ export class Realsense {
   }
 
   static async _callback(frame, context: { device: string | number; sensor: RealsenseCameraSensor }) {
-    var info = await Realsense.buildFrameInfo(frame)
-    var { stream, index } = info.meta
-    var channel = Realsense._buildChannel(context.device, context.sensor.name, stream, index)
-
-    debug('callback', channel)
-
-    var subscriptionsForChannel = Realsense._subscriptions[channel]
-    if (!subscriptionsForChannel) {
-      return
-    }
-
-    debug(
-      'callback-subscriptions',
-      subscriptionsForChannel.map(subscription => subscription.id)
+    var {
+      streamType,
+      profile: { streamIndex }
+    } = frame
+    var channel = Realsense._buildChannel(
+      context.device,
+      context.sensor.name,
+      rs2.stream.streamToString(streamType),
+      streamIndex
     )
-    subscriptionsForChannel.forEach(subscription => {
-      subscription.callback(info, subscription.count++)
-    })
+
+    var subscriptionsForChannel = Realsense.subscriptions[channel]
+
+    if (subscriptionsForChannel) {
+      debug('callback', channel, subscriptionsForChannel.length)
+      var info = await Realsense.buildFrameInfo(frame)
+
+      subscriptionsForChannel.forEach(subscription => {
+        subscription.callback(info, subscription.count++)
+      })
+    }
   }
 
   static subscribe(device: string | number, profile: Profile, callback): string {
@@ -97,9 +100,9 @@ export class Realsense {
     var channel = Realsense._buildChannel(device, sensor.name, profile.stream, profile.index)
     var id = channel + ':' + Date.now()
 
-    var subscriptionsForChannel = Realsense._subscriptions[channel]
+    var subscriptionsForChannel = Realsense.subscriptions[channel]
     if (!subscriptionsForChannel) {
-      Realsense._subscriptions[channel] = subscriptionsForChannel = []
+      Realsense.subscriptions[channel] = subscriptionsForChannel = []
     }
 
     subscriptionsForChannel.push({
@@ -117,36 +120,48 @@ export class Realsense {
     var [device, sensor, stream, index] = subscription.split(':')
     var channel = Realsense._buildChannel(device, sensor, stream, index)
 
-    var subscriptionsForChannel = Realsense._subscriptions[channel]
+    var subscriptionsForChannel = Realsense.subscriptions[channel]
     if (!subscriptionsForChannel) {
       debug(`FIX-YOURS - no channels for given subscription(${subscription})`)
       return
     }
 
-    subscriptionsForChannel = subscriptionsForChannel.filter(s => s.id != subscription)
-    if (subscriptionsForChannel.length == 0) {
-      delete Realsense._subscriptions[channel]
+    for (let i = 0; i < subscriptionsForChannel.length; i++) {
+      if (subscriptionsForChannel[i].id == subscription) {
+        subscriptionsForChannel.splice(i, 1)
+        break
+      }
+    }
 
-      if (Object.keys(Realsense._subscriptions).filter(key => key.indexOf('device:sensor') == 0).length == 0) {
-        debug(`stop sensor(${device}:${sensor})`)
+    if (subscriptionsForChannel.length == 0) {
+      delete Realsense.subscriptions[channel]
+
+      if (Object.keys(Realsense.subscriptions).filter(key => key.indexOf(`${device}:${sensor}`) == 0).length == 0) {
+        debug(`stop sensor(${device}:${sensor})`, Realsense.subscriptions)
         Realsense.getDevice(device)?.getSensorByName(sensor).stop()
       }
     }
   }
 
   static publish(message, channel) {
-    var subscriptionsForChannel = Realsense._subscriptions[channel]
+    var subscriptionsForChannel = Realsense.subscriptions[channel]
     if (!subscriptionsForChannel) {
-      Realsense._subscriptions[channel] = subscriptionsForChannel = []
+      Realsense.subscriptions[channel] = subscriptionsForChannel = []
     }
 
-    debug('publish', channel, subscriptionsForChannel.length, Realsense._subscriptions)
+    debug('publish', channel, subscriptionsForChannel.length, Realsense.subscriptions)
 
     subscriptionsForChannel.forEach(subscription => subscription.callback(message))
   }
 
   static async buildFrameInfo(frame) {
-    const { streamType, width, height, streamIndex, format } = frame
+    const {
+      streamType,
+      width,
+      height,
+      profile: { streamIndex },
+      format
+    } = frame
 
     if (streamType === rs2.stream.STREAM_COLOR) {
       const data = await sharp(Buffer.from(frame.data.buffer), {
@@ -164,7 +179,7 @@ export class Realsense {
       return {
         meta: {
           stream: rs2.stream.streamToString(streamType),
-          index: frame.profile.streamIndex,
+          index: streamIndex,
           format: rs2.format.formatToString(format),
           width: width,
           height: height
@@ -189,7 +204,7 @@ export class Realsense {
       return {
         meta: {
           stream: rs2.stream.streamToString(streamType),
-          index: frame.profile.streamIndex,
+          index: streamIndex,
           format: rs2.format.formatToString(format),
           width: width,
           height: height
@@ -202,7 +217,7 @@ export class Realsense {
       return {
         meta: {
           stream: rs2.stream.streamToString(streamType),
-          index: frame.profile.streamIndex,
+          index: streamIndex,
           format: rs2.format.formatToString(format),
           width: infraredFrame.width,
           height: infraredFrame.height

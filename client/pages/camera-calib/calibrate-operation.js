@@ -134,40 +134,7 @@ class CameraCalibrationOperation extends connect(store)(LitElement) {
     }
   }
 
-  firstUpdated() {
-    // this.streams = {}
-    // var colorCanvas = this.renderRoot.querySelector('canvas[name="color"]')
-    // var depthCanvas = this.renderRoot.querySelector('canvas[name="depth"]')
-    // this.streams['color'] = new RealsenseColorStream(colorCanvas)
-    // var colorProfile = {
-    //   stream: 'color',
-    //   index: 0
-    // }
-    // this.streams['depth'] = new RealsenseInfraredStream(depthCanvas)
-    // var depthProfile = {
-    //   stream: 'infrared',
-    //   index: 1
-    // }
-    // this.rs2clients = {}
-    // this.rs2clients['color'] = new RealsenseClient(0, colorProfile, data => {
-    //   if (typeof data === 'string') {
-    //     var meta = JSON.parse(data)
-    //     this.streams['color'].configure(meta)
-    //   } else if (data instanceof Blob) {
-    //     this.streams['color'].stream(data)
-    //   }
-    // })
-    // this.rs2clients['depth'] = new RealsenseClient(0, depthProfile, data => {
-    //   if (typeof data === 'string') {
-    //     var meta = JSON.parse(data)
-    //     this.streams['depth'].configure(meta)
-    //   } else if (data instanceof Blob) {
-    //     this.streams['depth'].stream(data)
-    //   }
-    // })
-    // this.rs2clients['color'].connect()
-    // this.rs2clients['depth'].connect()
-  }
+  firstUpdated() {}
 }
 
 customElements.define('camera-calib-operation', CameraCalibrationOperation)
