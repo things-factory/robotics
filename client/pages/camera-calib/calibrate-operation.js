@@ -5,12 +5,21 @@ import '@material/mwc-button'
 
 import { RealsenseClient } from '../../camera/realsense-client'
 import { RealsenseColorStream } from '../../camera/realsense-color-stream'
+import { RealsenseDepthStream } from '../../camera/realsense-depth-stream'
+import { RealsenseInfraredStream } from '../../camera/realsense-infrared-stream'
 
 import { WizardViewStyles } from '../../views/wizard-view-styles'
 
 class CameraCalibrationOperation extends connect(store)(LitElement) {
   static get styles() {
-    return [WizardViewStyles, css``]
+    return [
+      WizardViewStyles,
+      css`
+        canvas {
+          width: 100%;
+        }
+      `
+    ]
   }
 
   static get properties() {
@@ -30,43 +39,134 @@ class CameraCalibrationOperation extends connect(store)(LitElement) {
         <mwc-button label="Publish" icon="publish"></mwc-button>
       </div>
 
+      <div>
+        Camera
+        <select name="device" @change=${this.onStreamChange.bind(this)}>
+          <option value="" selected></option>
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+
+      <div>
+        Stream
+        <select name="stream" @change=${this.onStreamChange.bind(this)}>
+          <option value="" selected></option>
+          <option value="color">color</option>
+          <option value="depth">depth</option>
+          <option value="infrared-1">infrared-1</option>
+          <option value="infrared-2">infrared-2</option>
+        </select>
+      </div>
+
       <canvas></canvas>
     `
   }
 
-  firstUpdated() {
-    var canvas = this.renderRoot.querySelector('canvas')
-    var sensorName = 'RGB Camera'
-    var streams = ['color']
+  onStreamChange(e) {
+    var device = this.renderRoot.querySelector('[name=device]').value
+    var stream = this.renderRoot.querySelector('[name=stream]').value
 
-    this.colorStream = new RealsenseColorStream(canvas)
+    var oldCanvas = this.renderRoot.querySelector('canvas')
+    var canvas = oldCanvas.cloneNode(false)
+    oldCanvas.parentNode.replaceChild(canvas, oldCanvas)
 
-    this.rs2client = new RealsenseClient(0, data => {
-      /* how to tell target - infraredStream1, 2, color, depth */
-      // console.log(JSON.parse(data))
-      /* data should be a Blob or String */
-      if (typeof data === 'string') {
-        this.colorStream.configure(JSON.parse(data))
-      } else if (data instanceof Blob) {
-        this.colorStream.stream(data)
-        // } else {
-        //   // data instanceof ArrayBuffer
-        //   // ASSERT(false)
-      }
-    })
+    if (this.rs2client) {
+      this.rs2client.disconnect()
+    }
 
-    this.rs2client.connect()
-    setTimeout(() => {
-      this.rs2client.commandStartStream(sensorName, [
-        {
+    if (!device || !stream) {
+      return
+    }
+
+    var profile = {}
+
+    switch (stream) {
+      case 'color':
+        this.stream = new RealsenseColorStream(canvas)
+        profile = {
           stream: 'color',
-          format: 'rgb8',
-          fps: 30,
-          resolution: '1920*1080',
           index: 0
         }
-      ])
-    }, 2000)
+        break
+
+      case 'depth':
+        this.stream = new RealsenseDepthStream(canvas)
+        profile = {
+          stream: 'depth',
+          index: 0
+        }
+        break
+
+      case 'infrared-1':
+        this.stream = new RealsenseInfraredStream(canvas)
+        profile = {
+          stream: 'infrared',
+          index: 1
+        }
+        break
+
+      case 'infrared-2':
+        this.stream = new RealsenseInfraredStream(canvas)
+        profile = {
+          stream: 'infrared',
+          index: 2
+        }
+        break
+
+      default:
+        this.stream = null
+    }
+
+    if (this.stream) {
+      this.rs2client = new RealsenseClient(device, profile, data => {
+        if (typeof data === 'string') {
+          var meta = JSON.parse(data)
+          this.stream.configure(meta)
+        } else if (data instanceof Blob) {
+          this.stream.stream(data)
+        }
+      })
+
+      this.rs2client.connect()
+    }
+  }
+
+  firstUpdated() {
+    // this.streams = {}
+    // var colorCanvas = this.renderRoot.querySelector('canvas[name="color"]')
+    // var depthCanvas = this.renderRoot.querySelector('canvas[name="depth"]')
+    // this.streams['color'] = new RealsenseColorStream(colorCanvas)
+    // var colorProfile = {
+    //   stream: 'color',
+    //   index: 0
+    // }
+    // this.streams['depth'] = new RealsenseInfraredStream(depthCanvas)
+    // var depthProfile = {
+    //   stream: 'infrared',
+    //   index: 1
+    // }
+    // this.rs2clients = {}
+    // this.rs2clients['color'] = new RealsenseClient(0, colorProfile, data => {
+    //   if (typeof data === 'string') {
+    //     var meta = JSON.parse(data)
+    //     this.streams['color'].configure(meta)
+    //   } else if (data instanceof Blob) {
+    //     this.streams['color'].stream(data)
+    //   }
+    // })
+    // this.rs2clients['depth'] = new RealsenseClient(0, depthProfile, data => {
+    //   if (typeof data === 'string') {
+    //     var meta = JSON.parse(data)
+    //     this.streams['depth'].configure(meta)
+    //   } else if (data instanceof Blob) {
+    //     this.streams['depth'].stream(data)
+    //   }
+    // })
+    // this.rs2clients['color'].connect()
+    // this.rs2clients['depth'].connect()
   }
 }
 

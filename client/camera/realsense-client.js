@@ -5,10 +5,12 @@ export class RealsenseClient {
   callback
   deviceId
 
-  constructor(deviceId, callback) {
+  constructor(deviceId, profile, callback) {
     var protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
+    var { stream, index } = profile
     // this.url = `${protocol}//${window.location.host}/camera-stream/${deviceId}`
-    this.url = `${protocol}//localhost:3001/camera-stream/${deviceId}`
+    this.url = `${protocol}//localhost:3001/camera-stream/realsense/${deviceId}/${stream}/${index}`
+    // this.url = `${protocol}//localhost:3001/camera-stream/realsense/${deviceId}/depth/0`
 
     this.socket = null
     this.deviceId = deviceId
@@ -26,6 +28,10 @@ export class RealsenseClient {
       var { data } = event
       this.callback(data)
     })
+  }
+
+  disconnect() {
+    this.socket.close()
   }
 
   commandCameraSetting(setting) {

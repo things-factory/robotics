@@ -39,6 +39,8 @@ export class RealsenseCameraSensor {
       this.streamingProfiles = this.info.streams.map(stream =>
         this.findProfile({
           ...profile,
+          width: 1280,
+          height: 720,
           stream: stream.stream,
           index: stream.index
         })

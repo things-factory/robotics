@@ -1,4 +1,3 @@
-import WebSocket from 'ws'
 import Debug from 'debug'
 const debug = Debug('things-factory:vision-base:realsense-stream-driver')
 
@@ -6,12 +5,10 @@ import { CameraStreamDriver } from './camera-stream-driver'
 import { Realsense } from './realsense'
 import { CameraStreamer } from './camera-streamer'
 
-type STREAMS = { [key: string]: WebSocket[] }
-
 export class RealsenseStreamDriver implements CameraStreamDriver {
   subscribe(type, device, profile, socket) {
     debug('subscribe')
-    return Realsense.subscribe(device, profile, frame => this.sendFrame(socket, frame))
+    return Realsense.subscribe(device, profile, (frame, count) => this.sendFrame(socket, frame, count))
   }
 
   unsubscribe(subscription) {
@@ -91,10 +88,10 @@ export class RealsenseStreamDriver implements CameraStreamDriver {
   //   }
   // }
 
-  sendFrame(socket, frameInfo) {
+  sendFrame(socket, frameInfo, count) {
     const { meta, data } = frameInfo
 
-    socket.send(JSON.stringify(meta))
+    !count && socket.send(JSON.stringify(meta))
     socket.send(data)
   }
 

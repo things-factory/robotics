@@ -10,13 +10,15 @@ const debug = Debug('things-factory:vision-base:realsense')
 
 const JPEG_QUALITY = 40
 
+type SUBSCRIPTION = { id: string; device: string | number; sensor: string; count: number; callback: any }
+
 export class Realsense {
   static colorizer
   static decimate
   static context
   static _devices
   static _subscriptions: {
-    [channel: string]: { id: string; device: string | number; sensor: string; callback: any }[]
+    [channel: string]: SUBSCRIPTION[]
   } = {}
 
   static get devices(): rs2.Device[] {
@@ -73,7 +75,13 @@ export class Realsense {
       return
     }
 
-    subscriptionsForChannel.forEach(subscription => subscription.callback(info))
+    debug(
+      'callback-subscriptions',
+      subscriptionsForChannel.map(subscription => subscription.id)
+    )
+    subscriptionsForChannel.forEach(subscription => {
+      subscription.callback(info, subscription.count++)
+    })
   }
 
   static subscribe(device: string | number, profile: Profile, callback): string {
@@ -98,6 +106,7 @@ export class Realsense {
       id,
       device,
       sensor: sensor.name,
+      count: 0,
       callback
     })
 
@@ -130,6 +139,8 @@ export class Realsense {
     if (!subscriptionsForChannel) {
       Realsense._subscriptions[channel] = subscriptionsForChannel = []
     }
+
+    debug('publish', channel, subscriptionsForChannel.length, Realsense._subscriptions)
 
     subscriptionsForChannel.forEach(subscription => subscription.callback(message))
   }

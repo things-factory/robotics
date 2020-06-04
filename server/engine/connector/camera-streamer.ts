@@ -51,14 +51,14 @@ export class CameraStreamer {
     socket.on('close', () => {
       debug('on-close', request.url, remoteAddress, remotePort)
 
-      if (channel) {
-        debug(`one of socket in channel[${channel}] removed`)
+      // if (channel) {
+      // debug(`one of socket in channel[${channel}] removed`)
 
-        var { type, device, stream, index, channel } = this.getChannel(request)
+      // var { type, device, stream, index, channel } = this.getChannel(request)
 
-        var driver = CameraStreamer.getCameraDriver(type)
-        driver.unsubscribe(subscription)
-      }
+      var driver = CameraStreamer.getCameraDriver(type)
+      driver.unsubscribe(subscription)
+      // }
 
       this.closedCallback(socket, request)
     })
@@ -67,7 +67,7 @@ export class CameraStreamer {
       debug('on-error', request.url, remoteAddress, remotePort, err)
     })
 
-    var { type, device, stream, index, channel } = this.getChannel(request)
+    var { type, device, stream, index } = this.getChannel(request)
 
     var subscription = this.getDriver(type)?.subscribe(type, device, { stream, index }, socket)
 

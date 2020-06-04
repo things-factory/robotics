@@ -16,9 +16,9 @@ export class RealsenseInfraredStream {
 
     this.gl = this.canvas.getContext('webgl')
 
-    this.texture = gl.createTexture()
-    this.shaders = RealsenseShader.initShaders(gl)
-    this.buffers = RealsenseShader.initBuffers(gl)
+    this.texture = this.gl.createTexture()
+    this.shaders = RealsenseInfraredStream.initShaders(this.gl)
+    this.buffers = RealsenseInfraredStream.initBuffers(this.gl)
   }
 
   configure(setting) {
@@ -29,7 +29,7 @@ export class RealsenseInfraredStream {
 
   stream(data) {
     let fileReader = new FileReader()
-    fileReader.onload = function (event) {
+    fileReader.onload = event => {
       const arrayBuffer = event.target.result
       this.renderGL(arrayBuffer)
     }
@@ -86,7 +86,6 @@ export class RealsenseInfraredStream {
     // Tell the shader we bound the texture to texture unit 0
     gl.uniform1i(this.shaders.uniformLocations.uSampler, 0)
 
-    const offset = 0
     const vertexCount = 4
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position)

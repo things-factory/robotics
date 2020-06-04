@@ -6,55 +6,67 @@ import './middlewares'
 import './routes'
 import './engine'
 
-import websockify from './middlewares/realsense-stream-middleware'
+import http from 'http'
+import url from 'url'
+import Koa from 'koa'
 import Router from 'koa-router'
-// import { statSync, createReadStream } from 'fs'
-import { RealsenseServer } from './engine/connector/realsense-server/realsense-server'
 
-// import websocket from './middlewares/websocket-middleware'
-const Koa = require('koa')
+import { Realsense } from './engine/connector/realsense'
+import cameraStreamer from './engine/connector/camera-streamer-koa-middleware'
 
 process.on('bootstrap-module-start' as any, async ({ app, config, client }: any) => {
   /* Streaming over WEBSocket */
+  Realsense.init()
   const koaapp = new Koa()
 
-  const wsapp = websockify(koaapp)
-  const wsrouter = new Router()
-  const wsOptions = {}
+  const server = http.createServer(koaapp.callback())
+  const router = new Router()
 
-  // Regular middleware
-  // Note it's app.ws.use and not app.use
-  wsapp.ws.use(function (ctx, next) {
-    // return `next` to pass the context (ctx) on to the next ws middleware
-    return next(ctx)
+  koaapp.use(
+    cameraStreamer({
+      streamerProperty: 'streamer',
+      websocketProperty: 'websocket',
+      channelParser: function (request) {
+        var [type = '', device = '', stream = '', index = ''] = url
+          .parse(request.url)
+          .pathname.substr('/camera-stream'.length + 1)
+          .split('/')
+
+        return {
+          type,
+          device,
+          stream,
+          index,
+          channel: `${type}:${device}:${stream}:${index}`
+        }
+      }
+    })
+  )
+
+  router.all('/camera-stream/:type/:device/:stream/:index', async (context, next) => {
+    const {
+      streamer,
+      websocket,
+      params: { type, device, stream, index }
+    } = context
+    try {
+      if (websocket) {
+        var socket = await websocket()
+        // socket.send('hello there')
+        // var { channel } = streamer.getChannel(context.request)
+        // streamer.publish('hello there', channel)
+      } else {
+        context.body = 'hello there'
+      }
+
+      await next()
+    } catch (e) {
+      console.error(e)
+    }
   })
 
-  wsapp.ws.use(
-    // wss://host:ip/camera-stream/:dev
-    wsrouter
-      .all('/camera-stream/:dev', async (context, next) => {
-        const {
-          websocket,
-          params: { dev }
-        } = context
-        console.log('--------------- routed ----------------', dev)
-        try {
-          var server = new RealsenseServer(Number(dev), websocket)
-          websocket.on('message', message => {
-            console.log('--------------- message ----------------', message)
-            server.handleCommand(JSON.parse(message))
-          })
-          websocket.on('close', () => {
-            console.log('--------------- closed ----------------')
-          })
-
-          return await next()
-        } catch (e) {
-          console.error(e)
-        }
-      })
-      .routes()
-  )
+  koaapp.use(router.routes())
+  koaapp.use(router.allowedMethods())
 
   koaapp.listen(3001)
 })
