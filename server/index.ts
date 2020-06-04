@@ -11,8 +11,9 @@ import url from 'url'
 import Koa from 'koa'
 import Router from 'koa-router'
 
-import { Realsense } from './engine/connector/realsense'
-import cameraStreamer from './engine/connector/camera-streamer-koa-middleware'
+import './controllers/camera-streamer'
+import { Realsense } from './controllers/realsense'
+import cameraStreamer from './middlewares/camera-streamer-koa-middleware'
 
 process.on('bootstrap-module-start' as any, async ({ app, config, client }: any) => {
   /* Streaming over WEBSocket */

@@ -1,4 +1,4 @@
-import { Profile } from './realsense'
+import { Profile } from '../realsense'
 
 export interface CameraStreamDriver {
   subscribe(type, device, profile: Profile, socket): any

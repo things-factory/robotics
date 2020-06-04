@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import rs2 from '@things-factory/node-librealsense2'
-import { Realsense, SENSOR } from '../../server/engine/connector/realsense'
+import { Realsense, SENSOR } from '../../server/controllers/realsense'
 
 describe('Realsense', function () {
   before(function () {
@@ -19,11 +19,11 @@ describe('Realsense', function () {
         console.log(frame.meta.stream, frame.meta.format)
       )
 
-      expect(Object.keys(Realsense._subscriptions).length).be.equals(1)
+      expect(Object.keys(Realsense.subscriptions).length).be.equals(1)
 
       setTimeout(function () {
         Realsense.unsubscribe(subscription)
-        expect(Object.keys(Realsense._subscriptions).length).be.equals(0)
+        expect(Object.keys(Realsense.subscriptions).length).be.equals(0)
 
         setTimeout(function () {
           done()

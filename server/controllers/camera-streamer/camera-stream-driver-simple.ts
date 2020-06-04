@@ -4,7 +4,7 @@ import { CameraStreamer } from './camera-streamer'
 import Debug from 'debug'
 const debug = Debug('things-factory:vision-base:camera-stream-driver-impl')
 
-export class CameraStreamDriverImpl implements CameraStreamDriver {
+export class CameraStreamDriverSimple implements CameraStreamDriver {
   private streams = {}
 
   subscribe(type, device, profile, socket) {
@@ -43,4 +43,4 @@ export class CameraStreamDriverImpl implements CameraStreamDriver {
   }
 }
 
-CameraStreamer.registerCameraDriver('simple', new CameraStreamDriverImpl())
+CameraStreamer.registerCameraDriver('simple', new CameraStreamDriverSimple())

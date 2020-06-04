@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import rs2 from '@things-factory/node-librealsense2'
-import { Realsense, SENSOR } from '../../server/engine/connector/realsense'
+import { Realsense, SENSOR } from '../../server/controllers/realsense'
 
 describe('Realsense', function () {
   before(function () {

@@ -6,9 +6,9 @@ import request from 'request-promise'
 import WebSocket from 'ws'
 import url from 'url'
 
-import cameraStreamer from '../../server/engine/connector/camera-streamer-koa-middleware'
+import cameraStreamer from '../../server/middlewares/camera-streamer-koa-middleware'
 /* to register simple stream driver */
-import '../../server/engine/connector/camera-stream-driver-impl'
+import '../../server/controllers/camera-streamer/camera-stream-driver-simple'
 
 const app = new Koa()
 

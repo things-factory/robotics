@@ -1,4 +1,4 @@
-import { CameraStreamer } from './camera-streamer'
+import { CameraStreamer } from '../controllers/camera-streamer/camera-streamer'
 
 import Debug from 'debug'
 const debug = Debug('things-factory:vision-base:camera-streamer-koa-middleware')

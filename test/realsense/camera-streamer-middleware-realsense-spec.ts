@@ -6,10 +6,10 @@ import request from 'request-promise'
 import WebSocket from 'ws'
 import url from 'url'
 
-import { Realsense } from '../../server/engine/connector/realsense'
-import cameraStreamer from '../../server/engine/connector/camera-streamer-koa-middleware'
+import { Realsense } from '../../server/controllers/realsense'
+import cameraStreamer from '../../server/middlewares/camera-streamer-koa-middleware'
 /* to register realsense stream driver */
-import '../../server/engine/connector/camera-stream-driver-realsense'
+import '../../server/controllers/camera-streamer/camera-stream-driver-realsense'
 
 describe('CameraStreamerMiddlewareRealsense', function () {
   this.timeout(10000)

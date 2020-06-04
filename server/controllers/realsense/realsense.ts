@@ -31,14 +31,17 @@ export class Realsense {
   }
 
   static init() {
+    Realsense.cleanup()
+
     Realsense.colorizer = new rs2.Colorizer()
     Realsense.decimate = new rs2.DecimationFilter()
     Realsense.context = new rs2.Context()
   }
 
   static cleanup() {
-    Realsense.devices.forEach(device => device.dispose())
+    Realsense._devices?.forEach(device => device.dispose())
     delete Realsense._devices
+    Realsense.subscriptions = {}
 
     rs2.cleanup()
   }

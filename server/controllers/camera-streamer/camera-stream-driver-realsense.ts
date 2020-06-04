@@ -2,8 +2,8 @@ import Debug from 'debug'
 const debug = Debug('things-factory:vision-base:realsense-stream-driver')
 
 import { CameraStreamDriver } from './camera-stream-driver'
-import { Realsense } from './realsense'
 import { CameraStreamer } from './camera-streamer'
+import { Realsense } from '../realsense'
 
 export class RealsenseStreamDriver implements CameraStreamDriver {
   subscribe(type, device, profile, socket) {

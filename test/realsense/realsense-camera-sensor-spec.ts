@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { SENSOR, Realsense } from '../../server/engine/connector/realsense'
+import { SENSOR, Realsense } from '../../server/controllers/realsense'
 
 describe('RealsenseCameraSensor', function () {
   before(function () {

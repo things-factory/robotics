@@ -1,7 +1,7 @@
 import { expect } from 'chai'
-import { CameraStreamer } from '../../server/engine/connector/camera-streamer'
+import { CameraStreamer } from '../../server/controllers/camera-streamer/camera-streamer'
 /* to register simple stream driver */
-import '../../server/engine/connector/camera-stream-driver-impl'
+import '../../server/controllers/camera-streamer/camera-stream-driver-simple'
 import WebSocket from 'ws'
 
 describe('CameraStreamer', function () {

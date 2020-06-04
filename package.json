@@ -28,7 +28,7 @@
     "migration:revert": "node ./node_modules/typeorm/cli.js migration:revert",
     "stop:dev": "kill $(lsof -t -i:3000,3001)",
     "stop": "things-factory-stop vision-base",
-    "test": "DEBUG=things-factory:* npx mocha -r ts-node/register ./test/**/*spec.ts ./test/**/test-*.js"
+    "test": "DEBUG=things-factory:* npx mocha -r ts-node/register ./test/**/*spec.ts"
   },
   "dependencies": {
     "@things-factory/integration-base": "^2.3.0",
