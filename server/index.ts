@@ -1,17 +1,12 @@
-export * from './entities'
-export * from './migrations'
-export * from './graphql'
-
 import './middlewares'
-import './routes'
 import './engine'
+import './controllers/camera-streamer'
 
 import http from 'http'
 import url from 'url'
 import Koa from 'koa'
 import Router from 'koa-router'
 
-import './controllers/camera-streamer'
 import { Realsense } from './controllers/realsense'
 import cameraStreamer from './middlewares/camera-streamer-koa-middleware'
 
