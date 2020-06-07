@@ -5,6 +5,8 @@
 import { LitElement, html, css } from 'lit-element'
 import { i18next, localize } from '@things-factory/i18n-base'
 
+import { WebcamClient } from '../camera/webcam-client'
+
 import '@material/mwc-icon'
 
 export class RealsenseCameraSettingPopup extends LitElement {
@@ -39,6 +41,11 @@ export class RealsenseCameraSettingPopup extends LitElement {
           display: flex;
           margin-left: auto;
         }
+
+        canvas {
+          width: 400px;
+          height: 300px;
+        }
       `
     ]
   }
@@ -49,12 +56,36 @@ export class RealsenseCameraSettingPopup extends LitElement {
     }
   }
 
+  firstUpdated() {
+    var device = 'dev0'
+
+    this.webcamClient = new WebcamClient(device, data => {
+      if (typeof data === 'string') {
+        var meta = JSON.parse(data)
+        this.stream.configure(meta)
+      } else if (data instanceof Blob) {
+        var blob = new Blob([data], { type: 'image/jpg' })
+        var url = URL.createObjectURL(blob)
+
+        var image = new Image()
+        image.src = url
+        image.onload = () => {
+          this.context.drawImage(image, 0, 0)
+          URL.revokeObjectURL(url)
+        }
+      }
+    })
+
+    this.webcamClient.connect()
+  }
+
   render() {
     var json = JSON.stringify(this.value, null, 2)
 
     return html`
       <content>
         ${json}
+        <canvas></canvas>
       </content>
 
       <div class="button-container">

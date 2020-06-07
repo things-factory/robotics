@@ -47,15 +47,22 @@ export class GstLiveCamServer {
    * webcam over the given TCP address and port.
    * @return A Node <child-process> of the launched pipeline
    */
-  start(tcp_addr, tcp_port) {
+  start() {
     const cam_pipeline =
       this.gst_video_src +
       ' ! jpegenc ! multipartmux  boundary="' +
       this.gst_multipart_boundary +
-      '" ! tcpserversink host=' +
-      tcp_addr +
-      ' port=' +
-      tcp_port
+      '" ! filesink location=/dev/stdout'
+
+    // start(tcp_addr, tcp_port) {
+    //   const cam_pipeline =
+    //     this.gst_video_src +
+    //     ' ! jpegenc ! multipartmux  boundary="' +
+    //     this.gst_multipart_boundary +
+    //     '" ! tcpserversink host=' +
+    //     tcp_addr +
+    //     ' port=' +
+    //     tcp_port
 
     if (GstLaunch.isAvailable()) {
       Connections.logger.info('GstLaunch found: ' + GstLaunch.getPath())

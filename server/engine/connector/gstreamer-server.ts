@@ -2,7 +2,7 @@ import { Connections, Connector } from '@things-factory/integration-base'
 import { LiveCamUI } from '../../controllers/camera-streamer/gstreamer/livecam-ui'
 import { GstLaunch } from '../../controllers/camera-streamer/gstreamer/gst-launcher'
 import { GstLiveCamServer } from '../../controllers/camera-streamer/gstreamer/gst-livecam-server'
-import { SocketCamWrapper } from '../../controllers/camera-streamer/gstreamer/socket-cam-wrapper'
+import { StdoutCamWrapper } from '../../controllers/camera-streamer/gstreamer/stdout-cam-wrapper'
 
 export class GStreamerServer implements Connector {
   async ready(connectionConfigs) {
@@ -14,8 +14,6 @@ export class GStreamerServer implements Connector {
   async connect(connection) {
     var [host = '0.0.0.0', wsPort = 12000] = connection.endpoint.split(':')
     var {
-      // gstreamer service port
-      gstreamerPort = 10000,
       // sample UI service port
       uiPort = 11000,
       // should frames be converted to grayscale (default : false)
@@ -42,9 +40,6 @@ export class GStreamerServer implements Connector {
     }
 
     var broadcast = function () {
-      // address and port of GStreamer's tcp sink
-      const gst_tcp_addr = host
-      const gst_tcp_port = gstreamerPort
       // address and port of the webcam UI
       const ui_addr = host
       const ui_port = uiPort
@@ -63,32 +58,32 @@ export class GStreamerServer implements Connector {
 
       var gst_cam_ui = new LiveCamUI()
       var gst_cam_server = new GstLiveCamServer(webcam)
-      var gst_cam_process = gst_cam_server.start(gst_tcp_addr, gst_tcp_port)
+      var gst_cam_process = gst_cam_server.start()
       var gst_cam_wrap
 
+      var started = false
       gst_cam_process.stdout.on('data', function (data) {
-        Connections.logger.info(data.toString())
         // This catches GStreamer when pipeline goes into PLAYING state
-        if (data.toString().includes('Setting pipeline to PLAYING') > 0) {
-          gst_cam_wrap = SocketCamWrapper.wrap(gst_tcp_addr, gst_tcp_port, broadcast_addr, broadcast_port)
+
+        // 프로세스 출력 메시지와 실제 비디오 데이타를 구분해서 처리할 필요가 있다. started되면, listen을 멈추는 방법이 좋을 듯.
+        if (!started && data.toString().includes('Setting pipeline to PLAYING') > 0) {
+          gst_cam_wrap = StdoutCamWrapper.wrap(gst_cam_process, broadcast_addr, broadcast_port)
           gst_cam_ui.serve(ui_addr, ui_port, broadcast_addr, broadcast_port)
-          // gst_cam_ui.close()
 
           Connections.logger.info(`gstreamer-server connection(${connection.name}:${connection.endpoint}) is started`)
+
+          started = true
         }
       })
 
       gst_cam_process.stderr.on('data', function (data) {
         Connections.logger.info(data.toString())
-        // gst_cam_ui.close()
       })
       gst_cam_process.on('error', function (err) {
         Connections.logger.info('Webcam server error: ' + err)
-        // gst_cam_ui.close()
       })
       gst_cam_process.on('exit', function (code) {
         Connections.logger.info('Webcam server exited: ' + code)
-        // gst_cam_ui.close()
       })
 
       return {
@@ -144,11 +139,6 @@ export class GStreamerServer implements Connector {
         type: 'number',
         label: 'ui-port',
         name: 'uiPort'
-      },
-      {
-        type: 'number',
-        label: 'gstreamer-port',
-        name: 'gstreamerPort'
       }
     ]
   }
