@@ -1,8 +1,8 @@
 import { Connections, Connector } from '@things-factory/integration-base'
-import { LiveCamUI } from './gstreamer/livecam-ui'
-import { GstLaunch } from './gstreamer/gst-launcher'
-import { GstLiveCamServer } from './gstreamer/gst-livecam-server'
-import { SocketCamWrapper } from './gstreamer/socket-cam-wrapper'
+import { LiveCamUI } from '../../controllers/camera-streamer/gstreamer/livecam-ui'
+import { GstLaunch } from '../../controllers/camera-streamer/gstreamer/gst-launcher'
+import { GstLiveCamServer } from '../../controllers/camera-streamer/gstreamer/gst-livecam-server'
+import { SocketCamWrapper } from '../../controllers/camera-streamer/gstreamer/socket-cam-wrapper'
 
 export class GStreamerServer implements Connector {
   async ready(connectionConfigs) {

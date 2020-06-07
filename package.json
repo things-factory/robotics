@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@things-factory/integration-base": "^2.0.0",
+    "@things-factory/modeller-ui": "^2.0.0",
     "@things-factory/node-librealsense2": "^0.1.0",
     "debug": "^4.1.1",
     "dicer": "^0.3.0",

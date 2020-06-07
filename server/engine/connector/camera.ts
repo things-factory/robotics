@@ -33,6 +33,10 @@ export class CameraConnector implements Connector {
       }
     ]
   }
+
+  get taskPrefixes() {
+    return ['camera']
+  }
 }
 
 Connections.registerConnector('camera-connector', new CameraConnector())

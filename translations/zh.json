@@ -2,11 +2,14 @@
   "button.next": "next",
   "button.prev": "previous",
   "button.done": "done",
+  "label.calibration": "calibration",
+  "label.device": "device",
   "label.framerate": "frame rate (fps)",
   "label.grayscale": "gray scale",
   "label.fake": "fake video",
   "label.ui-port": "sample UI port",
   "label.gstreamer-port": "gstreamer service port",
+  "text.camera setting": "camera setting",
   "text.camera calibration": "camera calibration",
   "text.handeye calibration": "handeye calibration"
 }
