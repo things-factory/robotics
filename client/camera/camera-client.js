@@ -1,13 +1,14 @@
-// Web Camera Video Streaming Protocol Client Module
-export class WebcamClient {
+export class CameraClient {
   url
   socket
   callback
   deviceId
 
-  constructor(deviceId, callback) {
+  constructor(port, cameraType, deviceId, profile, callback) {
     var protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
-    this.url = `${protocol}//${window.location.hostname}:3001/camera-stream/webcam/${deviceId}/0/0`
+    var { stream = '0', index = '0' } = profile
+
+    this.url = `${protocol}//${window.location.hostname}:${port}/camera-stream/${cameraType}/${deviceId}/${stream}/${index}`
 
     this.socket = null
     this.deviceId = deviceId
@@ -23,7 +24,6 @@ export class WebcamClient {
 
     this.socket.onmessage = message => {
       var { data } = message
-      // this.callback('data:image/jpeg;base64,' + message.data)
       this.callback(data)
     }
   }

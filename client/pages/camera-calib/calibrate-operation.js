@@ -3,10 +3,10 @@ import { connect } from 'pwa-helpers/connect-mixin.js'
 import { store } from '@things-factory/shell'
 import '@material/mwc-button'
 
-import { RealsenseClient } from '../../camera/realsense-client'
-import { RealsenseColorStream } from '../../camera/realsense-color-stream'
-import { RealsenseDepthStream } from '../../camera/realsense-depth-stream'
-import { RealsenseInfraredStream } from '../../camera/realsense-infrared-stream'
+import { RealsenseClient } from '../../camera/realsense/realsense-client'
+import { RealsenseColorStream } from '../../camera/realsense/realsense-color-stream'
+import { RealsenseDepthStream } from '../../camera/realsense/realsense-depth-stream'
+import { RealsenseInfraredStream } from '../../camera/realsense/realsense-infrared-stream'
 
 import { WizardViewStyles } from '../../views/wizard-view-styles'
 
@@ -26,6 +26,10 @@ class CameraCalibrationOperation extends connect(store)(LitElement) {
     return {
       settings: Object
     }
+  }
+
+  disconnectedCallback() {
+    this.rs2client?.disconnect()
   }
 
   render() {
@@ -121,7 +125,7 @@ class CameraCalibrationOperation extends connect(store)(LitElement) {
     }
 
     if (this.stream) {
-      this.rs2client = new RealsenseClient(device, profile, data => {
+      this.rs2client = new RealsenseClient(3001, device, profile, data => {
         if (typeof data === 'string') {
           var meta = JSON.parse(data)
           this.stream.configure(meta)

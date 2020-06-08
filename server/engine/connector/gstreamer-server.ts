@@ -29,7 +29,7 @@ export class GStreamerServer implements Connector {
       fake = false,
       // framerate of the feed (default : 0)
       // provide 0 to match webcam input
-      framerate = 25
+      framerate = 30
     } = connection.params
 
     if (!GstLaunch.isAvailable()) {

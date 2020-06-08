@@ -1,5 +1,5 @@
 /**
- * 이 클래스는 realsense-camera 의 설정을 위한 에디터로 동작한다.
+ * 이 클래스는 camera 의 설정을 위한 에디터로 동작한다.
  */
 
 import { LitElement, html, css } from 'lit-element'
@@ -8,9 +8,9 @@ import { openPopup } from '@things-factory/layout-base'
 import { ThingsEditorProperty, ThingsEditorPropertyStyles } from '@things-factory/modeller-ui'
 import '@material/mwc-icon'
 
-import './realsense-camera-calibration-popup'
+import './camera-roi-popup'
 
-export class RealsenseCameraCalibrationEditor extends ThingsEditorProperty {
+export class CameraROIEditor extends ThingsEditorProperty {
   static get styles() {
     return [ThingsEditorPropertyStyles]
   }
@@ -22,12 +22,10 @@ export class RealsenseCameraCalibrationEditor extends ThingsEditorProperty {
   }
 
   editorTemplate(props) {
-    return html`<mwc-button @click=${e => this.openCalibrationSetup()}
-      >${i18next.t('text.camera calibration')}</mwc-button
-    >`
+    return html`<mwc-button @click=${e => this.openROISetup()}>${i18next.t('text.camera roi')}</mwc-button>`
   }
 
-  async openCalibrationSetup() {
+  async openROISetup() {
     if (this.popup) {
       delete this.popup
     }
@@ -51,16 +49,15 @@ export class RealsenseCameraCalibrationEditor extends ThingsEditorProperty {
       따라서, 가급적 이들 속성의 레퍼런스를 변화시키지 않는 것이 좋다.
     */
     var template = html`
-      <realsense-camera-calibration-popup .value=${this.value} .confirmCallback=${confirmCallback}>
-      </realsense-camera-calibration-popup>
+      <camera-roi-popup .value=${this.value} .confirmCallback=${confirmCallback}> </camera-roi-popup>
     `
 
     this.popup = openPopup(template, {
       backdrop: true,
       size: 'large',
-      title: i18next.t('text.camera calibration')
+      title: i18next.t('text.camera roi')
     })
   }
 }
 
-customElements.define('realsense-camera-calibration-editor', RealsenseCameraCalibrationEditor)
+customElements.define('camera-roi-editor', CameraROIEditor)

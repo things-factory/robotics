@@ -27,6 +27,7 @@ describe('RealsenseCameraSensor', function () {
       var sensors = device?.sensors
 
       console.log('sensor.info', sensors[0]?.info)
+      console.log('sensor.info', sensors[1]?.info)
     })
   })
 

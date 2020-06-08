@@ -92,7 +92,7 @@ const options = [
   }
 ]
 
-export class RealsenseCameraSettingPopup extends LitElement {
+export class CameraSettingPopup extends LitElement {
   static get styles() {
     return [
       ScrollbarStyles,
@@ -354,4 +354,4 @@ export class RealsenseCameraSettingPopup extends LitElement {
   }
 }
 
-customElements.define('realsense-camera-setting-popup', RealsenseCameraSettingPopup)
+customElements.define('camera-setting-popup', CameraSettingPopup)

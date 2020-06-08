@@ -40,6 +40,11 @@ export class RealsenseCamera implements Connector {
         type: 'realsense-camera-calibration',
         label: 'calibration',
         name: 'calibration'
+      },
+      {
+        type: 'camera-roi',
+        label: 'roi',
+        name: 'roi'
       }
     ]
   }

@@ -30,6 +30,21 @@ export class CameraConnector implements Connector {
         type: 'string',
         label: 'device',
         name: 'device'
+      },
+      {
+        type: 'camera-setting',
+        label: 'setting',
+        name: 'setting'
+      },
+      {
+        type: 'camera-calibration',
+        label: 'calibration',
+        name: 'calibration'
+      },
+      {
+        type: 'camera-roi',
+        label: 'roi',
+        name: 'roi'
       }
     ]
   }

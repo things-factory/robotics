@@ -10,7 +10,7 @@ import { CameraClient } from '../camera/camera-client'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 
-export class RealsenseCameraCalibrationPopup extends LitElement {
+export class CameraCalibrationPopup extends LitElement {
   static get styles() {
     return [
       css`
@@ -70,10 +70,6 @@ export class RealsenseCameraCalibrationPopup extends LitElement {
           border: 3px solid #73ad21;
           padding: 10px;
         }
-
-        img {
-          width: 80%;
-        }
       `
     ]
   }
@@ -123,9 +119,6 @@ export class RealsenseCameraCalibrationPopup extends LitElement {
           <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
           <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
           <mwc-button label="Compute" icon="exposure"></mwc-button>
-          <img
-            src="https://www.intel.co.kr/content/dam/www/public/us/en/images/product/16x9/depth-camera-16x9.png.rendition.intel.web.416.234.png"
-          />
         </div>
 
         <div stream>
@@ -174,4 +167,4 @@ export class RealsenseCameraCalibrationPopup extends LitElement {
   }
 }
 
-customElements.define('realsense-camera-calibration-popup', RealsenseCameraCalibrationPopup)
+customElements.define('camera-calibration-popup', CameraCalibrationPopup)

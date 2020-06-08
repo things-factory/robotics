@@ -7,9 +7,11 @@
   "label.framerate": "frame rate (fps)",
   "label.grayscale": "gray scale",
   "label.fake": "fake video",
+  "label.roi": "ROI",
   "label.ui-port": "sample UI port",
   "label.gstreamer-port": "gstreamer service port",
   "text.camera setting": "camera setting",
   "text.camera calibration": "camera calibration",
-  "text.handeye calibration": "handeye calibration"
+  "text.handeye calibration": "handeye calibration",
+  "text.camera roi": "ROI"
 }
