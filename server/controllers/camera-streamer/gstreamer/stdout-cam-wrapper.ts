@@ -30,12 +30,10 @@ export class StdoutCamWrapper {
         part.setEncoding('base64')
 
         part.on('data', function (data) {
-          Connections.logger.info('frame received.')
           frameEncoded += data
         })
         part.on('end', function () {
           try {
-            Connections.logger.info('frame end received.')
             io.sockets.emit('image', frameEncoded)
           } catch (e) {
             Connections.logger.error(e)

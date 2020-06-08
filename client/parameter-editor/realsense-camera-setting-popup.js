@@ -43,8 +43,8 @@ export class RealsenseCameraSettingPopup extends LitElement {
         }
 
         canvas {
-          width: 400px;
-          height: 300px;
+          width: 800px;
+          height: 600px;
         }
       `
     ]
@@ -56,24 +56,30 @@ export class RealsenseCameraSettingPopup extends LitElement {
     }
   }
 
+  disconnectedCallback() {
+    this.webcamClient.disconnect()
+  }
+
   firstUpdated() {
-    var device = 'dev0'
+    var device = '0'
+    var canvas = this.renderRoot.querySelector('canvas')
+    var context = canvas.getContext('2d')
 
     this.webcamClient = new WebcamClient(device, data => {
-      if (typeof data === 'string') {
-        var meta = JSON.parse(data)
-        this.stream.configure(meta)
-      } else if (data instanceof Blob) {
-        var blob = new Blob([data], { type: 'image/jpg' })
-        var url = URL.createObjectURL(blob)
+      // if (typeof data === 'string') {
+      //   var meta = JSON.parse(data)
+      //   this.stream.configure(meta)
+      // } else if (data instanceof Blob) {
+      // var blob = new Blob([data], { type: 'image/jpg' })
+      // var url = URL.createObjectURL(blob)
 
-        var image = new Image()
-        image.src = url
-        image.onload = () => {
-          this.context.drawImage(image, 0, 0)
-          URL.revokeObjectURL(url)
-        }
+      var image = new Image()
+      image.src = data
+      image.onload = () => {
+        context.drawImage(image, 0, 0)
+        URL.revokeObjectURL(data)
       }
+      // }
     })
 
     this.webcamClient.connect()

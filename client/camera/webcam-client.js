@@ -1,4 +1,4 @@
-// Realsense Camera Video Streaming Protocol Client Module
+// Web Camera Video Streaming Protocol Client Module
 export class WebcamClient {
   url
   socket
@@ -7,7 +7,7 @@ export class WebcamClient {
 
   constructor(deviceId, callback) {
     var protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
-    this.url = `${protocol}//localhost:3001/camera-stream/realsense/${deviceId}/0/0`
+    this.url = `${protocol}//${window.location.hostname}:3001/camera-stream/webcam/${deviceId}/0/0`
 
     this.socket = null
     this.deviceId = deviceId
@@ -21,10 +21,9 @@ export class WebcamClient {
       console.log('websocket open', event)
     })
 
-    this.socket.addEventListener('message', event => {
-      var { data } = event
-      this.callback(data)
-    })
+    this.socket.onmessage = message => {
+      this.callback('data:image/jpeg;base64,' + message.data)
+    }
   }
 
   disconnect() {

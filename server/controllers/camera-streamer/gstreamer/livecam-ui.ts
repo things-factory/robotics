@@ -16,7 +16,7 @@ const template = function () {
   <body>
     <div class="feed"><img id="video" src="" /></div>
     <script>
-      var webcam_addr = "@WEBCAM_ADDR@";
+      var webcam_addr = location.hostname;
       var webcam_port = "@WEBCAM_PORT@";
       var webcam_host = $(".feed img");
       var socket = io.connect('http://' + webcam_addr + ':' + webcam_port);

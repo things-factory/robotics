@@ -40,29 +40,30 @@ export class CameraStreamDriverWebcam implements CameraStreamDriver {
       var dicer = new Dicer({ boundary: gst_multipart_boundary })
 
       dicer
-        .on('part', function (part) {
+        .on('part', part => {
           var frameEncoded = ''
           part.setEncoding('base64')
 
-          part.on('data', function (data) {
+          part.on('data', data => {
             frameEncoded += data
           })
-          part.on('end', function () {
+          part.on('end', () => {
             try {
               this.streams[channel].forEach(socket => socket.send(frameEncoded))
             } catch (e) {
               Connections.logger.error(e)
             }
           })
-          part.on('error', function (err) {
+          part.on('error', err => {
+            frameEncoded = ''
             Connections.logger.error('error', err)
           })
         })
-        .on('error', function (err) {
+        .on('error', err => {
           Connections.logger.error('error', err)
         })
 
-      dicer.on('finish', function () {
+      dicer.on('finish', () => {
         Connections.logger.info('Dicer finished: ' + channel)
       })
 
@@ -71,10 +72,12 @@ export class CameraStreamDriverWebcam implements CameraStreamDriver {
       gstProcess.stdout.pipe(dicer)
     }
 
-    return {
+    var subscription = {
       channel,
       socket
     }
+
+    return subscription
   }
 
   unsubscribe(subscription) {
@@ -84,13 +87,16 @@ export class CameraStreamDriverWebcam implements CameraStreamDriver {
     var streams = this.streams[channel]
     if (streams) {
       streams.splice(streams.indexOf(socket), 1)
+      socket.close()
       if (streams.length == 0) {
-        var liveserver = this.livecams[channel]
-        delete this.livecams[channel]
-        liveserver.stop()
+        delete this.streams[channel]
       }
-    } else {
-      delete this.streams[channel]
+    }
+
+    if (!this.streams[channel]) {
+      var liveserver = this.livecams[channel]
+      delete this.livecams[channel]
+      liveserver?.stop()
     }
   }
 

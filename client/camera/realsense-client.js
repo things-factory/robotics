@@ -8,9 +8,7 @@ export class RealsenseClient {
   constructor(deviceId, profile, callback) {
     var protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
     var { stream, index } = profile
-    // this.url = `${protocol}//${window.location.host}/camera-stream/${deviceId}`
-    this.url = `${protocol}//localhost:3001/camera-stream/realsense/${deviceId}/${stream}/${index}`
-    // this.url = `${protocol}//localhost:3001/camera-stream/realsense/${deviceId}/depth/0`
+    this.url = `${protocol}//${window.location.hostname}:3001/camera-stream/realsense/${deviceId}/${stream}/${index}`
 
     this.socket = null
     this.deviceId = deviceId
