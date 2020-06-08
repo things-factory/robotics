@@ -72,6 +72,13 @@ export class CameraStreamDriverWebcam implements CameraStreamDriver {
       gstProcess.stdout.pipe(dicer)
     }
 
+    socket.send(
+      JSON.stringify({
+        width: 800,
+        height: 600
+      })
+    )
+
     var subscription = {
       channel,
       socket

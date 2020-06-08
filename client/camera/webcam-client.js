@@ -22,7 +22,9 @@ export class WebcamClient {
     })
 
     this.socket.onmessage = message => {
-      this.callback('data:image/jpeg;base64,' + message.data)
+      var { data } = message
+      // this.callback('data:image/jpeg;base64,' + message.data)
+      this.callback(data)
     }
   }
 

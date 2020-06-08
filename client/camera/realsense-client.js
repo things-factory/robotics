@@ -22,8 +22,8 @@ export class RealsenseClient {
       console.log('websocket open', event)
     })
 
-    this.socket.addEventListener('message', event => {
-      var { data } = event
+    this.socket.addEventListener('message', message => {
+      var { data } = message
       this.callback(data)
     })
   }
