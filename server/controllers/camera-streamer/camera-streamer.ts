@@ -3,7 +3,6 @@ import Channel from './channel'
 import { CameraStreamDriver } from './camera-stream-driver'
 
 import Debug from 'debug'
-import { ClientRequest } from 'http'
 const debug = Debug('things-factory:vision-base:camera-streamer')
 
 const NOOP = function () {}
