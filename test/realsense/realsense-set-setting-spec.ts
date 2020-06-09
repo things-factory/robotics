@@ -61,9 +61,19 @@ describe('set-setting', function () {
 
       try {
         if (websocket) {
-          var socket = await websocket()
+          let socket = await websocket()
         } else {
-          context.body = await streamer.handleRequest({ type, device, stream, index }, context.request)
+          let command = {
+            ...context.request.query,
+            ...context.request.body
+          }
+          context.body = await streamer.handleRequest({
+            type,
+            device,
+            stream,
+            index,
+            command
+          })
         }
 
         await next()

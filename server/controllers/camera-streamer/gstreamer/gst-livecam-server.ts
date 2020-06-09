@@ -54,16 +54,6 @@ export class GstLiveCamServer {
       this.gst_multipart_boundary +
       '" ! filesink location=/dev/stdout'
 
-    // start(tcp_addr, tcp_port) {
-    //   const cam_pipeline =
-    //     this.gst_video_src +
-    //     ' ! jpegenc ! multipartmux  boundary="' +
-    //     this.gst_multipart_boundary +
-    //     '" ! tcpserversink host=' +
-    //     tcp_addr +
-    //     ' port=' +
-    //     tcp_port
-
     if (GstLaunch.isAvailable()) {
       Connections.logger.info('GstLaunch found: ' + GstLaunch.getPath())
       Connections.logger.info('GStreamer version: ' + GstLaunch.getVersion())

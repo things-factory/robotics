@@ -6,6 +6,7 @@ import request from 'request-promise'
 import WebSocket from 'ws'
 import url from 'url'
 import { Realsense, SENSOR } from '../../server/controllers/realsense'
+import koaBodyParser from 'koa-bodyparser'
 
 import cameraStreamer from '../../server/middlewares/camera-streamer-koa-middleware'
 import '../../server/controllers/camera-streamer/camera-stream-driver-realsense'
@@ -42,6 +43,14 @@ describe('get-setting', function () {
       })
     )
 
+    app.use(
+      koaBodyParser({
+        formLimit: '10mb',
+        jsonLimit: '10mb',
+        textLimit: '10mb'
+      })
+    )
+
     const router = new Router()
     router.all('/camera-stream/:type/:device/:stream/:index', async (context, next) => {
       const {
@@ -52,9 +61,19 @@ describe('get-setting', function () {
 
       try {
         if (websocket) {
-          var socket = await websocket()
+          let socket = await websocket()
         } else {
-          context.body = await streamer.handleRequest({ type, device, stream, index }, context.request)
+          let command = {
+            ...context.request.query,
+            ...context.request.body
+          }
+          context.body = await streamer.handleRequest({
+            type,
+            device,
+            stream,
+            index,
+            command
+          })
         }
 
         await next()
