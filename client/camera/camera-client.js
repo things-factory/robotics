@@ -1,5 +1,6 @@
 export class CameraClient {
-  url
+  wsUrl
+  httpUrl
   socket
   callback
   deviceId
@@ -8,7 +9,8 @@ export class CameraClient {
     var protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
     var { stream = '0', index = '0' } = profile
 
-    this.url = `${protocol}//${window.location.hostname}:${port}/camera-stream/${cameraType}/${deviceId}/${stream}/${index}`
+    this.wsUrl = `${protocol}//${window.location.hostname}:${port}/camera-stream/${cameraType}/${deviceId}/${stream}/${index}`
+    this.httpUrl = `${location.protocol}//${window.location.host}/camera-stream/${cameraType}/${deviceId}/${stream}/${index}`
 
     this.socket = null
     this.deviceId = deviceId
@@ -16,7 +18,7 @@ export class CameraClient {
   }
 
   connect() {
-    this.socket = new WebSocket(this.url)
+    this.socket = new WebSocket(this.wsUrl)
 
     this.socket.addEventListener('open', event => {
       console.log('websocket open', event)
@@ -30,5 +32,19 @@ export class CameraClient {
 
   disconnect() {
     this.socket.close()
+  }
+
+  async sendRequest(command) {
+    const response = await fetch(this.httpUrl, {
+      method: 'POST',
+      mode: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(command)
+    })
+
+    return await response.json()
   }
 }

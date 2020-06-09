@@ -4,6 +4,7 @@ const debug = Debug('things-factory:vision-base:realsense-stream-driver')
 import { CameraStreamDriver } from './camera-stream-driver'
 import { CameraStreamer } from './camera-streamer'
 import { Realsense } from '../realsense'
+import { ClientRequest } from 'http'
 
 export class RealsenseStreamDriver implements CameraStreamDriver {
   subscribe(type, device, profile, socket) {
@@ -21,38 +22,58 @@ export class RealsenseStreamDriver implements CameraStreamDriver {
     Realsense.publish(message, channel)
   }
 
-  // handleCommand(command) {
-  //   switch (command.tag) {
-  //     case 'sensor-setting':
-  //       this.handleSensorSetting(command)
-  //       break
-  //     case 'start-stream':
-  //       this.handleStartStream(command)
-  //       break
-  //     case 'stop-stream':
-  //       this.handleStopStream(command)
-  //       break
-  //     default:
-  //       debug(`Unrecognized command ${command}`)
-  //       break
-  //   }
-  // }
+  handleRequest(request) {
+    var { tag } = request.command
 
-  // handleSensorSetting(command) {
-  //   const { device, setting, sensor: sensorName } = command.data
+    switch (tag) {
+      case 'get-setting':
+        return this.handleGetSetting(request)
+        break
+      case 'set-setting':
+        return this.handleSetSetting(request)
+        break
+      // case 'start-stream':
+      //   this.handleStartStream(request)
+      //   break
+      // case 'stop-stream':
+      //   this.handleStopStream(request)
+      //   break
+      default:
+        debug(`Unrecognized request ${tag}`)
+        return {
+          error: `Unrecognized request ${tag}`
+        }
+        break
+    }
+  }
 
-  //   var sensor = Realsense.devices[device].this._findSensorByName(sensorName)
+  handleGetSetting(request) {
+    const { device, stream } = request
 
-  //   for (let option in setting) {
-  //     sensor.setOption(option, Number(setting[option]))
-  //   }
-  // }
+    var sensor = Realsense.getDevice(device).findSensorSupportingStream(stream)
+    return sensor.options
+  }
 
-  // handleStartStream(command) {
+  handleSetSetting(request) {
+    const { device, stream, command } = request
+
+    const { setting } = command
+
+    var sensor = Realsense.getDevice(device).findSensorSupportingStream(stream)
+
+    debug('handleSetSetting', command)
+    for (let option in setting) {
+      sensor.setOption(option, Number(setting[option]))
+    }
+
+    return sensor.options
+  }
+
+  // handleStartStream(request) {
   //   const {
   //     tag,
   //     data: { device, profile }
-  //   } = command
+  //   } = request
 
   //   this.subscribe(device, profile)
   //   Realsense.subscribe(device, profile, frame => {
@@ -75,11 +96,11 @@ export class RealsenseStreamDriver implements CameraStreamDriver {
   //   }
   // }
 
-  // handleStopStream(command) {
+  // handleStopStream(request) {
   //   const {
   //     tag,
   //     data: { sensor: sensorName }
-  //   } = command
+  //   } = request
   //   let sensor = this._findSensorByName(sensorName)
 
   //   if (sensor) {
@@ -95,8 +116,8 @@ export class RealsenseStreamDriver implements CameraStreamDriver {
     socket.send(data)
   }
 
-  // sendCommand(command) {
-  //   socket.send(JSON.stringify(command))
+  // sendrequest(request) {
+  //   socket.send(JSON.stringify(request))
   // }
 }
 

@@ -139,6 +139,7 @@ export class RealsenseCameraSensor {
    * @param value value
    */
   setOption(option: String, value: Number): void {
+    debug('setOption', option, value)
     this.sensor.setOption(option, Number(value))
   }
 

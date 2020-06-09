@@ -111,6 +111,8 @@ export class CameraStreamDriverWebcam implements CameraStreamDriver {
     debug('publish', channel)
     this.streams[channel]?.forEach(socket => socket.send(message))
   }
+
+  handleRequest(context) {}
 }
 
 CameraStreamer.registerCameraDriver('webcam', new CameraStreamDriverWebcam())

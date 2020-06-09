@@ -81,7 +81,7 @@ export class Realsense {
     var subscriptionsForChannel = Realsense.subscriptions[channel]
 
     if (subscriptionsForChannel) {
-      debug('callback', channel, subscriptionsForChannel.length)
+      // debug('callback', channel, subscriptionsForChannel.length)
       var info = await Realsense.buildFrameInfo(frame)
 
       subscriptionsForChannel.forEach(subscription => {

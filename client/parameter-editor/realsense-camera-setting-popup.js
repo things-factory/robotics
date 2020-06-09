@@ -6,91 +6,18 @@ import { LitElement, html, css } from 'lit-element'
 import { ScrollbarStyles } from '@things-factory/styles'
 import { i18next, localize } from '@things-factory/i18n-base'
 
-import { CameraClient } from '../camera/camera-client'
+import { RealsenseClient } from '../camera/realsense/realsense-client'
+import { RealsenseColorStream } from '../camera/realsense/realsense-color-stream'
+import { RealsenseDepthStream } from '../camera/realsense/realsense-depth-stream'
+import { RealsenseInfraredStream } from '../camera/realsense/realsense-infrared-stream'
+
+import { OPTIONS } from '../camera/realsense/realsense-options'
 
 import '@material/mwc-icon'
 import '@material/mwc-slider'
 import '@material/mwc-checkbox'
 import '@material/mwc-radio'
 import '@material/mwc-button'
-
-const options = [
-  {
-    option: 'exposure',
-    value: 8500,
-    range: { minValue: 1, maxValue: 165000, step: 1, defaultValue: 8500 }
-  },
-  {
-    option: 'gain',
-    value: 16,
-    range: { minValue: 16, maxValue: 248, step: 1, defaultValue: 16 }
-  },
-  {
-    option: 'enable-auto-exposure',
-    value: 1
-  },
-  {
-    option: 'visual-preset',
-    value: 0,
-    range: { minValue: 0, maxValue: 6, step: 1, defaultValue: 0 }
-  },
-  {
-    option: 'laser-power',
-    value: 150,
-    range: { minValue: 0, maxValue: 360, step: 30, defaultValue: 150 }
-  },
-  {
-    option: 'emitter-enabled',
-    value: 1,
-    values: [0, 1, 2]
-  },
-  {
-    option: 'frames-queue-size',
-    value: 16,
-    range: { minValue: 0, maxValue: 32, step: 1, defaultValue: 16 }
-  },
-  {
-    option: 'error-polling-enabled',
-    value: 1
-  },
-  {
-    option: 'output-trigger-enabled',
-    value: 0
-  },
-  {
-    option: 'depth-units',
-    value: 0.0010000000474974513,
-    range: {
-      minValue: 9.999999974752427e-7,
-      maxValue: 0.009999999776482582,
-      step: 9.999999974752427e-7,
-      defaultValue: 0.0010000000474974513
-    }
-  },
-  {
-    option: 'stereo-baseline',
-    value: 50.123226165771484,
-    range: {
-      minValue: 50.123226165771484,
-      maxValue: 50.123226165771484,
-      step: 0,
-      defaultValue: 50.123226165771484
-    }
-  },
-  {
-    option: 'inter-cam-sync-mode',
-    value: 0,
-    values: [0, 1, 2]
-  },
-  {
-    option: 'emitter-on-off',
-    value: 0
-  },
-  {
-    option: 'global-time-enabled',
-    value: 1
-  }
-]
 
 export class RealsenseCameraSettingPopup extends LitElement {
   static get styles() {
@@ -159,48 +86,28 @@ export class RealsenseCameraSettingPopup extends LitElement {
 
   static get properties() {
     return {
-      value: Object
+      value: Object,
+      device: Number,
+      sensor: Number,
+      stream: String
     }
   }
 
   disconnectedCallback() {
-    this.webcamClient.disconnect()
+    this.rs2client?.disconnect()
   }
 
-  firstUpdated() {
-    var device = '0'
-    var canvas = this.renderRoot.querySelector('canvas')
-    var context = canvas.getContext('2d')
-    var count = 0
-
-    this.webcamClient = new CameraClient(3001, 'webcam', device, {}, data => {
-      if (count++ == 0) {
-        var { width, height } = JSON.parse(data)
-        canvas.width = width
-        canvas.height = height
-
-        return
-      }
-
-      var image = new Image()
-      image.src = 'data:image/jpeg;base64,' + data
-      image.onload = () => {
-        context.drawImage(image, 0, 0)
-        URL.revokeObjectURL(data)
-      }
-    })
-
-    this.webcamClient.connect()
-  }
+  firstUpdated() {}
 
   render() {
-    var { sensor = '0' } = this.value || {}
+    var sensor = this.sensor || '0'
+    var options = OPTIONS
 
     return html`
       <content>
         <div settings>
           <label>sensor</label>
-          <select>
+          <select name="sensor" @change=${this.onStreamChange.bind(this)}>
             <option value="0">RGB Camera</option>
             <option value="1">Stereo Camera</option>
           </select>
@@ -208,7 +115,8 @@ export class RealsenseCameraSettingPopup extends LitElement {
           ${sensor == '0'
             ? html`
                 <label>stream</label>
-                <select>
+                <select name="stream" @change=${this.onStreamChange.bind(this)}>
+                  <option value="" selected></option>
                   <option>color</option>
                 </select>
 
@@ -247,7 +155,8 @@ export class RealsenseCameraSettingPopup extends LitElement {
               `
             : html`
                 <label>stream</label>
-                <select>
+                <select name="stream" @change=${this.onStreamChange.bind(this)}>
+                  <option value="" selected></option>
                   <option>depth</option>
                   <option>infrared-1</option>
                   <option>infrared-2</option>
@@ -284,28 +193,47 @@ export class RealsenseCameraSettingPopup extends LitElement {
                   <option>15</option>
                 </select>
               `}
-          ${options.map(
-            option => html`
-              <label>${option.option}</label>
-              ${option.range
-                ? html`
-                    <mwc-slider
-                      pin
-                      markers
-                      max=${option.range.maxValue}
-                      min=${option.range.minValue}
-                      value=${option.value}
-                      step=${option.range.step}
-                    ></mwc-slider>
-                  `
-                : option.values
-                ? option.values.map(
-                    value =>
-                      html` <mwc-radio name=${option.option} .checked=${value == option.value}>${value}</mwc-radio> `
-                  )
-                : html` <mwc-checkbox .checked=${option.value == 1}></mwc-checkbox> `}
-            `
-          )}
+          <div
+            @change=${e => {
+              var option = e.target.getAttribute('name')
+              var value = e.target.getAttribute('checkbox') ? (e.target.selected ? 1 : 0) : e.target.value
+              this.rs2client.sendRequest({
+                tag: 'set-setting',
+                setting: {
+                  [option]: value
+                }
+              })
+            }}
+            options
+          >
+            ${options.map(
+              option => html`
+                <label>${option.option}</label>
+                ${option.range
+                  ? html`
+                      <mwc-slider
+                        name=${option.option}
+                        pin
+                        markers
+                        max=${option.range.maxValue}
+                        min=${option.range.minValue}
+                        value=${option.value}
+                        step=${option.range.step}
+                      ></mwc-slider>
+                    `
+                  : option.values
+                  ? option.values.map(
+                      value =>
+                        html`
+                          <mwc-radio name=${option.option} .checked=${value == option.value} value=${value}
+                            >${value}</mwc-radio
+                          >
+                        `
+                    )
+                  : html` <mwc-checkbox name=${option.option} .checked=${option.value == 1} checkbox></mwc-checkbox> `}
+              `
+            )}
+          </div>
         </div>
 
         <div stream>
@@ -342,6 +270,76 @@ export class RealsenseCameraSettingPopup extends LitElement {
       delete this.value[key]
     }
     Object.assign(this.value, e.detail)
+  }
+
+  onStreamChange(e) {
+    var device = this.device || 0
+    var sensor = (this.sensor = this.renderRoot.querySelector('[name=sensor]').value)
+    var stream = (this.stream = this.renderRoot.querySelector('[name=stream]').value)
+
+    var oldCanvas = this.renderRoot.querySelector('canvas')
+    var canvas = oldCanvas.cloneNode(false)
+    oldCanvas.parentNode.replaceChild(canvas, oldCanvas)
+
+    if (this.rs2client) {
+      this.rs2client.disconnect()
+    }
+
+    if (!sensor || !stream) {
+      return
+    }
+
+    var profile = {}
+
+    switch (stream) {
+      case 'color':
+        this.stream = new RealsenseColorStream(canvas)
+        profile = {
+          stream: 'color',
+          index: 0
+        }
+        break
+
+      case 'depth':
+        this.stream = new RealsenseDepthStream(canvas)
+        profile = {
+          stream: 'depth',
+          index: 0
+        }
+        break
+
+      case 'infrared-1':
+        this.stream = new RealsenseInfraredStream(canvas)
+        profile = {
+          stream: 'infrared',
+          index: 1
+        }
+        break
+
+      case 'infrared-2':
+        this.stream = new RealsenseInfraredStream(canvas)
+        profile = {
+          stream: 'infrared',
+          index: 2
+        }
+        break
+
+      default:
+        this.stream = null
+    }
+
+    if (this.stream) {
+      this.rs2client = new RealsenseClient(3001, device, profile, data => {
+        if (typeof data === 'string') {
+          var meta = JSON.parse(data)
+          this.stream.configure(meta)
+        } else if (data instanceof Blob) {
+          this.stream.stream(data)
+        }
+      })
+
+      this.rs2client.connect()
+    }
   }
 
   oncancel(e) {
