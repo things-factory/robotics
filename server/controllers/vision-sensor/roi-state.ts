@@ -1,18 +1,18 @@
-import { EventType, Pose } from './types'
+import { ROIEventType, Pose } from './vision-sensor-types'
 
 const isSamePose = (pose1, pose2) => {
   /* TODO 미세한 변화는 움직이지 않은 것으로 한다. */
   return true
 }
 
-export class VisionSensor {
-  tag: string
+export class ROIState {
+  roi: string
   object: string
   stay: number
   pose: Pose
 
-  constructor(tag, object, stay, pose) {
-    this.tag = tag
+  constructor(roi, object, stay, pose) {
+    this.roi = roi
     this.object = object
     this.stay = stay
     this.pose = pose
@@ -33,8 +33,8 @@ export class VisionSensor {
     var events = []
     moveout &&
       events.push({
-        eventType: EventType.OUT,
-        tag: this.tag,
+        eventType: ROIEventType.OUT,
+        roi: this.roi,
         object: this.object
       })
 
@@ -44,16 +44,16 @@ export class VisionSensor {
 
     movein &&
       events.push({
-        eventType: EventType.IN,
-        tag: this.tag,
+        eventType: ROIEventType.IN,
+        roi: this.roi,
         object,
         pose
       })
 
     this.stay == 1 &&
       events.push({
-        eventType: EventType.STAY,
-        tag: this.tag,
+        eventType: ROIEventType.STAY,
+        roi: this.roi,
         object,
         pose
       })

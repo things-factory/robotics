@@ -113,10 +113,10 @@ export class RealsenseCameraSensor {
   /**
    * 센서의 현재 옵션과 설정 범위를 가져온다.
    */
-  get options(): { option: String; value: Number; range: rs2.Range }[] {
+  get options(): { option: string; value: number; range: rs2.Range }[] {
     return Object.values(rs2.option)
       .filter(option => typeof option == 'string' && this.sensor.supportsOption(option))
-      .map((option: String) => {
+      .map((option: string) => {
         return {
           option,
           value: this.sensor.getOption(option),
@@ -129,7 +129,7 @@ export class RealsenseCameraSensor {
    * 센서의 옵션값을 가져온다.
    * @param option option
    */
-  getOption(option: String): Number {
+  getOption(option: string): number {
     return this.sensor.getOption(option)
   }
 
@@ -138,7 +138,7 @@ export class RealsenseCameraSensor {
    * @param option option
    * @param value value
    */
-  setOption(option: String, value: Number): void {
+  setOption(option: string, value: number): void {
     debug('setOption', option, value)
     this.sensor.setOption(option, Number(value))
   }

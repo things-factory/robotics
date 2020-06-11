@@ -9,7 +9,7 @@ import Dicer from 'dicer'
 import Debug from 'debug'
 const debug = Debug('things-factory:vision-base:camera-stream-driver-webcam')
 
-const gst_multipart_boundary: String = '--videoboundary'
+const gst_multipart_boundary: string = '--videoboundary'
 
 export class CameraStreamDriverWebcam implements CameraStreamDriver {
   private streams = {}

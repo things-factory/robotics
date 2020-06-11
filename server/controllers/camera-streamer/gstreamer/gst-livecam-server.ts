@@ -8,8 +8,8 @@ import kill from 'tree-kill'
  * @brief Encapsulates a GStreamer pipeline to broadcast default webcam.
  */
 export class GstLiveCamServer {
-  gst_video_src: String
-  gst_multipart_boundary: String = '--videoboundary'
+  gst_video_src: string
+  gst_multipart_boundary: string = '--videoboundary'
 
   public childProcess: any
 

@@ -1,6 +1,7 @@
 import { Connections, Connector } from '@things-factory/integration-base'
+import { VisionSensor } from '../../controllers/vision-sensor/vision-sensor-types'
 
-export class CameraConnector implements Connector {
+export class CameraConnector implements Connector, VisionSensor {
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
 
@@ -23,6 +24,8 @@ export class CameraConnector implements Connector {
 
     Connections.logger.info(`camera-connector connection(${name}) is disconnected`)
   }
+
+  detectRegion(storage) {}
 
   get parameterSpec() {
     return [

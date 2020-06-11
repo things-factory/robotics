@@ -1,6 +1,7 @@
 import { Connections, Connector } from '@things-factory/integration-base'
+import { VisionSensor } from '../../controllers/vision-sensor/vision-sensor-types'
 
-export class RealsenseCamera implements Connector {
+export class RealsenseCamera implements Connector, VisionSensor {
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
 
@@ -23,6 +24,8 @@ export class RealsenseCamera implements Connector {
 
     Connections.logger.info(`realsense-camera connection(${name}) is disconnected`)
   }
+
+  detectRegion(storage) {}
 
   get parameterSpec() {
     return [

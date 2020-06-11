@@ -1,11 +1,11 @@
 import { Connections, Connector } from '@things-factory/integration-base'
 import { VisionSensorEngine } from '../../controllers/vision-sensor/vision-sensor-engine'
 
-export class VisionSensorConnector implements Connector {
+export class VisionSensorEngineConnector implements Connector {
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
 
-    Connections.logger.info('vision-sensor-connector connections are ready')
+    Connections.logger.info('vision-sensor-engine-connector connections are ready')
   }
 
   async connect(connection) {
@@ -16,7 +16,7 @@ export class VisionSensorConnector implements Connector {
     Connections.addConnection(connection.name, engine)
 
     Connections.logger.info(
-      `vision-sensor-connector connection(${connection.name}:${connection.endpoint}) is connected`
+      `vision-sensor-engine-connector connection(${connection.name}:${connection.endpoint}) is connected`
     )
   }
 
@@ -25,7 +25,7 @@ export class VisionSensorConnector implements Connector {
 
     engine.stop()
 
-    Connections.logger.info(`vision-sensor-connector connection(${name}) is disconnected`)
+    Connections.logger.info(`vision-sensor-engine-connector connection(${name}) is disconnected`)
   }
 
   get parameterSpec() {
@@ -37,4 +37,4 @@ export class VisionSensorConnector implements Connector {
   }
 }
 
-Connections.registerConnector('vision-sensor-connector', new VisionSensorConnector())
+Connections.registerConnector('vision-sensor-engine', new VisionSensorEngineConnector())
