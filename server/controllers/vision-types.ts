@@ -27,12 +27,47 @@ export enum HANDEYE_TYPES {
 /**
  * 카메라 캘리브레이션의 결과 매트릭스
  */
-export interface CameraMatrix {}
+export interface CameraMatrix {
+  rows: number
+  columns: number
+  /**
+   * ????
+   */
+  dt: any
+  /**
+   * 3 x 3 ?
+   */
+  data: number[]
+}
+
+export interface DistortionCoefficient {
+  rows: number
+  columns: number
+  /**
+   * ????
+   */
+  dt: any
+  /**
+   * ? x ?
+   */
+  data: number[]
+}
 
 /**
  * 핸드아이 캘리브레이션의 결과 매트릭스
  */
-export interface HandEyeMatrix {}
+export interface HandEyeMatrix {
+  rows: number
+  columns: number
+  /**
+   * ????
+   */
+  dt: any
+  /**
+   * ? x ?
+   */
+  data: number[]
+}
 
 // Interfaces for Management Targets
 
@@ -80,9 +115,22 @@ export interface Trackable {
    * @param storage
    */
   trace(storage: TrackingStorage): void
+  capture(): any
 }
 
 // Interfaces for Management
+
+export interface ROIProvider {
+  findROIs(trackable: Trackable): ROI[]
+}
+
+export interface ROIManager {
+  provider: ROIProvider
+
+  list(): ROI[]
+  get(id): ROI
+  register(ROI): void
+}
 
 export interface TrackingStorage {
   getObjectState(id: string | number)
