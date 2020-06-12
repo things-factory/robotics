@@ -1,8 +1,7 @@
-import { ROIStateStorage } from './vision-sensor-types'
-import { ROIStateStorageImpl } from './roi-state-storage'
+import { TrackingTargetStorage } from '../vision-types'
 
-export class VisionSensorEngine {
-  storage: ROIStateStorage
+export class MarkerTrackingEngine {
+  storage: TrackingTargetStorage
 
   cameras: any[]
   regions: any[]
@@ -10,9 +9,11 @@ export class VisionSensorEngine {
 
   _interval: any
 
-  start() {
-    this.storage = new ROIStateStorageImpl()
+  constructor(storage: TrackingTargetStorage) {
+    this.storage = storage
+  }
 
+  start() {
     var { cameras, regions } = this.fetchSensors()
     this.cameras = cameras
     this.regions = regions
