@@ -1,11 +1,11 @@
-import { TrackingTargetEvent, TrackingTarget, Pose, ROI } from './vision-types'
+import { TrackingEvent, TrackableObject, Pose, ROI, TRACKING_EVENT_TYPES } from './vision-types'
 
 const isSamePose = (pose1, pose2) => {
   /* TODO 미세한 변화는 움직이지 않은 것으로 한다. */
   return true
 }
 
-export class TrackingTargetMarker implements TrackingTarget {
+export class TrackingTargetMarker implements TrackableObject {
   /**
    * TrackingTarget의 id, eg) marker id
    */
@@ -32,24 +32,37 @@ export class TrackingTargetMarker implements TrackingTarget {
     this.pose = pose
   }
 
-  update(region, pose) {
+  update(roi, pose) {
+    var from = {
+      roi: this.roi,
+      pose: this.pose,
+      retention: this.retention
+    }
+    var to = {
+      roi: roi,
+      pose: pose,
+      retention: 0
+    }
+
     var moving = true
     var movein = false
     var moveout = false
 
-    if (this.region !== region) {
-      movein = !!marker
-      moveout == !!this.marker
+    if (this.roi !== roi) {
+      /* roi가 바뀌었다면 movein/out 중이다 */
+      movein = !!roi
+      moveout == !!this.roi
     } else {
       moving = !isSamePose(this.pose, pose)
     }
 
-    var events = []
+    var events: TrackingEvent[] = []
     moveout &&
       events.push({
-        eventType: TrackingTargetEvent.OUT,
-        roi: this.roi,
-        marker: this.marker
+        type: TRACKING_EVENT_TYPES.OUT,
+        object: this,
+        from,
+        to
       })
 
     this.pose = pose
@@ -57,18 +70,21 @@ export class TrackingTargetMarker implements TrackingTarget {
 
     movein &&
       events.push({
-        eventType: TrackingTargetEvent.IN,
-        roi: this.roi,
-        trackingTarget: this,
-        pose
+        type: TRACKING_EVENT_TYPES.IN,
+        object: this,
+        from,
+        to
       })
 
     this.retention == 1 &&
       events.push({
-        eventType: TrackingTargetEvent.STAY,
-        roi: this.roi,
-        trackingTarget: this,
-        pose
+        type: TRACKING_EVENT_TYPES.STAY,
+        object: this,
+        from,
+        to: {
+          ...to,
+          retention: 1
+        }
       })
 
     return events

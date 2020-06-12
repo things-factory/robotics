@@ -1,6 +1,6 @@
 import { Connections, Connector } from '@things-factory/integration-base'
-import { MarkerTrackingEngine } from '../../controllers/marker-tracker/marker-tracking-engine'
-import { ROIStateStorageImpl } from 'server/controllers/marker-tracker/marker-state-storage'
+import { TrackingEngineImpl } from '../../controllers/tracking-engine'
+import { ROIStateStorageImpl } from '../../controllers/tracking-storage'
 
 export class MarkerTrackingEngineConnector implements Connector {
   async ready(connectionConfigs) {
@@ -12,7 +12,9 @@ export class MarkerTrackingEngineConnector implements Connector {
   async connect(connection) {
     var { params } = connection
 
-    var engine = new MarkerTrackingEngine(new ROIStateStorageImpl())
+    var engine = new TrackingEngineImpl()
+    engine.storage = new ROIStateStorageImpl()
+    engine.duration = 1000
 
     Connections.addConnection(connection.name, engine)
 

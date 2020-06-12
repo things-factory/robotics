@@ -1,3 +1,8 @@
+// Base Interfaces
+
+import { ROIStateStorageImpl } from './tracking-storage'
+import { PostgresqlConnector } from '@things-factory/integration-base/dist-server/engine/connector/postgresql-connector'
+
 export interface Pose {
   x: number
   y: number
@@ -7,37 +12,42 @@ export interface Pose {
   w: number
 }
 
-export enum HANDEYE_TYPES {
-  EYE_IN_HAND,
-  EYE_TO_HAND
-}
-
-export interface CameraMatrix {}
-
-export interface HandEyeMatrix {}
-
-export interface RegionArea {
+export interface Region {
   x1: number
   y1: number
   x2: number
   y2: number
 }
 
+export enum HANDEYE_TYPES {
+  EYE_IN_HAND,
+  EYE_TO_HAND
+}
+
 /**
- * 마커 트래킹 영역
+ * 카메라 캘리브레이션의 결과 매트릭스
+ */
+export interface CameraMatrix {}
+
+/**
+ * 핸드아이 캘리브레이션의 결과 매트릭스
+ */
+export interface HandEyeMatrix {}
+
+// Interfaces for Management Targets
+
+/**
+ * 카메라가 주시하는 작업 영역(또는 공간)
  */
 export interface ROI {
   id: string | number
-  area: RegionArea
+  region: Region
 }
 
-export enum TrackingTargetEvent {
-  IN,
-  STAY,
-  OUT
-}
-
-export interface TrackingTarget {
+/**
+ * 카메라의 추적 대상 오브젝트
+ */
+export interface TrackableObject {
   /**
    * TrackingTarget의 id, eg) marker id
    */
@@ -55,19 +65,13 @@ export interface TrackingTarget {
   retention: number
   pose: Pose
 
-  update(pose)
-}
-
-export interface TrackingTargetStorage {
-  getTargetState(target)
-  updateTargetState(roi, target?: TrackingTarget, pose?: Pose)
-  publish(change: { eventType: TrackingTargetEvent; target?: TrackingTarget; pose?: Pose })
+  update(roi, pose)
 }
 
 /**
  * 마커 트래킹 기능 인터페이스
  */
-export interface TrackingTargetTracker {
+export interface Trackable {
   cameraMatrix: CameraMatrix
   handEyeMatrix: HandEyeMatrix
   /**
@@ -75,5 +79,44 @@ export interface TrackingTargetTracker {
    * - 캡쳐된 이미지내의 마커 Pose를 계산하여 storage를 업데이트
    * @param storage
    */
-  trace(storage: TrackingTargetStorage): void
+  trace(storage: TrackingStorage): void
+}
+
+// Interfaces for Management
+
+export interface TrackingStorage {
+  getObjectState(id: string | number)
+  updateObjectState(id: string | number, roi?: ROI, pose?: Pose)
+  publish(event: TrackingEvent)
+}
+
+export interface TrackingEngine {
+  storage: TrackingStorage
+
+  start()
+  stop()
+  evaluate()
+}
+
+// TrackableObject Event
+
+export enum TRACKING_EVENT_TYPES {
+  IN,
+  STAY,
+  OUT
+}
+
+export interface TrackingEvent {
+  type: TRACKING_EVENT_TYPES
+  object: TrackableObject
+  from: {
+    pose: Pose
+    roi: ROI
+    retention: number
+  }
+  to: {
+    pose: Pose
+    roi: ROI
+    retention: number
+  }
 }
