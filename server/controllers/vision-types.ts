@@ -102,7 +102,7 @@ export interface TrackableObject {
 /**
  * 마커 트래킹 기능 인터페이스
  */
-export interface Trackable {
+export interface TrackingCamera {
   cameraMatrix: CameraMatrix
   handEyeMatrix: HandEyeMatrix
   /**
@@ -110,14 +110,14 @@ export interface Trackable {
    * - 캡쳐된 이미지내의 마커 Pose를 계산하여 storage를 업데이트
    * @param storage
    */
-  trace(storage: TrackingStorage): void
+  // trace(storage: TrackingStorage): void
   capture(): any
 }
 
 // Interfaces for Management
 
 export interface ROIProvider {
-  findROIs(trackable: Trackable): ROI[]
+  findROIs(trackable: TrackingCamera): ROI[]
 }
 
 export interface ROIManager {

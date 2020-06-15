@@ -24,7 +24,7 @@ export class CameraStreamer {
     return CameraStreamer.cameraDrivers[type]
   }
 
-  despose(): void {
+  dispose(): void {
     if (this.wss) {
       this.wss.close()
       delete this.wss

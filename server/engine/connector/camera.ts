@@ -1,7 +1,7 @@
 import { Connections, Connector } from '@things-factory/integration-base'
-import { CameraMatrix, HandEyeMatrix, Trackable } from '../../controllers/vision-types'
+import { CameraMatrix, HandEyeMatrix, TrackingCamera } from '../../controllers/vision-types'
 
-export class CameraConnector implements Connector, Trackable {
+export class CameraConnector implements Connector, TrackingCamera {
   cameraMatrix: CameraMatrix
   handEyeMatrix: HandEyeMatrix
 
@@ -29,6 +29,7 @@ export class CameraConnector implements Connector, Trackable {
   }
 
   trace(storage) {}
+  capture() {}
 
   get parameterSpec() {
     return [
