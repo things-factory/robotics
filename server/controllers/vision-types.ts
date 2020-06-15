@@ -27,10 +27,6 @@ export interface CameraMatrix {
   rows: number
   columns: number
   /**
-   * ????
-   */
-  dt: any
-  /**
    * 3 x 3 ?
    */
   data: number[]
@@ -39,10 +35,6 @@ export interface CameraMatrix {
 export interface DistortionCoefficient {
   rows: number
   columns: number
-  /**
-   * ????
-   */
-  dt: any
   /**
    * ? x ?
    */
@@ -55,10 +47,6 @@ export interface DistortionCoefficient {
 export interface HandEyeMatrix {
   rows: number
   columns: number
-  /**
-   * ????
-   */
-  dt: any
   /**
    * ? x ?
    */

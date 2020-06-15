@@ -21,7 +21,7 @@ describe('CameraStreamer', function () {
   })
 
   after(function () {
-    cameraStreamer.despose()
+    cameraStreamer.dispose()
   })
 
   describe('publish', function () {
