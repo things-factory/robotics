@@ -20,6 +20,11 @@ export enum HANDEYE_TYPES {
   EYE_TO_HAND
 }
 
+export enum CAMERA_TYPES {
+  STANDARD,
+  REALSENSE
+}
+
 /**
  * 카메라 캘리브레이션의 결과 매트릭스
  */
