@@ -1,8 +1,4 @@
 // Base Interfaces
-
-import { ROIStateStorageImpl } from './tracking-storage'
-import { PostgresqlConnector } from '@things-factory/integration-base/dist-server/engine/connector/postgresql-connector'
-
 export interface Pose {
   x: number
   y: number
