@@ -1,15 +1,18 @@
-import { TrackingCamera } from '../../../controllers/vision-types'
+import { getRepository } from 'typeorm'
+import { Connections, Connection } from '@things-factory/integration-base'
+import { CameraMatrix, HandEyeMatrix, TrackingCamera } from '../../../controllers/vision-types'
 
 export const updateTrackingCamera = {
   async updateTrackingCamera(_: any, { name, patch }, context: any) {
-    // const repository = getRepository(TrackingCamera)
-    // const trackingCamera = await repository.findOne({
-    //   where: { domain: context.state.domain, name }
-    // })
-    // return await repository.save({
-    //   ...trackingCamera,
-    //   ...patch,
-    //   updater: context.state.user
-    // })
+    const repository = getRepository(Connection)
+    const connection = await repository.findOne({
+      where: { domain: context.state.domain, name }
+    })
+
+    return await repository.save({
+      ...connection,
+      ...patch,
+      updater: context.state.user
+    })
   }
 }

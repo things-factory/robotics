@@ -2,6 +2,8 @@ import './middlewares'
 import './routes'
 import './engine'
 
+export * from './graphql'
+
 import { config as SystemConfig } from '@things-factory/env'
 import { StreamingServer } from './streaming-server'
 

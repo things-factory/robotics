@@ -6,6 +6,11 @@ export const TrackingCamera = gql`
     name: String
     domain: Domain
     description: String
+    type: String
+    endpoint: String
+    status: Int
+    active: Boolean
+    params: String
     updater: User
     creator: User
     updatedAt: String
