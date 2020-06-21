@@ -10,7 +10,10 @@ export const TrackingCamera = gql`
     endpoint: String
     status: Int
     active: Boolean
-    params: String
+    config: Object
+    cameraMatrix: Matrix
+    handEyeMatrix: Matrix
+    rois: [ROI]
     updater: User
     creator: User
     updatedAt: String

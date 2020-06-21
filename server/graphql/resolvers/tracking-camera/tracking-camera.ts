@@ -1,6 +1,5 @@
 import { getRepository } from 'typeorm'
 import { Connections, Connection } from '@things-factory/integration-base'
-import { TrackingCamera } from '../../../controllers/vision-types'
 
 export const trackingCameraResolver = {
   async trackingCamera(_: any, { name }, context: any) {
@@ -13,6 +12,13 @@ export const trackingCameraResolver = {
       conn.status = Connections.getConnection(name) ? 1 : 0
     }
 
-    return conn
+    var { cameraMatrix = null, handEyeMatrix = null, rois = [] } = conn.params ? JSON.parse(conn.params) : ({} as any)
+
+    return {
+      ...conn,
+      cameraMatrix,
+      handEyeMatrix,
+      rois
+    }
   }
 }

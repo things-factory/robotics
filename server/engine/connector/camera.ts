@@ -1,9 +1,10 @@
 import { Connections, Connector } from '@things-factory/integration-base'
-import { CameraMatrix, HandEyeMatrix, TrackingCamera } from '../../controllers/vision-types'
+import { Matrix, ROI, TrackingCamera } from '../../controllers/vision-types'
 
 export class CameraConnector implements Connector, TrackingCamera {
-  cameraMatrix: CameraMatrix
-  handEyeMatrix: HandEyeMatrix
+  cameraMatrix: Matrix
+  handEyeMatrix: Matrix
+  rois: ROI[]
 
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
@@ -30,6 +31,7 @@ export class CameraConnector implements Connector, TrackingCamera {
 
   trace(storage) {}
   capture() {}
+  configure() {}
 
   get parameterSpec() {
     return [

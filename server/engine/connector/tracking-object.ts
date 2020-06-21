@@ -1,7 +1,7 @@
 import { Connections, Connector } from '@things-factory/integration-base'
-import { Matrix, ROI, TrackingCamera } from '../../controllers/vision-types'
+import { ROI, Matrix, TrackingCamera } from '../../controllers/vision-types'
 
-export class RealsenseCamera implements Connector, TrackingCamera {
+export class CameraConnector implements Connector, TrackingCamera {
   cameraMatrix: Matrix
   handEyeMatrix: Matrix
   rois: ROI[]
@@ -9,7 +9,7 @@ export class RealsenseCamera implements Connector, TrackingCamera {
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
 
-    Connections.logger.info('realsense-camera connections are ready')
+    Connections.logger.info('camera-connector connections are ready')
   }
 
   async connect(connection) {
@@ -20,16 +20,16 @@ export class RealsenseCamera implements Connector, TrackingCamera {
       params
     })
 
-    Connections.logger.info(`realsense-camera connection(${connection.name}:${connection.endpoint}) is connected`)
+    Connections.logger.info(`camera-connector connection(${connection.name}:${connection.endpoint}) is connected`)
   }
 
   async disconnect(name) {
     Connections.removeConnection(name)
 
-    Connections.logger.info(`realsense-camera connection(${name}) is disconnected`)
+    Connections.logger.info(`camera-connector connection(${name}) is disconnected`)
   }
 
-  trace(storage) {}
+  // trace(storage) {}
   capture() {}
   configure() {}
 
@@ -41,12 +41,12 @@ export class RealsenseCamera implements Connector, TrackingCamera {
         name: 'device'
       },
       {
-        type: 'realsense-camera-setting',
+        type: 'camera-setting',
         label: 'setting',
         name: 'setting'
       },
       {
-        type: 'realsense-camera-calibration',
+        type: 'camera-calibration',
         label: 'calibration',
         name: 'calibration'
       },
@@ -59,8 +59,8 @@ export class RealsenseCamera implements Connector, TrackingCamera {
   }
 
   get taskPrefixes() {
-    return ['realsense']
+    return ['camera']
   }
 }
 
-Connections.registerConnector('realsense-camera', new RealsenseCamera())
+Connections.registerConnector('camera-connector', new CameraConnector())

@@ -1,6 +1,5 @@
 import { getRepository } from 'typeorm'
-import { Connections, Connection } from '@things-factory/integration-base'
-import { CameraMatrix, HandEyeMatrix, TrackingCamera } from '../../../controllers/vision-types'
+import { Connection } from '@things-factory/integration-base'
 
 export const updateTrackingCamera = {
   async updateTrackingCamera(_: any, { name, patch }, context: any) {

@@ -28,32 +28,11 @@ export enum CAMERA_TYPES {
 /**
  * 카메라 캘리브레이션의 결과 매트릭스
  */
-export interface CameraMatrix {
+export interface Matrix {
   rows: number
   columns: number
   /**
    * 3 x 3 ?
-   */
-  data: number[]
-}
-
-export interface DistortionCoefficient {
-  rows: number
-  columns: number
-  /**
-   * ? x ?
-   */
-  data: number[]
-}
-
-/**
- * 핸드아이 캘리브레이션의 결과 매트릭스
- */
-export interface HandEyeMatrix {
-  rows: number
-  columns: number
-  /**
-   * ? x ?
    */
   data: number[]
 }
@@ -96,15 +75,16 @@ export interface TrackableObject {
  * 마커 트래킹 기능 인터페이스
  */
 export interface TrackingCamera {
-  cameraMatrix: CameraMatrix
-  handEyeMatrix: HandEyeMatrix
+  cameraMatrix: Matrix
+  handEyeMatrix: Matrix
+  rois: ROI[]
   /**
    * - 해당 카메라 캡쳐
    * - 캡쳐된 이미지내의 마커 Pose를 계산하여 storage를 업데이트
    * @param storage
    */
-  // trace(storage: TrackingStorage): void
   capture(): any
+  configure(config: any): void
 }
 
 // Interfaces for Management
