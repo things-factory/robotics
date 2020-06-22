@@ -11,15 +11,26 @@ export const trackingCamerasResolver = {
     })
 
     items
-      // .filter(conn => Connections.getConnection(conn.name) instanceof TrackingCamera)
+      .filter(conn => 'isTrackingCamera' in Connections.getConnection(conn.name))
       .map(conn => {
-        var { cameraMatrix = null, handEyeMatrix = null, rois = [] } = conn.params
-          ? JSON.parse(conn.params)
-          : ({} as any)
-        conn.status = Connections.getConnection(conn.name) ? 1 : 0
+        var {
+          config,
+          baseRobotArm: baseRobotArmName,
+          cameraMatrix = null,
+          handEyeMatrix = null,
+          rois = []
+        } = conn.params ? JSON.parse(conn.params) : ({} as any)
+
+        var baseRobotArm = Connections.getConnection(baseRobotArmName)
+
+        if (!('isRobotArm' in baseRobotArm)) {
+          baseRobotArm = undefined
+        }
 
         return {
           ...conn,
+          config,
+          baseRobotArm,
           cameraMatrix,
           handEyeMatrix,
           rois

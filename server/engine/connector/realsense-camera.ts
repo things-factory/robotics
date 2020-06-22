@@ -1,10 +1,8 @@
 import { Connections, Connector } from '@things-factory/integration-base'
-import { Matrix, ROI, TrackingCamera } from '../../controllers/vision-types'
+import { VISION_OBJECT_TYPES, VisionObject } from '../../controllers/vision-types'
 
-export class RealsenseCamera implements Connector, TrackingCamera {
-  cameraMatrix: Matrix
-  handEyeMatrix: Matrix
-  rois: ROI[]
+export class RealsenseCamera implements Connector, VisionObject {
+  visionObjectType = VISION_OBJECT_TYPES.CAMERA
 
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
@@ -13,11 +11,10 @@ export class RealsenseCamera implements Connector, TrackingCamera {
   }
 
   async connect(connection) {
-    var { params } = connection
+    // var { params } = connection
 
     Connections.addConnection(connection.name, {
-      ...connection,
-      params
+      ...connection
     })
 
     Connections.logger.info(`realsense-camera connection(${connection.name}:${connection.endpoint}) is connected`)
@@ -39,6 +36,11 @@ export class RealsenseCamera implements Connector, TrackingCamera {
         type: 'string',
         label: 'device',
         name: 'device'
+      },
+      {
+        type: 'string',
+        label: 'base-robot-arm',
+        name: 'baseRobotArm'
       },
       {
         type: 'realsense-camera-setting',

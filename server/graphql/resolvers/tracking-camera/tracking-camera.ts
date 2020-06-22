@@ -1,24 +1,23 @@
 import { getRepository } from 'typeorm'
 import { Connections, Connection } from '@things-factory/integration-base'
+import { VISION_OBJECT_TYPES } from 'server/controllers/vision-types'
 
 export const trackingCameraResolver = {
   async trackingCamera(_: any, { name }, context: any) {
-    var conn = await getRepository(Connection).findOne({
-      where: { domain: context.state.domain, name },
-      relations: ['domain', 'creator', 'updater']
-    })
-
-    if (conn) {
-      conn.status = Connections.getConnection(name) ? 1 : 0
+    var connection = Connections.getConnection(name)
+    if (!connection || connection.visionObjectType !== VISION_OBJECT_TYPES.CAMERA) {
+      throw Error(`TrackingCamera '${name}' Not Found`)
     }
 
-    var { cameraMatrix = null, handEyeMatrix = null, rois = [] } = conn.params ? JSON.parse(conn.params) : ({} as any)
+    var baseRobotArm = Connections.getConnection(connection.params?.baseRobotArm)
+
+    if (!baseRobotArm || connection.visionObjectType !== VISION_OBJECT_TYPES.ROBOT_ARM) {
+      baseRobotArm = undefined
+    }
 
     return {
-      ...conn,
-      cameraMatrix,
-      handEyeMatrix,
-      rois
+      ...connection,
+      baseRobotArm
     }
   }
 }

@@ -25,6 +25,18 @@ export enum CAMERA_TYPES {
   REALSENSE
 }
 
+export enum VISION_OBJECT_TYPES {
+  WORKSPACE,
+  ROBOT_ARM,
+  CAMERA,
+  ROI,
+  OBJECT
+}
+
+export interface VisionObject {
+  visionObjectType: VISION_OBJECT_TYPES
+}
+
 /**
  * 카메라 캘리브레이션의 결과 매트릭스
  */
@@ -60,7 +72,7 @@ export interface TrackableObject {
   /**
    * tracking 된 중심점으로부터의 실제 position offset 정보
    */
-  pivotOffset: Pose
+  poseOffset: Pose
   roi: ROI
   /**
    * ROI내 특정 위치에 체류한 시간
@@ -69,6 +81,15 @@ export interface TrackableObject {
   pose: Pose
 
   update(roi, pose)
+}
+
+/**
+ * 트래킹 카메라의 베이스 스테이션
+ * 현재 포즈 정보를 제공한다.
+ */
+export interface RobotArm {
+  poseOffset: Pose
+  pose: Pose
 }
 
 /**
@@ -107,12 +128,12 @@ export interface TrackingStorage {
   publish(event: TrackingEvent)
 }
 
-export interface TrackingEngine {
-  storage: TrackingStorage
+export interface TrackingWorkspace {
+  trackingStorage: TrackingStorage
 
-  start()
-  stop()
-  evaluate()
+  // start()
+  // stop()
+  // evaluate()
 }
 
 // TrackableObject Event

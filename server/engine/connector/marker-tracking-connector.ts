@@ -1,8 +1,11 @@
 import { Connections, Connector } from '@things-factory/integration-base'
 import { TrackingEngineImpl } from '../../controllers/tracking-engine'
 import { ROIStateStorageImpl } from '../../controllers/tracking-storage'
+import { VISION_OBJECT_TYPES, VisionObject } from '../../controllers/vision-types'
 
-export class MarkerTrackingEngineConnector implements Connector {
+export class MarkerTrackingWorkspace implements Connector, VisionObject {
+  visionObjectType = VISION_OBJECT_TYPES.WORKSPACE
+
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
 
@@ -32,7 +35,13 @@ export class MarkerTrackingEngineConnector implements Connector {
   }
 
   get parameterSpec() {
-    return []
+    return [
+      {
+        type: 'string',
+        label: 'base-robot-arm',
+        name: 'baseRobotArm'
+      }
+    ]
   }
 
   get taskPrefixes() {
@@ -40,4 +49,4 @@ export class MarkerTrackingEngineConnector implements Connector {
   }
 }
 
-Connections.registerConnector('marker-tracking-engine', new MarkerTrackingEngineConnector())
+Connections.registerConnector('marker-tracking-engine', new MarkerTrackingWorkspace())

@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-export const TrackingCamera = gql`
-  type TrackingCamera {
+export const RobotArm = gql`
+  type RobotArm {
     id: String
     name: String
     domain: Domain
@@ -9,11 +9,8 @@ export const TrackingCamera = gql`
     type: String
     endpoint: String
     active: Boolean
-    config: Object
-    baseRobotArm: RobotArm
-    cameraMatrix: Matrix
-    handEyeMatrix: Matrix
-    rois: [ROI]
+    params: Object
+    poseOffset: Pose
     updater: User
     creator: User
     updatedAt: String

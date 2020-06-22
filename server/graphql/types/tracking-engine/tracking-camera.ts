@@ -10,7 +10,7 @@ export const TrackingCamera = gql`
     endpoint: String
     active: Boolean
     config: Object
-    baseRobotArm: RobotArm
+    baseStation: String
     cameraMatrix: Matrix
     handEyeMatrix: Matrix
     rois: [ROI]
