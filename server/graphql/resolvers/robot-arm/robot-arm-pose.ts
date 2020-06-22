@@ -1,11 +1,11 @@
-import { RobotArm } from '../../../controllers/vision-types'
+import { VISION_OBJECT_TYPES } from '../../../controllers/vision-types'
 import { Connections } from '@things-factory/integration-base'
 
 export const robotArmPoseResolver = {
   async robotArmPose(_: any, { name, pose }, context: any) {
-    var connection: RobotArm = Connections.getConnection(name)
+    var connection = Connections.getConnection(name)
 
-    if ('isRobotArm' in connection) {
+    if (connection && connection.discriminator == VISION_OBJECT_TYPES.ROBOT_ARM) {
       return connection.pose
     } else {
       throw Error(`RobotArm '${name}' Not Found`)

@@ -128,12 +128,12 @@ export interface TrackingStorage {
   publish(event: TrackingEvent)
 }
 
-export interface TrackingWorkspace {
+export interface TrackingEngine {
   trackingStorage: TrackingStorage
 
-  // start()
-  // stop()
-  // evaluate()
+  start()
+  stop()
+  evaluate()
 }
 
 // TrackableObject Event

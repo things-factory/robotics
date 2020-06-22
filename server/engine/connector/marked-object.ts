@@ -2,8 +2,6 @@ import { Connections, Connector } from '@things-factory/integration-base'
 import { VISION_OBJECT_TYPES } from '../../controllers/vision-types'
 
 export class MarkedObject implements Connector {
-  visionObjectType = VISION_OBJECT_TYPES.OBJECT
-
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
 
@@ -14,6 +12,7 @@ export class MarkedObject implements Connector {
     // var { params } = connection
 
     Connections.addConnection(connection.name, {
+      discriminator: VISION_OBJECT_TYPES.OBJECT,
       ...connection
     })
 

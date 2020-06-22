@@ -1,17 +1,18 @@
-import { getRepository } from 'typeorm'
-import { Connection } from '@things-factory/integration-base'
+import { VISION_OBJECT_TYPES } from '../../../controllers/vision-types'
+import { Connections } from '@things-factory/integration-base'
 
 export const updateRobotArmPose = {
-  async updateRobotArmPose(_: any, { name, patch }, context: any) {
-    const repository = getRepository(Connection)
-    const connection = await repository.findOne({
-      where: { domain: context.state.domain, name }
-    })
+  async updateRobotArmPose(_: any, { name, pose }, context: any) {
+    var connection = Connections.getConnection(name)
+    if (!connection || connection.discriminator !== VISION_OBJECT_TYPES.ROBOT_ARM) {
+      throw Error(`RobotArm '${name}' Not Found`)
+    }
 
-    return await repository.save({
-      ...connection,
-      ...patch,
-      updater: context.state.user
-    })
+    connection.pose = pose
+    // await .. until move finished
+
+    return {
+      ...connection
+    }
   }
 }

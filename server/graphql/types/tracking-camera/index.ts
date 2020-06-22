@@ -1,12 +1,7 @@
 import { TrackingCamera } from './tracking-camera'
-import { TrackingCameraPatch } from './tracking-camera-patch'
 import { TrackingCameraList } from './tracking-camera-list'
 
 export const Mutation = `
-  updateTrackingCamera (
-    name: String!
-    patch: TrackingCameraPatch!
-  ): TrackingCamera
 `
 
 export const Query = `
@@ -14,4 +9,4 @@ export const Query = `
   trackingCamera(name: String!): TrackingCamera
 `
 
-export const Types = [TrackingCamera, TrackingCameraPatch, TrackingCameraList]
+export const Types = [TrackingCamera, TrackingCameraList]

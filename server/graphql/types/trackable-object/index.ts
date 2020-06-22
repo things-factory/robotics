@@ -1,11 +1,11 @@
-import { TrackableObject } from './tracking-object'
-import { TrackableObjectPatch } from './tracking-object-patch'
-import { TrackableObjectList } from './tracking-object-list'
+import { TrackableObject } from './trackable-object'
+import { TrackableObjectState } from './trackable-object-state'
+import { TrackableObjectList } from './trackable-object-list'
 
 export const Mutation = `
-  updateTrackableObject (
+  updateTrackableObjectState (
     name: String!
-    patch: TrackableObjectPatch!
+    state: TrackableObjectState!
   ): TrackableObject
 `
 
@@ -14,4 +14,4 @@ export const Query = `
   trackableObject(name: String!): TrackableObject
 `
 
-export const Types = [TrackableObject, TrackableObjectPatch, TrackableObjectList]
+export const Types = [TrackableObject, TrackableObjectState, TrackableObjectList]

@@ -1,11 +1,11 @@
 import { VISION_OBJECT_TYPES } from '../../../controllers/vision-types'
 import { Connections } from '@things-factory/integration-base'
 
-export const robotArmResolver = {
-  async robotArm(_: any, { name }, context: any) {
+export const trackableObjectResolver = {
+  async trackableObject(_: any, { name }, context: any) {
     var connection = Connections.getConnection(name)
-    if (!connection || connection.discriminator !== VISION_OBJECT_TYPES.ROBOT_ARM) {
-      throw Error(`RobotArm '${name}' Not Found`)
+    if (!connection || connection.discriminator !== VISION_OBJECT_TYPES.OBJECT) {
+      throw Error(`TrackableObject '${name}' Not Found`)
     }
 
     return {

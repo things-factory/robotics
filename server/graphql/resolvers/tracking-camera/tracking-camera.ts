@@ -1,11 +1,10 @@
-import { getRepository } from 'typeorm'
-import { Connections, Connection } from '@things-factory/integration-base'
-import { VISION_OBJECT_TYPES } from 'server/controllers/vision-types'
+import { Connections } from '@things-factory/integration-base'
+import { VISION_OBJECT_TYPES } from '../../../controllers/vision-types'
 
 export const trackingCameraResolver = {
   async trackingCamera(_: any, { name }, context: any) {
     var connection = Connections.getConnection(name)
-    if (!connection || connection.visionObjectType !== VISION_OBJECT_TYPES.CAMERA) {
+    if (!connection || connection.discriminator !== VISION_OBJECT_TYPES.CAMERA) {
       throw Error(`TrackingCamera '${name}' Not Found`)
     }
 

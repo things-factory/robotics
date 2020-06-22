@@ -1,9 +1,7 @@
 import { Connections, Connector } from '@things-factory/integration-base'
-import { VISION_OBJECT_TYPES, VisionObject } from '../../controllers/vision-types'
+import { VISION_OBJECT_TYPES } from '../../controllers/vision-types'
 
-export class CameraConnector implements Connector, VisionObject {
-  visionObjectType = VISION_OBJECT_TYPES.CAMERA
-
+export class CameraConnector implements Connector {
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
 
@@ -14,6 +12,7 @@ export class CameraConnector implements Connector, VisionObject {
     // var { params } = connection
 
     Connections.addConnection(connection.name, {
+      discriminator: VISION_OBJECT_TYPES.CAMERA,
       ...connection
     })
 

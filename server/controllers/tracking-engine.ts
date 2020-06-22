@@ -1,7 +1,7 @@
 import { TrackingEngine, TrackingStorage } from './vision-types'
 
 export class TrackingEngineImpl implements TrackingEngine {
-  storage: TrackingStorage
+  trackingStorage: TrackingStorage
 
   trackables: any[]
   rois: any[]
@@ -22,7 +22,7 @@ export class TrackingEngineImpl implements TrackingEngine {
   }
 
   evaluate() {
-    this.trackables.forEach(trackable => trackable.detect(this.storage))
+    this.trackables.forEach(trackable => trackable.detect(this.trackingStorage))
   }
 
   fetchSensors() {

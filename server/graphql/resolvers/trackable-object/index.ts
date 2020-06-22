@@ -1,17 +1,13 @@
-import { robotArmResolver } from './robot-arm'
-import { robotArmsResolver } from './robot-arms'
-import { robotArmPoseResolver } from './robot-arm-pose'
+import { trackableObjectResolver } from './trackable-object'
+import { trackableObjectsResolver } from './trackable-objects'
 
-import { updateRobotArm } from './update-robot-arm'
-import { updateRobotArmPose } from './update-robot-arm-pose'
+import { updateTrackableObjectState } from './update-trackable-object-state'
 
 export const Query = {
-  ...robotArmsResolver,
-  ...robotArmResolver,
-  ...robotArmPoseResolver
+  ...trackableObjectsResolver,
+  ...trackableObjectResolver
 }
 
 export const Mutation = {
-  ...updateRobotArm,
-  ...updateRobotArmPose
+  ...updateTrackableObjectState
 }

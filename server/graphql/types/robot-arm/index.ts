@@ -1,16 +1,12 @@
 import { RobotArm } from './robot-arm'
 import { RobotArmList } from './robot-arm-list'
-import { RobotArmPatch } from './robot-arm-patch'
+import { PoseInput } from './pose-input'
 
 export const Mutation = `
-  updateRobotArm (
-    name: String!
-    patch: RobotArmPatch!
-  ): RobotArm
   updateRobotArmPose (
     name: String!
-    pose: Pose!
-  ): void
+    pose: PoseInput!
+  ): RobotArm
 `
 
 export const Query = `
@@ -19,4 +15,4 @@ export const Query = `
   robotArmPose(name: String!): Pose
 `
 
-export const Types = [RobotArm, RobotArmPatch, RobotArmList]
+export const Types = [PoseInput, RobotArm, RobotArmList]

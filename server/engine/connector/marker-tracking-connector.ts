@@ -1,11 +1,9 @@
 import { Connections, Connector } from '@things-factory/integration-base'
 import { TrackingEngineImpl } from '../../controllers/tracking-engine'
 import { ROIStateStorageImpl } from '../../controllers/tracking-storage'
-import { VISION_OBJECT_TYPES, VisionObject } from '../../controllers/vision-types'
+import { VISION_OBJECT_TYPES } from '../../controllers/vision-types'
 
-export class MarkerTrackingWorkspace implements Connector, VisionObject {
-  visionObjectType = VISION_OBJECT_TYPES.WORKSPACE
-
+export class MarkerTrackingWorkspace implements Connector {
   async ready(connectionConfigs) {
     await Promise.all(connectionConfigs.map(this.connect))
 
@@ -16,10 +14,13 @@ export class MarkerTrackingWorkspace implements Connector, VisionObject {
     var { params } = connection
 
     var engine = new TrackingEngineImpl()
-    engine.storage = new ROIStateStorageImpl()
+    engine.trackingStorage = new ROIStateStorageImpl()
     engine.duration = 1000
 
-    Connections.addConnection(connection.name, engine)
+    Connections.addConnection(connection.name, {
+      discriminator: VISION_OBJECT_TYPES.WORKSPACE,
+      engine
+    })
 
     Connections.logger.info(
       `marker-tracking-engine-connector connection(${connection.name}:${connection.endpoint}) is connected`
@@ -27,7 +28,7 @@ export class MarkerTrackingWorkspace implements Connector, VisionObject {
   }
 
   async disconnect(name) {
-    var engine = Connections.removeConnection(name)
+    var { engine } = Connections.removeConnection(name)
 
     engine.stop()
 
