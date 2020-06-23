@@ -6,24 +6,32 @@ import { LitElement, html, css } from 'lit-element'
 import { i18next, localize } from '@things-factory/i18n-base'
 import { openPopup } from '@things-factory/layout-base'
 import { ThingsEditorProperty, ThingsEditorPropertyStyles } from '@things-factory/modeller-ui'
-import '@material/mwc-icon'
+import '@material/mwc-button'
 
 import './handeye-calibration-popup'
+
+const ZEROS = new Array(16).fill(0)
 
 export class HandEyeCalibrationEditor extends ThingsEditorProperty {
   static get styles() {
     return [
       ThingsEditorPropertyStyles,
       css`
-        div[matrix] {
+        [matrix] {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
           column-gap: 4px;
           row-gap: 4px;
         }
 
-        [matrix] * {
+        [matrix] input {
           min-width: 100px;
+          grid-column: unset;
+        }
+
+        mwc-button {
+          display: block;
+          text-align: center;
         }
       `
     ]
@@ -36,29 +44,35 @@ export class HandEyeCalibrationEditor extends ThingsEditorProperty {
   }
 
   editorTemplate(props) {
+    var { rows = 4, columns = 4, data = [...ZEROS] } = this.value || {}
+    var values = [...(data || []), ...ZEROS].slice(0, 16)
+
     return html`
       <div>
-        <div matrix>
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
-          <input type="number" />
+        <div matrix @change=${e => this.onchange(e)}>
+          ${values.map(value => html` <input type="number" value=${value} /> `)}
         </div>
         <mwc-button @click=${e => this.openHandEyeCalibration()}>${i18next.t('text.handeye calibration')}</mwc-button>
       </div>
     `
+  }
+
+  onchange(e) {
+    var inputs = this.renderRoot.querySelectorAll('input')
+    this.value = {
+      rows: 4,
+      columns: 4,
+      data: Array.from(inputs).map(input => input.value)
+    }
+
+    e.stopPropagation()
+
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        bubbles: true,
+        detail: this.value
+      })
+    )
   }
 
   async openHandEyeCalibration() {

@@ -4,7 +4,7 @@
   "button.done": "완료",
   "label.base-robot-arm": "베이스 로봇암",
   "label.camera calibration": "카메라 캘리브레이션",
-  "label.handeye calibration": "핸드아이 캘리브레이션",
+  "label.handeye matrix": "핸드아이 매트릭스",
   "label.device": "장치이름",
   "label.framerate": "프레임레이트(fps)",
   "label.grayscale": "그레이 스케일",

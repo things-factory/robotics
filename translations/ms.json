@@ -4,7 +4,7 @@
   "button.done": "done",
   "label.base-robot-arm": "base robot-arm",
   "label.camera calibration": "camera calibration",
-  "label.handeye calibration": "handeye calibration",
+  "label.handeye matrix": "handeye matrix",
   "label.device": "device",
   "label.framerate": "frame rate (fps)",
   "label.grayscale": "gray scale",

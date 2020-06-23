@@ -10,9 +10,38 @@ import '@material/mwc-icon'
 
 import './camera-calibration-popup'
 
+const ZEROS = new Array(9).fill(0)
+
 export class CameraCalibrationEditor extends ThingsEditorProperty {
   static get styles() {
-    return [ThingsEditorPropertyStyles]
+    return [
+      ThingsEditorPropertyStyles,
+      css`
+        [matrix] {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          column-gap: 4px;
+          row-gap: 4px;
+        }
+
+        [coeff] {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          column-gap: 4px;
+          row-gap: 4px;
+        }
+
+        input {
+          min-width: 100px;
+          grid-column: unset;
+        }
+
+        mwc-button {
+          display: block;
+          text-align: center;
+        }
+      `
+    ]
   }
 
   static get properties() {
@@ -22,9 +51,50 @@ export class CameraCalibrationEditor extends ThingsEditorProperty {
   }
 
   editorTemplate(props) {
-    return html`<mwc-button @click=${e => this.openCameraCalibration()}
-      >${i18next.t('text.camera calibration')}</mwc-button
-    >`
+    var { distortionCoefficient = [], cameraMatrix = {} } = this.value || {}
+
+    var { rows = 3, columns = 3, data = [...ZEROS] } = cameraMatrix
+    var cameraMatrixData = [...(data || []), ...ZEROS].slice(0, 9)
+    var distCoeffData = [...distortionCoefficient, ...ZEROS].slice(0, 5)
+
+    return html`
+      <div>
+        <label>distortion coefficients</label>
+        <div coeff @change=${e => this.onchange(e)}>
+          ${distCoeffData.map(value => html` <input type="number" value=${value} /> `)}
+        </div>
+
+        <label>camera matrix</label>
+        <div matrix @change=${e => this.onchange(e)}>
+          ${cameraMatrixData.map(value => html` <input type="number" value=${value} /> `)}
+        </div>
+
+        <mwc-button @click=${e => this.openCameraCalibration()}>${i18next.t('text.camera calibration')}</mwc-button>
+      </div>
+    `
+  }
+
+  onchange(e) {
+    var coeffInputs = this.renderRoot.querySelectorAll('[coeff] input')
+    var cameraMatrixInputs = this.renderRoot.querySelectorAll('[matrix] input')
+
+    this.value = {
+      distortionCoefficient: Array.from(coeffInputs).map(input => input.value),
+      cameraMatrix: {
+        rows: 3,
+        columns: 3,
+        data: Array.from(cameraMatrixInputs).map(input => input.value)
+      }
+    }
+
+    e.stopPropagation()
+
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        bubbles: true,
+        detail: this.value
+      })
+    )
   }
 
   async openCameraCalibration() {

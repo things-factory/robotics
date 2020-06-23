@@ -54,8 +54,8 @@ export class CameraConnector implements Connector {
       },
       {
         type: 'handeye-calibration',
-        label: 'handeye calibration',
-        name: 'handeyeCalibration'
+        label: 'handeye matrix',
+        name: 'handEyeMatrix'
       }
     ]
   }
