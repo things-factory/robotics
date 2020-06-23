@@ -26,15 +26,11 @@ export enum CAMERA_TYPES {
 }
 
 export enum VISION_OBJECT_TYPES {
-  WORKSPACE,
-  ROBOT_ARM,
-  CAMERA,
-  ROI,
-  OBJECT
-}
-
-export interface VisionObject {
-  visionObjectType: VISION_OBJECT_TYPES
+  WORKSPACE = 'workspace',
+  ROBOT_ARM = 'robot-arm',
+  CAMERA = 'vision-camera',
+  ROI = 'ROI',
+  OBJECT = 'vision-object'
 }
 
 /**

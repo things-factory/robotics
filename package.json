@@ -31,6 +31,7 @@
     "test": "DEBUG=things-factory:* npx mocha -r ts-node/register ./test/**/*spec.ts"
   },
   "dependencies": {
+    "@things-factory/indydcp-base": "^1.0.6",
     "@things-factory/integration-base": "^2.0.0",
     "@things-factory/modeller-ui": "^2.0.0",
     "@things-factory/node-librealsense2": "^0.1.0",
