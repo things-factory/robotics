@@ -11,7 +11,7 @@ import { CameraClient } from '../camera/camera-client'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 
-export class CameraCalibrationPopup extends LitElement {
+export class HandEyeCalibrationPopup extends LitElement {
   static get styles() {
     return [
       ScrollbarStyles,
@@ -58,20 +58,13 @@ export class CameraCalibrationPopup extends LitElement {
 
         [matrix] {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(4, 1fr);
           column-gap: 4px;
           row-gap: 4px;
         }
 
         [matrix] * {
           min-width: 100px;
-        }
-
-        [dist-coef] {
-          display: grid;
-          grid-template-columns: 1fr 3fr;
-          column-gap: 4px;
-          row-gap: 4px;
         }
 
         .button-container {
@@ -138,7 +131,7 @@ export class CameraCalibrationPopup extends LitElement {
           <mwc-button label="Compute" icon="exposure"></mwc-button>
 
           <div>
-            <h3>camera matrix</h3>
+            <h3>handeye matrix</h3>
             <div matrix>
               <input type="number" />
               <input type="number" />
@@ -149,21 +142,12 @@ export class CameraCalibrationPopup extends LitElement {
               <input type="number" />
               <input type="number" />
               <input type="number" />
-            </div>
-          </div>
-
-          <div>
-            <h3>distortion coeffeicients</h3>
-            <div dist-coef>
-              <label>k1</label>
               <input type="number" />
-              <label>k2</label>
               <input type="number" />
-              <label>p1</label>
               <input type="number" />
-              <label>p2</label>
               <input type="number" />
-              <label>k3</label>
+              <input type="number" />
+              <input type="number" />
               <input type="number" />
             </div>
           </div>
@@ -215,4 +199,4 @@ export class CameraCalibrationPopup extends LitElement {
   }
 }
 
-customElements.define('camera-calibration-popup', CameraCalibrationPopup)
+customElements.define('handeye-calibration-popup', HandEyeCalibrationPopup)

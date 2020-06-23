@@ -12,6 +12,7 @@ export const TrackingCamera = gql`
     config: Object
     baseRobotArm: RobotArm
     cameraMatrix: Matrix
+    distortionCoefficient: [Float]
     handEyeMatrix: Matrix
     rois: [ROI]
     updater: User

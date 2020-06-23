@@ -3,6 +3,7 @@
  */
 
 import { LitElement, html, css } from 'lit-element'
+import { ScrollbarStyles } from '@things-factory/styles'
 import { i18next, localize } from '@things-factory/i18n-base'
 
 import { CameraClient } from '../camera/camera-client'
@@ -13,6 +14,7 @@ import '@material/mwc-button'
 export class CameraROIPopup extends LitElement {
   static get styles() {
     return [
+      ScrollbarStyles,
       css`
         :host {
           display: flex;
@@ -34,7 +36,7 @@ export class CameraROIPopup extends LitElement {
           overflow: auto;
         }
 
-        [settings] {
+        [roi-setting] {
           flex: 2;
 
           padding: 20px;
@@ -43,12 +45,20 @@ export class CameraROIPopup extends LitElement {
           overflow-x: none;
         }
 
-        label {
-          display: block;
+        [roi] {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          column-gap: 4px;
+          row-gap: 4px;
         }
 
-        mwc-slider {
+        [roi] input {
+          min-width: 100px;
+        }
+
+        label {
           display: block;
+          text-align: right;
         }
 
         [stream] {
@@ -112,18 +122,47 @@ export class CameraROIPopup extends LitElement {
 
   render() {
     var json = JSON.stringify(this.value, null, 2)
+    var { rois = [{}, {}, {}, {}, {}] } = this.value || {}
 
     return html`
       <content>
-        <div settings>
-          <label>ROI Name</label>
-          <input type="text" />
-          <label>Value</label>
-          <textarea></textarea>
+        <div roi-setting>
+          <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
+          <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
+          <mwc-button label="Compute" icon="exposure"></mwc-button>
 
           <div>
+            <h3>ROI</h3>
+
+            ${rois.map(
+              roi => html`
+                <div roi>
+                  <label>ID</label>
+                  <input type="text" value="A" />
+                  <span></span>
+                  <label>Left-Top</label>
+                  <input type="number" value="100" placeholder="X" />
+                  <input type="number" value="100" placeholder="Y" />
+                  <label>Right-Bottom</label>
+                  <input type="number" value="100" placeholder="X" />
+                  <input type="number" value="100" placeholder="Y" />
+                </div>
+                <mwc-button>${i18next.t('button.delete')}</mwc-button>
+              `
+            )}
+
+            <div roi>
+              <label>ID</label>
+              <input type="text" />
+              <span></span>
+              <label>Left-Top</label>
+              <input type="number" placeholder="X" />
+              <input type="number" placeholder="Y" />
+              <label>Right-Bottom</label>
+              <input type="number" placeholder="X" />
+              <input type="number" placeholder="Y" />
+            </div>
             <mwc-button>${i18next.t('button.add')}</mwc-button>
-            <mwc-button>${i18next.t('button.delete')}</mwc-button>
           </div>
         </div>
         <div stream>

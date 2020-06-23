@@ -44,13 +44,18 @@ export class CameraConnector implements Connector {
       },
       {
         type: 'camera-calibration',
-        label: 'calibration',
-        name: 'calibration'
+        label: 'camera calibration',
+        name: 'cameraCalibration'
       },
       {
         type: 'camera-roi',
         label: 'rois',
         name: 'rois'
+      },
+      {
+        type: 'handeye-calibration',
+        label: 'handeye calibration',
+        name: 'handeyeCalibration'
       }
     ]
   }

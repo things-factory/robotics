@@ -3,6 +3,7 @@
  */
 
 import { LitElement, html, css } from 'lit-element'
+import { ScrollbarStyles } from '@things-factory/styles'
 import { i18next, localize } from '@things-factory/i18n-base'
 
 import { CameraClient } from '../camera/camera-client'
@@ -13,6 +14,7 @@ import '@material/mwc-button'
 export class RealsenseCameraCalibrationPopup extends LitElement {
   static get styles() {
     return [
+      ScrollbarStyles,
       css`
         :host {
           display: flex;

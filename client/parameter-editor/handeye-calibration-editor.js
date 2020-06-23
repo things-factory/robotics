@@ -8,11 +8,25 @@ import { openPopup } from '@things-factory/layout-base'
 import { ThingsEditorProperty, ThingsEditorPropertyStyles } from '@things-factory/modeller-ui'
 import '@material/mwc-icon'
 
-import './camera-calibration-popup'
+import './handeye-calibration-popup'
 
-export class CameraCalibrationEditor extends ThingsEditorProperty {
+export class HandEyeCalibrationEditor extends ThingsEditorProperty {
   static get styles() {
-    return [ThingsEditorPropertyStyles]
+    return [
+      ThingsEditorPropertyStyles,
+      css`
+        div[matrix] {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          column-gap: 4px;
+          row-gap: 4px;
+        }
+
+        [matrix] * {
+          min-width: 100px;
+        }
+      `
+    ]
   }
 
   static get properties() {
@@ -22,12 +36,32 @@ export class CameraCalibrationEditor extends ThingsEditorProperty {
   }
 
   editorTemplate(props) {
-    return html`<mwc-button @click=${e => this.openCameraCalibration()}
-      >${i18next.t('text.camera calibration')}</mwc-button
-    >`
+    return html`
+      <div>
+        <div matrix>
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+          <input type="number" />
+        </div>
+        <mwc-button @click=${e => this.openHandEyeCalibration()}>${i18next.t('text.handeye calibration')}</mwc-button>
+      </div>
+    `
   }
 
-  async openCameraCalibration() {
+  async openHandEyeCalibration() {
     if (this.popup) {
       delete this.popup
     }
@@ -51,15 +85,15 @@ export class CameraCalibrationEditor extends ThingsEditorProperty {
       따라서, 가급적 이들 속성의 레퍼런스를 변화시키지 않는 것이 좋다.
     */
     var template = html`
-      <camera-calibration-popup .value=${this.value} .confirmCallback=${confirmCallback}> </camera-calibration-popup>
+      <handeye-calibration-popup .value=${this.value} .confirmCallback=${confirmCallback}> </handeye-calibration-popup>
     `
 
     this.popup = openPopup(template, {
       backdrop: true,
       size: 'large',
-      title: i18next.t('text.camera calibration')
+      title: i18next.t('text.handeye calibration')
     })
   }
 }
 
-customElements.define('camera-calibration-editor', CameraCalibrationEditor)
+customElements.define('handeye-calibration-editor', HandEyeCalibrationEditor)
