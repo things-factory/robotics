@@ -16,6 +16,10 @@ export class OffsetPoseEditor extends ThingsEditorProperty {
     return [
       ThingsEditorPropertyStyles,
       css`
+        :host {
+          margin-top: 20px;
+        }
+
         [offset] {
           display: grid;
           grid-template-columns: repeat(3, 1fr 4fr);

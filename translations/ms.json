@@ -9,7 +9,7 @@
   "label.framerate": "frame rate (fps)",
   "label.grayscale": "gray scale",
   "label.fake": "fake video",
-  "label.pose-offset": "pose offset",
+  "label.pose-offset": "POI offset",
   "label.marker-offset": "marker offset",
   "label.gripper-offset": "gripper offset",
   "label.roi": "ROI",

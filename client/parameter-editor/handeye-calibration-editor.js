@@ -17,6 +17,10 @@ export class HandEyeCalibrationEditor extends ThingsEditorProperty {
     return [
       ThingsEditorPropertyStyles,
       css`
+        :host {
+          margin-top: 20px;
+        }
+
         [matrix] {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
