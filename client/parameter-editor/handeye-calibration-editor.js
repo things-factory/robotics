@@ -26,7 +26,6 @@ export class HandEyeCalibrationEditor extends ThingsEditorProperty {
 
         [matrix] input {
           min-width: 100px;
-          grid-column: unset;
         }
 
         mwc-button {

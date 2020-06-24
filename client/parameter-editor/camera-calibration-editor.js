@@ -33,7 +33,6 @@ export class CameraCalibrationEditor extends ThingsEditorProperty {
 
         input {
           min-width: 100px;
-          grid-column: unset;
         }
 
         mwc-button {

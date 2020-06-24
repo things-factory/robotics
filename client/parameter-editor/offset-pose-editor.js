@@ -18,14 +18,17 @@ export class OffsetPoseEditor extends ThingsEditorProperty {
       css`
         [offset] {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(3, 1fr 4fr);
           column-gap: 4px;
           row-gap: 4px;
         }
 
-        [offset] * {
-          min-width: 100px;
-          grid-column: unset;
+        [offset] input {
+          min-width: 60px;
+        }
+
+        label {
+          text-align: right;
         }
 
         mwc-button {
@@ -47,7 +50,10 @@ export class OffsetPoseEditor extends ThingsEditorProperty {
       <div>
         <div offset @change=${e => this.onchange(e)}>
           ${LABELS.map(
-            key => html` <input type="number" value=${(this.value && this.value[key]) || 0} placeholder=${key} /> `
+            key => html`
+              <label>${key}</label>
+              <input type="number" value=${(this.value && this.value[key]) || 0} placeholder=${key} />
+            `
           )}
         </div>
       </div>
