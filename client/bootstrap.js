@@ -6,6 +6,7 @@ import { ADD_MODELLER_EDITORS } from '@things-factory/modeller-ui'
 import './parameter-editor/camera-setting-editor'
 import './parameter-editor/camera-calibration-editor'
 import './parameter-editor/camera-roi-editor'
+import './parameter-editor/offset-pose-editor'
 import './parameter-editor/handeye-calibration-editor'
 import './parameter-editor/realsense-camera-setting-editor'
 import './parameter-editor/realsense-camera-calibration-editor'
@@ -39,6 +40,7 @@ export default function bootstrap() {
       'camera-setting': 'camera-setting-editor',
       'camera-calibration': 'camera-calibration-editor',
       'camera-roi': 'camera-roi-editor',
+      'offset-pose': 'offset-pose-editor',
       'handeye-calibration': 'handeye-calibration-editor',
       'realsense-camera-setting': 'realsense-camera-setting-editor',
       'realsense-camera-calibration': 'realsense-camera-calibration-editor'

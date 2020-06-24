@@ -33,7 +33,7 @@ export class MarkedObject implements Connector {
         name: 'type'
       },
       {
-        type: 'pose-offset',
+        type: 'offset-pose',
         label: 'pose-offset',
         name: 'poseOffset'
       }

@@ -6,6 +6,14 @@ export const trackableObjectsResolver = {
     var items = Object.keys(Connections.getConnections())
       .map(name => Connections.getConnection(name))
       .filter(connection => connection.discriminator == VISION_OBJECT_TYPES.OBJECT)
+      .map(connection => {
+        var { poseOffset } = connection.params || {}
+
+        return {
+          ...connection,
+          poseOffset
+        }
+      })
 
     return {
       items,

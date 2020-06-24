@@ -6,6 +6,15 @@ export const robotArmsResolver = {
     var items = Object.keys(Connections.getConnections())
       .map(name => Connections.getConnection(name))
       .filter(connection => connection.discriminator == VISION_OBJECT_TYPES.ROBOT_ARM)
+      .map(connection => {
+        var { markerOffset, gripperOffset } = connection.params || {}
+
+        return {
+          ...connection,
+          markerOffset,
+          gripperOffset
+        }
+      })
 
     return {
       items,
