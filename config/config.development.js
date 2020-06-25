@@ -2,9 +2,20 @@ module.exports = {
   vision: {
     streamingPort: 3001,
     camera: {
-      handEyeCalibrator: '',
-      ROIconfigurer: ''
+      handEyeCalibrator: {
+        path: ''
+      },
+      ROICalibrator: {
+        path: ''
+      }
     },
-    objectTracker: ''
+    robotArm: {
+      markerOffsetCalibrator: {
+        path: ''
+      }
+    },
+    objectTracker: {
+      path: ''
+    }
   }
 }
