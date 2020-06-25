@@ -16,7 +16,7 @@ export const VisionTypes = gql`
   }
 
   type Region {
-    tl: PixelPoint
+    lt: PixelPoint
     rb: PixelPoint
   }
 

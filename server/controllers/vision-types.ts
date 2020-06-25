@@ -9,10 +9,14 @@ export interface Pose {
 }
 
 export interface Region {
-  x1: number
-  y1: number
-  x2: number
-  y2: number
+  lt: {
+    x: number
+    y: number
+  }
+  rb: {
+    x: number
+    y: number
+  }
 }
 
 export enum HANDEYE_TYPES {
