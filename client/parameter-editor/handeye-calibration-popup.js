@@ -11,6 +11,8 @@ import { CameraClient } from '../camera/camera-client'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 
+const ZEROS = new Array(16).fill(0)
+
 export class HandEyeCalibrationPopup extends LitElement {
   static get styles() {
     return [
@@ -121,7 +123,8 @@ export class HandEyeCalibrationPopup extends LitElement {
   }
 
   render() {
-    var json = JSON.stringify(this.value, null, 2)
+    var { rows = 4, columns = 4, data = [...ZEROS] } = this.value || {}
+    var values = [...(data || []), ...ZEROS].slice(0, 16)
 
     return html`
       <content>
@@ -132,23 +135,8 @@ export class HandEyeCalibrationPopup extends LitElement {
 
           <div>
             <h3>handeye matrix</h3>
-            <div matrix>
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
+            <div matrix @change=${e => this.onchange(e)}>
+              ${values.map(value => html` <input type="number" value=${value} /> `)}
             </div>
           </div>
         </div>
@@ -179,14 +167,19 @@ export class HandEyeCalibrationPopup extends LitElement {
       => 
       이런 이유로, Object.assign(...)을 사용하였다.
     */
-    if (!this.value) {
-      this.value = {}
+    var inputs = this.renderRoot.querySelectorAll('input')
+    this.value = {
+      rows: 4,
+      columns: 4,
+      data: Array.from(inputs).map(input => input.value)
     }
 
-    for (let key in this.value) {
-      delete this.value[key]
-    }
-    Object.assign(this.value, e.detail)
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        bubbles: true,
+        detail: this.value
+      })
+    )
   }
 
   oncancel(e) {
@@ -194,7 +187,7 @@ export class HandEyeCalibrationPopup extends LitElement {
   }
 
   onconfirm(e) {
-    this.confirmCallback && this.confirmCallback(this.value ? JSON.stringify(this.value) : '')
+    this.confirmCallback && this.confirmCallback(this.value)
     history.back()
   }
 }

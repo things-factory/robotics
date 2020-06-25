@@ -11,6 +11,8 @@ import { CameraClient } from '../camera/camera-client'
 import '@material/mwc-icon'
 import '@material/mwc-button'
 
+const ZEROS = new Array(9).fill(0)
+
 export class CameraCalibrationPopup extends LitElement {
   static get styles() {
     return [
@@ -67,7 +69,7 @@ export class CameraCalibrationPopup extends LitElement {
           min-width: 100px;
         }
 
-        [dist-coef] {
+        [coeff] {
           display: grid;
           grid-template-columns: 1fr 3fr;
           column-gap: 4px;
@@ -128,7 +130,11 @@ export class CameraCalibrationPopup extends LitElement {
   }
 
   render() {
-    var json = JSON.stringify(this.value, null, 2)
+    var { distortionCoefficient = [], cameraMatrix = {} } = this.value || {}
+
+    var { rows = 3, columns = 3, data = [...ZEROS] } = cameraMatrix
+    var cameraMatrixData = [...(data || []), ...ZEROS].slice(0, 9)
+    var distCoeffData = [...distortionCoefficient, ...ZEROS].slice(0, 5)
 
     return html`
       <content>
@@ -139,32 +145,25 @@ export class CameraCalibrationPopup extends LitElement {
 
           <div>
             <h3>camera matrix</h3>
-            <div matrix>
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
-              <input type="number" />
+            <div matrix @change=${e => this.onchange(e)}>
+              ${cameraMatrixData.map(value => html` <input type="number" value=${value} /> `)}
             </div>
           </div>
 
           <div>
             <h3>distortion coeffeicients</h3>
-            <div dist-coef>
+            <div coeff @change=${e => this.onchange(e)}>
               <label>k1</label>
-              <input type="number" />
+              <input type="number" value=${distCoeffData[0]} />
               <label>k2</label>
-              <input type="number" />
+              <input type="number" value=${distCoeffData[1]} />
               <label>p1</label>
-              <input type="number" />
+              <input type="number" value=${distCoeffData[2]} />
               <label>p2</label>
-              <input type="number" />
+              <input type="number" value=${distCoeffData[3]} />
               <label>k3</label>
-              <input type="number" />
+              <input type="number" value=${distCoeffData[4]} />
+            </div>
             </div>
           </div>
         </div>
@@ -195,14 +194,24 @@ export class CameraCalibrationPopup extends LitElement {
       => 
       이런 이유로, Object.assign(...)을 사용하였다.
     */
-    if (!this.value) {
-      this.value = {}
+    var coeffInputs = this.renderRoot.querySelectorAll('[coeff] input')
+    var cameraMatrixInputs = this.renderRoot.querySelectorAll('[matrix] input')
+
+    this.value = {
+      distortionCoefficient: Array.from(coeffInputs).map(input => input.value),
+      cameraMatrix: {
+        rows: 3,
+        columns: 3,
+        data: Array.from(cameraMatrixInputs).map(input => input.value)
+      }
     }
 
-    for (let key in this.value) {
-      delete this.value[key]
-    }
-    Object.assign(this.value, e.detail)
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        bubbles: true,
+        detail: this.value
+      })
+    )
   }
 
   oncancel(e) {
@@ -210,7 +219,7 @@ export class CameraCalibrationPopup extends LitElement {
   }
 
   onconfirm(e) {
-    this.confirmCallback && this.confirmCallback(this.value ? JSON.stringify(this.value) : '')
+    this.confirmCallback && this.confirmCallback(this.value)
     history.back()
   }
 }
