@@ -9,7 +9,6 @@ import './parameter-editor/camera-roi-editor'
 import './parameter-editor/offset-pose-editor'
 import './parameter-editor/handeye-calibration-editor'
 import './parameter-editor/realsense-camera-setting-editor'
-import './parameter-editor/realsense-camera-calibration-editor'
 
 export default function bootstrap() {
   store.dispatch({
@@ -42,8 +41,7 @@ export default function bootstrap() {
       'camera-roi': 'camera-roi-editor',
       'offset-pose': 'offset-pose-editor',
       'handeye-calibration': 'handeye-calibration-editor',
-      'realsense-camera-setting': 'realsense-camera-setting-editor',
-      'realsense-camera-calibration': 'realsense-camera-calibration-editor'
+      'realsense-camera-setting': 'realsense-camera-setting-editor'
     }
   })
 }

@@ -7,9 +7,13 @@ export const trackingCamerasResolver = {
       .map(name => Connections.getConnection(name))
       .filter(connection => connection.discriminator == VISION_OBJECT_TYPES.CAMERA)
       .map(connection => {
-        var { handEyeMatrix, cameraCalibration, rois } = connection.params || {}
+        var { baseRobotArm: baseRobotArmName, handEyeMatrix, cameraCalibration, rois } = connection.params || {}
         var { cameraMatrix, distortionCoefficient } = cameraCalibration || {}
-        var baseRobotArm = Connections.getConnection(connection.params?.baseRobotArm)
+        var baseRobotArm = Connections.getConnection(baseRobotArmName)
+        if (!baseRobotArm || baseRobotArm.discriminator !== VISION_OBJECT_TYPES.ROBOT_ARM) {
+          baseRobotArm = undefined
+        }
+
         return {
           ...connection,
           cameraMatrix,

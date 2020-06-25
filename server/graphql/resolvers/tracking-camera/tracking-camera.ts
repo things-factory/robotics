@@ -8,15 +8,14 @@ export const trackingCameraResolver = {
       throw Error(`TrackingCamera '${name}' Not Found`)
     }
 
-    var baseRobotArm = Connections.getConnection(connection.params?.baseRobotArm)
-
-    if (!baseRobotArm || connection.visionObjectType !== VISION_OBJECT_TYPES.ROBOT_ARM) {
-      baseRobotArm = undefined
-    }
-
-    var { handEyeMatrix, cameraCalibration, rois } = connection.params || {}
+    var { baseRobotArm: baseRobotArmName, handEyeMatrix, cameraCalibration, rois } = connection.params || {}
 
     var { cameraMatrix, distortionCoefficient } = cameraCalibration || {}
+    var baseRobotArm = Connections.getConnection(baseRobotArmName)
+
+    if (!baseRobotArm || baseRobotArm.discriminator !== VISION_OBJECT_TYPES.ROBOT_ARM) {
+      baseRobotArm = undefined
+    }
 
     return {
       ...connection,

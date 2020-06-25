@@ -33,9 +33,13 @@ export class CameraConnector implements Connector {
         name: 'device'
       },
       {
-        type: 'string',
+        type: 'entity-selector',
         label: 'base-robot-arm',
-        name: 'baseRobotArm'
+        name: 'baseRobotArm',
+        property: {
+          queryName: 'robotArms',
+          valueKey: 'name'
+        }
       },
       {
         type: 'camera-setting',

@@ -37,9 +37,13 @@ export class RealsenseCamera implements Connector {
         name: 'device'
       },
       {
-        type: 'string',
+        type: 'entity-selector',
         label: 'base-robot-arm',
-        name: 'baseRobotArm'
+        name: 'baseRobotArm',
+        property: {
+          queryName: 'robotArms',
+          valueKey: 'name'
+        }
       },
       {
         type: 'realsense-camera-setting',
@@ -47,14 +51,19 @@ export class RealsenseCamera implements Connector {
         name: 'setting'
       },
       {
-        type: 'realsense-camera-calibration',
-        label: 'calibration',
-        name: 'calibration'
+        type: 'camera-calibration',
+        label: 'camera calibration',
+        name: 'cameraCalibration'
       },
       {
         type: 'camera-roi',
-        label: 'roi',
-        name: 'roi'
+        label: 'rois',
+        name: 'rois'
+      },
+      {
+        type: 'handeye-calibration',
+        label: 'handeye matrix',
+        name: 'handEyeMatrix'
       }
     ]
   }
