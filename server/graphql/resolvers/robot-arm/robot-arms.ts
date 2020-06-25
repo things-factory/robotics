@@ -7,12 +7,12 @@ export const robotArmsResolver = {
       .map(name => Connections.getConnection(name))
       .filter(connection => connection.discriminator == VISION_OBJECT_TYPES.ROBOT_ARM)
       .map(connection => {
-        var { markerOffset, gripperOffset } = connection.params || {}
+        var { markerOffset, toolOffset } = connection.params || {}
 
         return {
           ...connection,
           markerOffset,
-          gripperOffset
+          toolOffset
         }
       })
 

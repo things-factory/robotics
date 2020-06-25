@@ -7,11 +7,11 @@ export const trackableObjectsResolver = {
       .map(name => Connections.getConnection(name))
       .filter(connection => connection.discriminator == VISION_OBJECT_TYPES.OBJECT)
       .map(connection => {
-        var { poseOffset } = connection.params || {}
+        var { poiOffset } = connection.params || {}
 
         return {
           ...connection,
-          poseOffset
+          poiOffset
         }
       })
 

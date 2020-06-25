@@ -11,7 +11,7 @@ export const TrackableObject = gql`
     status: Int
     active: Boolean
     config: Object
-    poseOffset: Pose
+    poiOffset: Pose
     updater: User
     creator: User
     updatedAt: String

@@ -8,12 +8,12 @@ export const robotArmResolver = {
       throw Error(`RobotArm '${name}' Not Found`)
     }
 
-    var { markerOffset, gripperOffset } = connection.params || {}
+    var { markerOffset, toolOffset } = connection.params || {}
 
     return {
       ...connection,
       markerOffset,
-      gripperOffset
+      toolOffset
     }
   }
 }

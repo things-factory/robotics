@@ -15,7 +15,7 @@ export class TrackingTargetMarker implements TrackableObject {
   /**
    * tracking 된 중심점으로부터의 실제 position offset 정보
    */
-  poseOffset: Pose
+  poiOffset: Pose
   roi: ROI
   /**
    * ROI내 특정 위치에 체류한 시간

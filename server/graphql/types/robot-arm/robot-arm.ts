@@ -11,7 +11,7 @@ export const RobotArm = gql`
     active: Boolean
     params: Object
     markerOffset: Pose
-    gripperOffset: Pose
+    toolOffset: Pose
     updater: User
     creator: User
     updatedAt: String

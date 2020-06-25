@@ -8,11 +8,11 @@ export const trackableObjectResolver = {
       throw Error(`TrackableObject '${name}' Not Found`)
     }
 
-    var { poseOffset } = connection.params || {}
+    var { poiOffset } = connection.params || {}
 
     return {
       ...connection,
-      poseOffset
+      poiOffset
     }
   }
 }
