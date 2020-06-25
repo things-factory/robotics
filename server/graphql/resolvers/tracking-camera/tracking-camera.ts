@@ -14,7 +14,7 @@ export const trackingCameraResolver = {
       baseRobotArm = undefined
     }
 
-    var { handEyeMatrix, cameraCalibration } = connection.params || {}
+    var { handEyeMatrix, cameraCalibration, rois } = connection.params || {}
 
     var { cameraMatrix, distortionCoefficient } = cameraCalibration || {}
 
@@ -23,7 +23,8 @@ export const trackingCameraResolver = {
       cameraMatrix,
       distortionCoefficient,
       handEyeMatrix,
-      baseRobotArm
+      baseRobotArm,
+      rois
     }
   }
 }
