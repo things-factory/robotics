@@ -86,7 +86,7 @@ export class CameraROIPopup extends LitElement {
 
   static get properties() {
     return {
-      value: Object
+      value: Array
     }
   }
 
@@ -121,8 +121,7 @@ export class CameraROIPopup extends LitElement {
   }
 
   render() {
-    var json = JSON.stringify(this.value, null, 2)
-    var { rois = [{}, {}, {}, {}, {}] } = this.value || {}
+    var rois = this.value instanceof Array ? this.value : []
 
     return html`
       <content>
@@ -134,24 +133,31 @@ export class CameraROIPopup extends LitElement {
           <div>
             <h3>ROI</h3>
 
-            ${rois.map(
-              roi => html`
-                <div roi>
+            ${rois.map(roi => {
+              var { id = '', region = {} } = roi
+
+              var x1 = region.lt?.x || 0
+              var y1 = region.lt?.y || 0
+              var x2 = region.rb?.x || 0
+              var y2 = region.rb?.y || 0
+
+              return html`
+                <div roi added>
                   <label>ID</label>
-                  <input type="text" value="A" />
+                  <input type="text" value=${id} />
                   <span></span>
                   <label>Left-Top</label>
-                  <input type="number" value="100" placeholder="X" />
-                  <input type="number" value="100" placeholder="Y" />
+                  <input type="number" value=${x1} placeholder="X" />
+                  <input type="number" value=${y1} placeholder="Y" />
                   <label>Right-Bottom</label>
-                  <input type="number" value="100" placeholder="X" />
-                  <input type="number" value="100" placeholder="Y" />
+                  <input type="number" value=${x2} placeholder="X" />
+                  <input type="number" value=${y2} placeholder="Y" />
                 </div>
-                <mwc-button>${i18next.t('button.delete')}</mwc-button>
+                <mwc-button @click=${e => this.onClickDelete(e)}>${i18next.t('button.delete')}</mwc-button>
               `
-            )}
+            })}
 
-            <div roi>
+            <div roi add>
               <label>ID</label>
               <input type="text" />
               <span></span>
@@ -162,7 +168,7 @@ export class CameraROIPopup extends LitElement {
               <input type="number" placeholder="X" />
               <input type="number" placeholder="Y" />
             </div>
-            <mwc-button>${i18next.t('button.add')}</mwc-button>
+            <mwc-button @click=${e => this.onClickAdd()}>${i18next.t('button.add')}</mwc-button>
           </div>
         </div>
         <div stream>
@@ -175,6 +181,43 @@ export class CameraROIPopup extends LitElement {
         <mwc-button @click=${this.onconfirm.bind(this)}>${i18next.t('button.confirm')}</mwc-button>
       </div>
     `
+  }
+
+  extractRoi(div) {
+    var inputs = div.querySelectorAll('input')
+    var [id, x1, y1, x2, y2] = Array.from(inputs).map(input => input.value)
+    return {
+      id,
+      region: {
+        lt: {
+          x: x1,
+          y: y1
+        },
+        rb: {
+          x: x2,
+          y: y2
+        }
+      }
+    }
+  }
+
+  onClickAdd() {
+    this.value = [...(this.value || []), this.extractRoi(this.renderRoot.querySelector('div[add]'))]
+
+    var inputs = this.renderRoot.querySelectorAll('div[add] input')
+    Array.from(inputs).forEach(input => (input.value = ''))
+  }
+
+  onClickDelete(e) {
+    var target = e.target
+    var div = target.previousElementSibling
+
+    var rois = this.renderRoot.querySelectorAll('div[added]')
+    var value = Array.from(rois)
+      .filter(roi => div !== roi)
+      .map(roi => this.extractRoi(roi))
+
+    this.value = value
   }
 
   onchange(e) {
@@ -206,7 +249,7 @@ export class CameraROIPopup extends LitElement {
   }
 
   onconfirm(e) {
-    this.confirmCallback && this.confirmCallback(this.value ? JSON.stringify(this.value) : '')
+    this.confirmCallback && this.confirmCallback(this.value || [])
     history.back()
   }
 }

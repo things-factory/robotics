@@ -31,6 +31,7 @@ export class CameraROIEditor extends ThingsEditorProperty {
     }
 
     const confirmCallback = newval => {
+      this.value = newval
       this.dispatchEvent(
         new CustomEvent('change', {
           bubbles: true,
