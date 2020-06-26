@@ -3,19 +3,19 @@ module.exports = {
     streamingPort: 3001,
     camera: {
       handEyeCalibrator: {
-        path: ''
+        program: ['python', '/Users/super/Documents/Things-Factory/vision-client-python/sample_roi_detector.py']
       },
-      ROICalibrator: {
-        path: ''
+      ROIDetector: {
+        program: ['python', '/Users/super/Documents/Things-Factory/vision-client-python/sample_roi_detector.py']
       }
     },
     robotArm: {
       markerOffsetCalibrator: {
-        path: ''
+        program: ['python', '/Users/super/Documents/Things-Factory/vision-client-python/sample_roi_detector.py']
       }
     },
     objectTracker: {
-      path: ''
+      program: ['python', '/Users/super/Documents/Things-Factory/vision-client-python/sample_roi_detector.py']
     }
   }
 }

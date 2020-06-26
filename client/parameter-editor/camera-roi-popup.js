@@ -3,6 +3,8 @@
  */
 
 import { LitElement, html, css } from 'lit-element'
+import gql from 'graphql-tag'
+import { client } from '@things-factory/shell'
 import { ScrollbarStyles } from '@things-factory/styles'
 import { i18next, localize } from '@things-factory/i18n-base'
 
@@ -86,6 +88,7 @@ export class CameraROIPopup extends LitElement {
 
   static get properties() {
     return {
+      cameraName: String,
       value: Array
     }
   }
@@ -129,6 +132,7 @@ export class CameraROIPopup extends LitElement {
           <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
           <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
           <mwc-button label="Compute" icon="exposure"></mwc-button>
+          <mwc-button label="Detect" icon="exposure" @click=${this.detectROIs.bind(this)}></mwc-button>
 
           <div>
             <h3>ROI</h3>
@@ -181,6 +185,33 @@ export class CameraROIPopup extends LitElement {
         <mwc-button @click=${this.onconfirm.bind(this)}>${i18next.t('button.confirm')}</mwc-button>
       </div>
     `
+  }
+
+  async detectROIs() {
+    const response = await client.query({
+      query: gql`
+        query($name: String!) {
+          detectTrackingCameraROIs(name: $name) {
+            id
+            region {
+              lt {
+                x
+                y
+              }
+              rb {
+                x
+                y
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        name: 'webcam' //this.cameraName
+      }
+    })
+
+    this.value = response.data.detectTrackingCameraROIs
   }
 
   extractRoi(div) {
