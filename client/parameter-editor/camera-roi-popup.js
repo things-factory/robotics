@@ -88,8 +88,8 @@ export class CameraROIPopup extends LitElement {
 
   static get properties() {
     return {
-      cameraName: String,
-      value: Array
+      value: Array,
+      host: Object
     }
   }
 
@@ -102,8 +102,9 @@ export class CameraROIPopup extends LitElement {
     var canvas = this.renderRoot.querySelector('canvas')
     var context = canvas.getContext('2d')
     var count = 0
+    var camera = this.host?.name
 
-    this.webcamClient = new CameraClient(3001, 'webcam', device, {}, data => {
+    this.webcamClient = new CameraClient(3001, camera, device, {}, data => {
       if (count++ == 0) {
         var { width, height } = JSON.parse(data)
         canvas.width = width
@@ -188,6 +189,8 @@ export class CameraROIPopup extends LitElement {
   }
 
   async detectROIs() {
+    var name = this.host?.name
+
     const response = await client.query({
       query: gql`
         query($name: String!) {
@@ -207,7 +210,7 @@ export class CameraROIPopup extends LitElement {
         }
       `,
       variables: {
-        name: 'webcam' //this.cameraName
+        name
       }
     })
 
