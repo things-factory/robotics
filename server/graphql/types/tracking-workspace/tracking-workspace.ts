@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-export const VisionWorkspace = gql`
-  type VisionWorkspace {
+export const TrackingWorkspace = gql`
+  type TrackingWorkspace {
     id: String
     name: String
     domain: Domain
@@ -10,9 +10,9 @@ export const VisionWorkspace = gql`
     endpoint: String
     active: Boolean
     params: Object
-    RobotArms: [RobotArm]
-    TrackingCameras: [TrackingCamera]
-    TrackableObject: [TrackableObject]
+    robotArms: [RobotArm]
+    trackingCameras: [TrackingCamera]
+    trackableObjects: [TrackableObject]
     updater: User
     creator: User
     updatedAt: String

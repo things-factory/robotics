@@ -2,15 +2,15 @@ import { VisionTypes } from './vision-types'
 import * as RobotArm from './robot-arm'
 import * as TrackableObject from './trackable-object'
 import * as TrackingCamera from './tracking-camera'
-import * as VisionWorkspace from './vision-workspace'
+import * as TrackingWorkspace from './tracking-workspace'
 
-export const queries = [RobotArm.Query, TrackableObject.Query, TrackingCamera.Query, VisionWorkspace.Query]
+export const queries = [RobotArm.Query, TrackableObject.Query, TrackingCamera.Query, TrackingWorkspace.Query]
 
 export const mutations = [
   RobotArm.Mutation,
   TrackableObject.Mutation,
   TrackingCamera.Mutation,
-  VisionWorkspace.Mutation
+  TrackingWorkspace.Mutation
 ]
 
 export const subscriptions = []
@@ -20,5 +20,5 @@ export const types = [
   ...RobotArm.Types,
   ...TrackableObject.Types,
   ...TrackingCamera.Types,
-  ...VisionWorkspace.Types
+  ...TrackingWorkspace.Types
 ]

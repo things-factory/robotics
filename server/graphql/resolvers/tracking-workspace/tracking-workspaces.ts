@@ -1,11 +1,24 @@
 import { Connections } from '@things-factory/integration-base'
 import { VISION_OBJECT_TYPES } from '../../../controllers/vision-types'
 
-export const visionWorkspacesResolver = {
-  async visionWorkspaces(_: any, {}, context: any) {
+import { trackingWorkspaceResolver } from './tracking-workspace'
+
+export const trackingWorkspacesResolver = {
+  async trackingWorkspaces(_: any, {}, context: any) {
     var items = Object.keys(Connections.getConnections())
       .map(name => Connections.getConnection(name))
       .filter(connection => connection.discriminator == VISION_OBJECT_TYPES.WORKSPACE)
+      .map(connection =>
+        trackingWorkspaceResolver.trackingWorkspace(
+          _,
+          {
+            name: connection.name
+          },
+          context
+        )
+      )
+
+    items = await Promise.all(items)
 
     return {
       items,
