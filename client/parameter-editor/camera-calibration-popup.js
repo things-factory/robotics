@@ -146,7 +146,7 @@ export class CameraCalibrationPopup extends LitElement {
           <div>
             <h3>camera matrix</h3>
             <div matrix @change=${e => this.onchange(e)}>
-              ${cameraMatrixData.map(value => html` <input type="number" value=${value} /> `)}
+              ${cameraMatrixData.map(value => html` <input type="number" .value=${value} /> `)}
             </div>
           </div>
 
@@ -154,15 +154,15 @@ export class CameraCalibrationPopup extends LitElement {
             <h3>distortion coeffeicients</h3>
             <div coeff @change=${e => this.onchange(e)}>
               <label>k1</label>
-              <input type="number" value=${distCoeffData[0]} />
+              <input type="number" .value=${distCoeffData[0]} />
               <label>k2</label>
-              <input type="number" value=${distCoeffData[1]} />
+              <input type="number" .value=${distCoeffData[1]} />
               <label>p1</label>
-              <input type="number" value=${distCoeffData[2]} />
+              <input type="number" .value=${distCoeffData[2]} />
               <label>p2</label>
-              <input type="number" value=${distCoeffData[3]} />
+              <input type="number" .value=${distCoeffData[3]} />
               <label>k3</label>
-              <input type="number" value=${distCoeffData[4]} />
+              <input type="number" .value=${distCoeffData[4]} />
             </div>
             </div>
           </div>
@@ -205,13 +205,6 @@ export class CameraCalibrationPopup extends LitElement {
         data: Array.from(cameraMatrixInputs).map(input => input.value)
       }
     }
-
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        bubbles: true,
-        detail: this.value
-      })
-    )
   }
 
   oncancel(e) {

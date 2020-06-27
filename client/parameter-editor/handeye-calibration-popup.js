@@ -136,7 +136,7 @@ export class HandEyeCalibrationPopup extends LitElement {
           <div>
             <h3>handeye matrix</h3>
             <div matrix @change=${e => this.onchange(e)}>
-              ${values.map(value => html` <input type="number" value=${value} /> `)}
+              ${values.map(value => html` <input type="number" .value=${value} /> `)}
             </div>
           </div>
         </div>
@@ -173,13 +173,6 @@ export class HandEyeCalibrationPopup extends LitElement {
       columns: 4,
       data: Array.from(inputs).map(input => input.value)
     }
-
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        bubbles: true,
-        detail: this.value
-      })
-    )
   }
 
   oncancel(e) {

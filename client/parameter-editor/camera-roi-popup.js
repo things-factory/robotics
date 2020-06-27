@@ -135,7 +135,7 @@ export class CameraROIPopup extends LitElement {
           <mwc-button label="Compute" icon="exposure"></mwc-button>
           <mwc-button label="Detect" icon="exposure" @click=${this.detectROIs.bind(this)}></mwc-button>
 
-          <div>
+          <div @change=${e => this.onchange(e)}>
             <h3>ROI</h3>
 
             ${rois.map(roi => {
@@ -152,11 +152,11 @@ export class CameraROIPopup extends LitElement {
                   <input type="text" value=${id} />
                   <span></span>
                   <label>Left-Top</label>
-                  <input type="number" value=${x1} placeholder="X" />
-                  <input type="number" value=${y1} placeholder="Y" />
+                  <input type="number" .value=${x1} placeholder="X" />
+                  <input type="number" .value=${y1} placeholder="Y" />
                   <label>Right-Bottom</label>
-                  <input type="number" value=${x2} placeholder="X" />
-                  <input type="number" value=${y2} placeholder="Y" />
+                  <input type="number" .value=${x2} placeholder="X" />
+                  <input type="number" .value=${y2} placeholder="Y" />
                 </div>
                 <mwc-button @click=${e => this.onClickDelete(e)}>${i18next.t('button.delete')}</mwc-button>
               `
@@ -214,12 +214,15 @@ export class CameraROIPopup extends LitElement {
       }
     })
 
-    this.value = response.data.detectTrackingCameraROIs
+    var rois = response.data.detectTrackingCameraROIs
+    console.log('detected rois', rois)
+    this.value = rois
   }
 
   extractRoi(div) {
     var inputs = div.querySelectorAll('input')
     var [id, x1, y1, x2, y2] = Array.from(inputs).map(input => input.value)
+
     return {
       id,
       region: {
@@ -268,14 +271,8 @@ export class CameraROIPopup extends LitElement {
       => 
       이런 이유로, Object.assign(...)을 사용하였다.
     */
-    if (!this.value) {
-      this.value = {}
-    }
-
-    for (let key in this.value) {
-      delete this.value[key]
-    }
-    Object.assign(this.value, e.detail)
+    var rois = this.renderRoot.querySelectorAll('div[added]')
+    this.value = Array.from(rois).map(roi => this.extractRoi(roi))
   }
 
   oncancel(e) {

@@ -52,7 +52,7 @@ export class CameraStreamer {
       debug('on-close', type, request.url, remoteAddress, remotePort)
 
       var driver = this.getDriver(type)
-      driver.unsubscribe(subscription)
+      driver && driver.unsubscribe(subscription)
 
       this.closedCallback(socket, request)
     })
