@@ -5,7 +5,7 @@ import { getTrackingWorkspace } from './get-tracking-workspace'
 async function TrackableObjectWaitForMove(step, { logger }) {
   var { connection } = step
 
-  var { object } = Connections.getConnection(connection) || {}
+  var object = Connections.getConnection(connection) || {}
   if (!object) {
     throw new Error(`no connection : ${connection}`)
   }
@@ -14,13 +14,13 @@ async function TrackableObjectWaitForMove(step, { logger }) {
 
   var workspace = getTrackingWorkspace()
   var { engine } = workspace
-  var { objectStorage } = engine
+  var { trackingStorage } = engine
 
-  var { pose: oldPose, roi: oldROI } = objectStorage.getObjectState(name)
+  var { pose: oldPose, roi: oldROI } = trackingStorage.getObjectState(name)
   await sleep(1000)
 
   while (true) {
-    var { pose: newPose, roi: newROI } = objectStorage.getObjectState(name)
+    var { pose: newPose, roi: newROI } = trackingStorage.getObjectState(name)
     if (oldPose !== newPose || oldROI !== newROI) {
       break
     }
@@ -28,7 +28,7 @@ async function TrackableObjectWaitForMove(step, { logger }) {
   }
 
   return {
-    data: objectStorage.getObjectState(name)
+    data: trackingStorage.getObjectState(name)
   }
 }
 

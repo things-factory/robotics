@@ -4,7 +4,7 @@ import { getTrackingWorkspace } from './get-tracking-workspace'
 async function TrackableObjectGetState(step, { logger }) {
   var { connection } = step
 
-  var { object } = Connections.getConnection(connection) || {}
+  var object = Connections.getConnection(connection) || {}
   if (!object) {
     throw new Error(`no connection : ${connection}`)
   }
@@ -13,10 +13,10 @@ async function TrackableObjectGetState(step, { logger }) {
 
   var workspace = getTrackingWorkspace()
   var { engine } = workspace
-  var { objectStorage } = engine
+  var { trackingStorage } = engine
 
   return {
-    data: objectStorage.getObjectState(name)
+    data: trackingStorage.getObjectState(name)
   }
 }
 
