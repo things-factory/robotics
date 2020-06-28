@@ -6,7 +6,7 @@ import spawn from 'await-spawn'
 const visionConfig = config.get('vision', {})
 const program = visionConfig.camera?.ROIDetector?.program
 
-export const detectTrackingCameraROIs = {
+export const detectTrackingCameraROIsResolver = {
   async detectTrackingCameraROIs(_: any, { name }, context: any) {
     var camera = Connections.getConnection(name)
     if (!camera || camera.discriminator !== VISION_OBJECT_TYPES.CAMERA) {

@@ -1,7 +1,9 @@
 import { TrackingWorkspace } from './tracking-workspace'
 import { TrackingWorkspaceList } from './tracking-workspace-list'
+import { TrackingWorkspaceStatusInput } from './tracking-workspace-status-input'
 
 export const Mutation = `
+  updateTrackingWorkspaceStatus(name: String!, status: TrackingWorkspaceStatusInput!): Boolean
 `
 
 export const Query = `
@@ -9,4 +11,4 @@ export const Query = `
   trackingWorkspace(name: String!): TrackingWorkspace
 `
 
-export const Types = [TrackingWorkspace, TrackingWorkspaceList]
+export const Types = [TrackingWorkspace, TrackingWorkspaceList, TrackingWorkspaceStatusInput]

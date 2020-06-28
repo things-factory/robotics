@@ -1,7 +1,8 @@
 import { TrackingEngine, TrackingStorage } from './vision-types'
+import { ROIStateStorageImpl } from './tracking-storage'
 
 export class TrackingEngineImpl implements TrackingEngine {
-  trackingStorage: TrackingStorage
+  trackingStorage: TrackingStorage = new ROIStateStorageImpl()
 
   trackables: any[]
   rois: any[]

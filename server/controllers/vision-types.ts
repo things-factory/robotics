@@ -32,9 +32,9 @@ export enum CAMERA_TYPES {
 export enum VISION_OBJECT_TYPES {
   WORKSPACE = 'workspace',
   ROBOT_ARM = 'robot-arm',
-  CAMERA = 'vision-camera',
+  CAMERA = 'tracking-camera',
   ROI = 'ROI',
-  OBJECT = 'vision-object'
+  OBJECT = 'trackable-object'
 }
 
 /**
@@ -64,21 +64,15 @@ export interface ROI {
  */
 export interface TrackableObject {
   /**
-   * TrackingTarget의 id, eg) marker id
+   * TrackableObject의 id, eg) tag id
    */
   id: string | number
-  description: string
-  type: string
-  /**
-   * tracking 된 중심점으로부터의 실제 position offset 정보
-   */
-  poiOffset: Pose
   roi: ROI
+  pose: Pose
   /**
    * ROI내 특정 위치에 체류한 시간
    */
   retention: number
-  pose: Pose
 
   update(roi, pose)
 }
@@ -109,18 +103,6 @@ export interface TrackingCamera {
 }
 
 // Interfaces for Management
-
-export interface ROIProvider {
-  findROIs(trackable: TrackingCamera): ROI[]
-}
-
-export interface ROIManager {
-  provider: ROIProvider
-
-  list(): ROI[]
-  get(id): ROI
-  register(ROI): void
-}
 
 export interface TrackingStorage {
   getObjectState(id: string | number)

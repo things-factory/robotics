@@ -1,9 +1,8 @@
 import gql from 'graphql-tag'
 
-export const TrackableObjectState = gql`
-  input TrackableObjectState {
+export const TrackableObjectStateInput = gql`
+  input TrackableObjectStateInput {
     pose: PoseInput!
     roi: String!
-    retension: Int!
   }
 `

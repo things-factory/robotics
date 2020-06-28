@@ -1,11 +1,11 @@
 import { TrackableObject } from './trackable-object'
-import { TrackableObjectState } from './trackable-object-state'
 import { TrackableObjectList } from './trackable-object-list'
+import { TrackableObjectStateInput } from './trackable-object-state'
 
 export const Mutation = `
   updateTrackableObjectState (
     name: String!
-    state: TrackableObjectState!
+    state: TrackableObjectStateInput!
   ): TrackableObject
 `
 
@@ -14,4 +14,4 @@ export const Query = `
   trackableObject(name: String!): TrackableObject
 `
 
-export const Types = [TrackableObject, TrackableObjectState, TrackableObjectList]
+export const Types = [TrackableObject, TrackableObjectStateInput, TrackableObjectList]

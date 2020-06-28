@@ -5,31 +5,20 @@ const isSamePose = (pose1, pose2) => {
   return true
 }
 
-export class TrackingTargetMarker implements TrackableObject {
+export class TrackableObjectImpl implements TrackableObject {
   /**
-   * TrackingTarget의 id, eg) marker id
+   * TrackableObject의 id, eg) tag id
    */
   id: string | number
-  description: string
-  type: string
-  /**
-   * tracking 된 중심점으로부터의 실제 position offset 정보
-   */
-  poiOffset: Pose
   roi: ROI
+  pose: Pose
   /**
    * ROI내 특정 위치에 체류한 시간
    */
   retention: number
-  pose: Pose
 
-  marker: string
-
-  constructor(roi, marker, retention, pose) {
-    this.roi = roi
-    this.marker = marker
-    this.retention = retention
-    this.pose = pose
+  constructor(id) {
+    this.id = id
   }
 
   update(roi, pose) {
@@ -65,6 +54,7 @@ export class TrackingTargetMarker implements TrackableObject {
         to
       })
 
+    this.roi = roi
     this.pose = pose
     this.retention = moving ? 0 : this.retention + 1
 
