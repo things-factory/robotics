@@ -38,6 +38,8 @@ async function TrackingWorkspaceWaitForROI(step, { root, data }) {
         })
 
       if (changed) {
+        lastObjects = objects
+
         if (waitFor == 'empty' && objects.length == 0) {
           break
         } else if (waitFor == 'fill' && objects.length > 0) {
