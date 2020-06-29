@@ -8,6 +8,13 @@ export class ROIStateStorageImpl implements TrackingStorage {
     return this.states[id]
   }
 
+  getROIState(roi) {
+    return Object.keys(this.states)
+      .map(id => this.states[id])
+      .filter(obj => obj.roi == roi)
+      .sort((obj1, obj2) => (obj1.id > obj2.id ? 1 : -1))
+  }
+
   updateObjectState(id, roi, pose?: Pose) {
     if (!this.states[id]) {
       this.states[id] = new TrackableObjectImpl(id)

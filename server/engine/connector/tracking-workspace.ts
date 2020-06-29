@@ -36,7 +36,7 @@ export class TrackingWorkspace implements Connector {
   }
 
   get taskPrefixes() {
-    return ['tracking']
+    return ['tracking-ws']
   }
 }
 

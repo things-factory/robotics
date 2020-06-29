@@ -2,29 +2,42 @@ import { sleep } from '@things-factory/utils'
 import { Connections, TaskRegistry } from '@things-factory/integration-base'
 import { getTrackingWorkspace } from './get-tracking-workspace'
 
-async function TrackableObjectWaitForMove(step, { logger }) {
-  var { connection } = step
+async function TrackableObjectWaitForMove(step, { root, data }) {
+  var { name: stepName, connection } = step
 
   var object = Connections.getConnection(connection) || {}
   if (!object) {
     throw new Error(`no connection : ${connection}`)
   }
 
-  var { name } = object
-
   var workspace = getTrackingWorkspace()
   var { engine } = workspace
   var { trackingStorage } = engine
 
-  var { pose: oldPose, roi: oldROI } = trackingStorage.getObjectState(name)
-  await sleep(1000)
+  var { name } = object
+
+  var lastStatus = data[stepName]
+
+  if (!lastStatus) {
+    lastStatus = trackingStorage.getObjectState(name) || {}
+    await sleep(1000)
+  }
+
+  var { pose: oldPose, roi: oldROI } = lastStatus
 
   while (true) {
-    var { pose: newPose, roi: newROI } = trackingStorage.getObjectState(name)
-    if (oldPose !== newPose || oldROI !== newROI) {
-      break
+    let state = root.getState()
+    if (state == 1 /* STARTED */) {
+      var { pose: newPose, roi: newROI } = trackingStorage.getObjectState(name) || {}
+      if (oldPose !== newPose || oldROI !== newROI) {
+        break
+      }
+      await sleep(1000)
+    } else if (state == 2 /* PAUSED */) {
+      await sleep(1000)
+    } else {
+      throw new Error('scenario stopped unexpectedly')
     }
-    await sleep(1000)
   }
 
   return {
