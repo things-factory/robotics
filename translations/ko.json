@@ -16,6 +16,7 @@
   "label.rois": "ROI",
   "label.ui-port": "샘플 페이지용 서비스 포트",
   "label.gstreamer-port": "gstreamer 서비스 포트",
+  "label.wait-for": "wait for",
   "text.camera setting": "카메라 설정",
   "text.camera calibration": "카메라 캘리브레이션",
   "text.handeye calibration": "핸드아이 캘리브레이션",

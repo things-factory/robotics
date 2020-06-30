@@ -16,6 +16,7 @@
   "label.rois": "ROI",
   "label.ui-port": "sample UI port",
   "label.gstreamer-port": "gstreamer service port",
+  "label.wait-for": "wait for",
   "text.camera setting": "camera setting",
   "text.camera calibration": "camera calibration",
   "text.handeye calibration": "handeye calibration",

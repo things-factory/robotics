@@ -103,7 +103,8 @@ export class HandEyeCalibrationEditor extends ThingsEditorProperty {
       따라서, 가급적 이들 속성의 레퍼런스를 변화시키지 않는 것이 좋다.
     */
     var template = html`
-      <handeye-calibration-popup .value=${this.value} .confirmCallback=${confirmCallback}> </handeye-calibration-popup>
+      <handeye-calibration-popup .value=${this.value} .host=${this.host} .confirmCallback=${confirmCallback}>
+      </handeye-calibration-popup>
     `
 
     this.popup = openPopup(template, {

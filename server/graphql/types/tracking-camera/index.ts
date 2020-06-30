@@ -8,6 +8,7 @@ export const Query = `
   trackingCameras(filters: [Filter], pagination: Pagination, sortings: [Sorting]): TrackingCameraList
   trackingCamera(name: String!): TrackingCamera
   detectTrackingCameraROIs(name: String!): [ROI]
+  calibrateHandeyeMatrix(name: String!): Matrix
 `
 
 export const Types = [TrackingCamera, TrackingCameraList]

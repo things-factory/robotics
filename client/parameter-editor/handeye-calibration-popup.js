@@ -3,6 +3,8 @@
  */
 
 import { LitElement, html, css } from 'lit-element'
+import gql from 'graphql-tag'
+import { client } from '@things-factory/shell'
 import { ScrollbarStyles } from '@things-factory/styles'
 import { i18next, localize } from '@things-factory/i18n-base'
 
@@ -88,7 +90,8 @@ export class HandEyeCalibrationPopup extends LitElement {
 
   static get properties() {
     return {
-      value: Object
+      value: Object,
+      host: Object
     }
   }
 
@@ -132,6 +135,7 @@ export class HandEyeCalibrationPopup extends LitElement {
           <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
           <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
           <mwc-button label="Compute" icon="exposure"></mwc-button>
+          <mwc-button label="Calibrate" icon="exposure" @click=${this.calibrateHandeyeMatrix.bind(this)}></mwc-button>
 
           <div>
             <h3>handeye matrix</h3>
@@ -151,6 +155,29 @@ export class HandEyeCalibrationPopup extends LitElement {
         <mwc-button @click=${this.onconfirm.bind(this)}>${i18next.t('button.confirm')}</mwc-button>
       </div>
     `
+  }
+
+  async calibrateHandeyeMatrix() {
+    var name = this.host?.name
+
+    const response = await client.query({
+      query: gql`
+        query($name: String!) {
+          calibrateHandeyeMatrix(name: $name) {
+            rows
+            columns
+            data
+          }
+        }
+      `,
+      variables: {
+        name
+      }
+    })
+
+    var handeyeMatrix = response.data.calibrateHandeyeMatrix
+    console.log('calibrated handeye matrix', handeyeMatrix)
+    this.value = handeyeMatrix
   }
 
   onchange(e) {

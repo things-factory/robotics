@@ -3,7 +3,7 @@ module.exports = {
     streamingPort: 3001,
     camera: {
       handEyeCalibrator: {
-        program: ['python', '/Users/hatiolab/Documents/python3-work/vision-client-python/sample_roi_detector.py']
+        program: ['python', '/Users/hatiolab/Documents/python3-work/vision-client-python/sample_handeye_calibrator.py']
       },
       ROIDetector: {
         program: ['python', '/Users/hatiolab/Documents/python3-work/vision-client-python/sample_roi_detector.py']
