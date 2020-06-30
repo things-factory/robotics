@@ -3,6 +3,8 @@
  */
 
 import { LitElement, html, css } from 'lit-element'
+import gql from 'graphql-tag'
+import { client } from '@things-factory/shell'
 import { ScrollbarStyles } from '@things-factory/styles'
 import { i18next, localize } from '@things-factory/i18n-base'
 
@@ -95,7 +97,8 @@ export class CameraCalibrationPopup extends LitElement {
 
   static get properties() {
     return {
-      value: Object
+      value: Object,
+      host: Object
     }
   }
 
@@ -142,6 +145,7 @@ export class CameraCalibrationPopup extends LitElement {
           <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
           <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
           <mwc-button label="Compute" icon="exposure"></mwc-button>
+          <mwc-button label="Calibrate" icon="exposure" @click=${this.calibrateCameraParameter.bind(this)}></mwc-button>
 
           <div>
             <h3>camera matrix</h3>
@@ -178,6 +182,32 @@ export class CameraCalibrationPopup extends LitElement {
         <mwc-button @click=${this.onconfirm.bind(this)}>${i18next.t('button.confirm')}</mwc-button>
       </div>
     `
+  }
+
+  async calibrateCameraParameter() {
+    var name = this.host?.name
+
+    const response = await client.query({
+      query: gql`
+        query($name: String!) {
+          calibrateCameraParameter(name: $name) {
+            distortionCoefficient
+            cameraMatrix {
+              rows
+              columns
+              data
+            }
+          }
+        }
+      `,
+      variables: {
+        name
+      }
+    })
+
+    var cameraParameter = response.data.calibrateCameraParameter
+    console.log('calibrated camera parameter', cameraParameter)
+    this.value = cameraParameter
   }
 
   onchange(e) {

@@ -30,4 +30,9 @@ export const VisionTypes = gql`
     columns: Int
     data: [Float]
   }
+
+  type CameraParameter {
+    distortionCoefficient: [Float]
+    cameraMatrix: Matrix
+  }
 `

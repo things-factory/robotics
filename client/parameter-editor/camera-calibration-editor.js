@@ -125,7 +125,8 @@ export class CameraCalibrationEditor extends ThingsEditorProperty {
       따라서, 가급적 이들 속성의 레퍼런스를 변화시키지 않는 것이 좋다.
     */
     var template = html`
-      <camera-calibration-popup .value=${this.value} .confirmCallback=${confirmCallback}> </camera-calibration-popup>
+      <camera-calibration-popup .value=${this.value} .host=${this.host} .confirmCallback=${confirmCallback}>
+      </camera-calibration-popup>
     `
 
     this.popup = openPopup(template, {

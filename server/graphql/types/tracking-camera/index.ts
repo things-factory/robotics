@@ -9,6 +9,7 @@ export const Query = `
   trackingCamera(name: String!): TrackingCamera
   detectTrackingCameraROIs(name: String!): [ROI]
   calibrateHandeyeMatrix(name: String!): Matrix
+  calibrateCameraParameter(name: String!): CameraParameter
 `
 
 export const Types = [TrackingCamera, TrackingCameraList]
