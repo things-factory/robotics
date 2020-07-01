@@ -2,7 +2,17 @@ import { TrackingEvent, TrackableObject, Pose, ROI, TRACKING_EVENT_TYPES } from 
 
 const isSamePose = (pose1, pose2) => {
   /* TODO 미세한 변화는 움직이지 않은 것으로 한다. */
-  return true
+  var { x: x1, y: y1, z: z1, u: u1, v: v1, w: w1 } = pose1
+  var { x: x2, y: y2, z: z2, u: u2, v: v2, w: w2 } = pose2
+
+  return (
+    Math.abs(x1 - x2) < 1 &&
+    Math.abs(y1 - y2) < 1 &&
+    Math.abs(z1 - z2) < 1 &&
+    Math.abs(u1 - u2) < 1 &&
+    Math.abs(v1 - v2) < 1 &&
+    Math.abs(w1 - w2) < 1
+  )
 }
 
 export class TrackableObjectImpl implements TrackableObject {
