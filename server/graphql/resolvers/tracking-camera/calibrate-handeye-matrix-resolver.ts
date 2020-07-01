@@ -18,8 +18,6 @@ export const calibrateHandeyeMatrixResolver = {
 
     var calibrationMatrix = await spawn(executable, params)
 
-    console.log('\n\n\n\n\n\n\n\ncalibration matrix', calibrationMatrix.toString(), executable, params)
-
     return JSON.parse(calibrationMatrix.toString())
   }
 }

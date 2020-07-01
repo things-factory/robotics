@@ -113,7 +113,7 @@ export interface TrackingStorage {
 export interface TrackingEngine {
   trackingStorage: TrackingStorage
 
-  start()
+  start(options: any)
   stop()
   evaluate()
 }

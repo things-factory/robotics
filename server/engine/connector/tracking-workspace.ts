@@ -10,8 +10,8 @@ export class TrackingWorkspace implements Connector {
   }
 
   async connect(connection) {
-    // var { params } = connection
-    var engine = new TrackingEngineImpl()
+    var { name } = connection
+    var engine = new TrackingEngineImpl(name)
 
     Connections.addConnection(connection.name, {
       discriminator: VISION_OBJECT_TYPES.WORKSPACE,
@@ -19,7 +19,7 @@ export class TrackingWorkspace implements Connector {
       engine
     })
 
-    engine.start()
+    engine.start({ logger: Connections.logger })
 
     Connections.logger.info(`tracking-workspace connection(${connection.name}:${connection.endpoint}) is connected`)
   }

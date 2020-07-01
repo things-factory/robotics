@@ -11,9 +11,9 @@ export class MarkerTrackingWorkspace implements Connector {
   }
 
   async connect(connection) {
-    var { params } = connection
+    var { name } = connection
 
-    var engine = new TrackingEngineImpl()
+    var engine = new TrackingEngineImpl(name)
     engine.trackingStorage = new ROIStateStorageImpl()
     engine.duration = 1000
 

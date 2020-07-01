@@ -18,8 +18,6 @@ export const calibrateCameraParameterResolver = {
 
     var cameraParameter = await spawn(executable, params)
 
-    console.log('\n\n\n\n\n\n\n\ncamera parameter', cameraParameter.toString(), executable, params)
-
     return JSON.parse(cameraParameter.toString())
   }
 }
