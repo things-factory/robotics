@@ -1,6 +1,23 @@
 import { TrackingEvent, TrackableObject, Pose, ROI, TRACKING_EVENT_TYPES } from './vision-types'
 
+const EMPTY_POSE = {
+  x: NaN,
+  y: NaN,
+  z: NaN,
+  u: NaN,
+  v: NaN,
+  w: NaN
+}
+
 const isSamePose = (pose1, pose2) => {
+  if ((!pose1 || pose1 === EMPTY_POSE) && (!pose2 || pose2 === EMPTY_POSE)) {
+    return true
+  }
+
+  if (!pose1 || pose1 === EMPTY_POSE || !pose2 || pose2 === EMPTY_POSE) {
+    return false
+  }
+
   /* TODO 미세한 변화는 움직이지 않은 것으로 한다. */
   var { x: x1, y: y1, z: z1, u: u1, v: v1, w: w1 } = pose1
   var { x: x2, y: y2, z: z2, u: u2, v: v2, w: w2 } = pose2
@@ -34,6 +51,14 @@ export class TrackableObjectImpl implements TrackableObject {
   }
 
   update(roi, pose) {
+    if (!roi) {
+      roi = ''
+    }
+
+    if (!pose) {
+      pose = EMPTY_POSE
+    }
+
     var from = {
       roi: this.roi,
       pose: this.pose,
@@ -66,8 +91,8 @@ export class TrackableObjectImpl implements TrackableObject {
         to
       })
 
-    this.roi = roi
-    this.pose = pose
+    this.roi = roi || ''
+    this.pose = pose || EMPTY_POSE
     this.retention = moving ? 0 : this.retention + 1
     this.updatedAt = Date.now()
     if (moving) {

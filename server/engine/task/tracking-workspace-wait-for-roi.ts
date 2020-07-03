@@ -2,6 +2,14 @@ import { sleep } from '@things-factory/utils'
 import { Connections, TaskRegistry } from '@things-factory/integration-base'
 import { getTrackingWorkspace } from './get-tracking-workspace'
 
+function getROIState(roi) {
+  var workspace = getTrackingWorkspace()
+  var { engine } = workspace
+  var { trackingStorage } = engine
+
+  return trackingStorage.getROIState(roi).filter(obj => obj.retention > 0)
+}
+
 async function TrackingWorkspaceWaitForROI(step, { root, data }) {
   var {
     name,
@@ -14,21 +22,17 @@ async function TrackingWorkspaceWaitForROI(step, { root, data }) {
   //   throw new Error(`no connection : ${connection}`)
   // }
 
-  var workspace = getTrackingWorkspace()
-  var { engine } = workspace
-  var { trackingStorage } = engine
-
   var lastObjects = data[name]
 
   if (!lastObjects) {
-    lastObjects = trackingStorage.getROIState(roi).filter(obj => obj.retention > 0)
+    lastObjects = getROIState(roi)
     await sleep(1000)
   }
 
   while (true) {
     let state = root.getState()
     if (state == 1 /* STARTED */) {
-      var objects = trackingStorage.getROIState(roi).filter(obj => obj.retention > 0)
+      var objects = getROIState(roi)
 
       var changed =
         lastObjects.length !== objects.length ||
