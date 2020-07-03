@@ -10,26 +10,25 @@ async function TrackableObjectWaitForMove(step, { root, data }) {
     throw new Error(`no connection : ${connection}`)
   }
 
+  var { endpoint: objectId } = object
   var workspace = getTrackingWorkspace()
   var { engine } = workspace
   var { trackingStorage } = engine
 
-  var { name } = object
-
   var lastStatus = data[stepName]
 
   if (!lastStatus) {
-    lastStatus = trackingStorage.getObjectState(name) || {}
+    lastStatus = trackingStorage.getObjectState(objectId) || {}
     await sleep(1000)
   }
 
-  var { pose: oldPose, roi: oldROI } = lastStatus
+  var { movedAt: oldMovedAt } = lastStatus
 
   while (true) {
     let state = root.getState()
     if (state == 1 /* STARTED */) {
-      var { pose: newPose, roi: newROI } = trackingStorage.getObjectState(name) || {}
-      if (oldPose !== newPose || oldROI !== newROI) {
+      var { retention: newRetention, movedAt: newMovedAt } = trackingStorage.getObjectState(objectId) || {}
+      if (newMovedAt !== oldMovedAt && newRetention > 0) {
         break
       }
       await sleep(1000)
@@ -41,7 +40,7 @@ async function TrackableObjectWaitForMove(step, { root, data }) {
   }
 
   return {
-    data: trackingStorage.getObjectState(name)
+    data: trackingStorage.getObjectState(objectId)
   }
 }
 

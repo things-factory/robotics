@@ -22,6 +22,8 @@ export class TrackableObjectImpl implements TrackableObject {
   id: string | number
   roi: ROI
   pose: Pose
+  updatedAt: number
+  movedAt: number
   /**
    * ROI내 특정 위치에 체류한 시간
    */
@@ -67,6 +69,10 @@ export class TrackableObjectImpl implements TrackableObject {
     this.roi = roi
     this.pose = pose
     this.retention = moving ? 0 : this.retention + 1
+    this.updatedAt = Date.now()
+    if (moving) {
+      this.movedAt = this.updatedAt
+    }
 
     movein &&
       events.push({
