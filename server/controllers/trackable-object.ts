@@ -23,12 +23,12 @@ const isSamePose = (pose1, pose2) => {
   var { x: x2, y: y2, z: z2, u: u2, v: v2, w: w2 } = pose2
 
   return (
-    Math.abs(x1 - x2) < 1 &&
-    Math.abs(y1 - y2) < 1 &&
-    Math.abs(z1 - z2) < 1 &&
-    Math.abs(u1 - u2) < 1 &&
-    Math.abs(v1 - v2) < 1 &&
-    Math.abs(w1 - w2) < 1
+    Math.abs(x1 - x2) < 0.002 &&
+    Math.abs(y1 - y2) < 0.002 &&
+    Math.abs(z1 - z2) < 0.002 &&
+    Math.abs(u1 - u2) < 5 &&
+    Math.abs(v1 - v2) < 5 &&
+    Math.abs(w1 - w2) < 5
   )
 }
 
