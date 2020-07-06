@@ -32,9 +32,14 @@ async function TrackableObjectWaitForMove(step, { root, data }) {
   while (true) {
     let state = root.getState()
     if (state == 1 /* STARTED */) {
-      var { retention: newRetention, movedAt: newMovedAt } = getObjectState(objectId)
+      var { pose, retention: newRetention, movedAt: newMovedAt } = getObjectState(objectId)
 
-      if (newMovedAt !== oldMovedAt && newRetention > 0) {
+      if (
+        newMovedAt !== oldMovedAt &&
+        newRetention > 0 &&
+        pose &&
+        !isNaN(pose.x + pose.y + pose.z + pose.u + pose.v + pose.w)
+      ) {
         break
       }
       await sleep(1000)
