@@ -1,3 +1,4 @@
+import { sleep } from '@things-factory/utils'
 import { Connections, Connector } from '@things-factory/integration-base'
 import { VISION_OBJECT_TYPES } from '../../controllers/vision-types'
 import { TrackingEngineImpl } from '../../controllers/tracking-engine'
@@ -18,6 +19,9 @@ export class TrackingWorkspace implements Connector {
       ...connection,
       engine
     })
+
+    /* IMPROVE-ME 최초 시작시점에 다른 커넥션들이 완료될 시간을 1초 정도 벌어주자. */
+    await sleep(1000)
 
     engine.start({ logger: Connections.logger })
 
