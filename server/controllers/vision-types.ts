@@ -74,7 +74,7 @@ export interface TrackableObject {
    */
   retention: number
 
-  update(roi, pose)
+  update(roi, pose, threshold)
 }
 
 /**
@@ -117,6 +117,8 @@ export interface TrackingEngine {
   stop()
   evaluate()
 }
+
+export const DEFAULT_POSE_THRESHOLD = { x: 0.002, y: 0.002, z: 0.002, u: 5, v: 5, w: 5 }
 
 // TrackableObject Event
 

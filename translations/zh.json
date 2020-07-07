@@ -11,6 +11,7 @@
   "label.fake": "fake video",
   "label.poi-offset": "POI offset",
   "label.marker-offset": "marker offset",
+  "label.pose-threshold": "pose threshold",
   "label.tool-offset": "tool offset",
   "label.roi": "ROI",
   "label.rois": "ROI",

@@ -8,7 +8,7 @@ export const updateTrackingWorkspaceStatusResolver = {
       throw Error(`Tracking Workspace '${name}' Not Found`)
     }
 
-    var { engine } = workspace
+    var { engine, params } = workspace
     var storage = engine.trackingStorage
     var { objectStatus } = status
 
@@ -17,7 +17,7 @@ export const updateTrackingWorkspaceStatusResolver = {
         id,
         state: { roi, pose }
       } = state
-      storage.updateObjectState(id, roi, pose)
+      storage.updateObjectState(id, roi, pose, params?.poseThreshold)
     })
 
     return true

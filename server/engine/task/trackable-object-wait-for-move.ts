@@ -7,9 +7,7 @@ function getObjectState(objectId) {
   var { engine } = workspace
   var { trackingStorage } = engine
 
-  return {
-    ...(trackingStorage.getObjectState(objectId) || {})
-  }
+  return trackingStorage.getObjectState(objectId)
 }
 
 function isValidPose(pose) {

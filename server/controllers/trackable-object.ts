@@ -9,7 +9,7 @@ const EMPTY_POSE = {
   w: NaN
 }
 
-const isSamePose = (pose1, pose2) => {
+const isSamePose = (pose1, pose2, threshold) => {
   if ((!pose1 || pose1 === EMPTY_POSE) && (!pose2 || pose2 === EMPTY_POSE)) {
     return true
   }
@@ -21,14 +21,15 @@ const isSamePose = (pose1, pose2) => {
   /* TODO 미세한 변화는 움직이지 않은 것으로 한다. */
   var { x: x1, y: y1, z: z1, u: u1, v: v1, w: w1 } = pose1
   var { x: x2, y: y2, z: z2, u: u2, v: v2, w: w2 } = pose2
+  var { x: tx, y: ty, z: tz, u: tu, v: tv, w: tw } = threshold
 
   return (
-    Math.abs(x1 - x2) < 0.002 &&
-    Math.abs(y1 - y2) < 0.002 &&
-    Math.abs(z1 - z2) < 0.002 &&
-    Math.abs(u1 - u2) < 5 &&
-    Math.abs(v1 - v2) < 5 &&
-    Math.abs(w1 - w2) < 5
+    Math.abs(x1 - x2) < tx &&
+    Math.abs(y1 - y2) < ty &&
+    Math.abs(z1 - z2) < tz &&
+    Math.abs(u1 - u2) < tu &&
+    Math.abs(v1 - v2) < tv &&
+    Math.abs(w1 - w2) < tw
   )
 }
 
@@ -50,7 +51,7 @@ export class TrackableObjectImpl implements TrackableObject {
     this.id = id
   }
 
-  update(roi, pose) {
+  update(roi, pose, threshold) {
     if (!roi) {
       roi = ''
     }
@@ -79,7 +80,7 @@ export class TrackableObjectImpl implements TrackableObject {
       movein = !!roi
       moveout == !!this.roi
     } else {
-      moving = !isSamePose(this.pose, pose)
+      moving = !isSamePose(this.pose, pose, threshold)
     }
 
     var events: TrackingEvent[] = []

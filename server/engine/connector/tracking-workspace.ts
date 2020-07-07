@@ -22,7 +22,6 @@ export class TrackingWorkspace implements Connector {
 
     /* IMPROVE-ME 최초 시작시점에 다른 커넥션들이 완료될 시간을 1초 정도 벌어주자. */
     await sleep(1000)
-
     engine.start({ logger: Connections.logger })
 
     Connections.logger.info(`tracking-workspace connection(${connection.name}:${connection.endpoint}) is connected`)
@@ -36,7 +35,13 @@ export class TrackingWorkspace implements Connector {
   }
 
   get parameterSpec() {
-    return []
+    return [
+      {
+        type: 'offset-pose',
+        name: 'poseThreshold',
+        label: 'pose-threshold'
+      }
+    ]
   }
 
   get taskPrefixes() {

@@ -38,7 +38,7 @@ export class TrackingEngineImpl implements TrackingEngine {
     })
 
     this.childProcess.stderr.on('data', function (data) {
-      logger.info('stderr: ' + data)
+      logger.error('stderr: ' + data)
     })
 
     this.childProcess.on('exit', function (code) {
