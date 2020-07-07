@@ -7,7 +7,9 @@ function getObjectState(objectId) {
   var { engine } = workspace
   var { trackingStorage } = engine
 
-  return trackingStorage.getObjectState(objectId) || {}
+  return {
+    ...(trackingStorage.getObjectState(objectId) || {})
+  }
 }
 
 function isValidPose(pose) {
@@ -20,7 +22,7 @@ function isValidPose(pose) {
   )
 }
 
-async function TrackableObjectWaitForMove(step, { root, data }) {
+async function TrackableObjectWaitForMove(step, { root, data, logger }) {
   var { name: stepName, connection, params } = step
   var { duration = 1000 } = params || {}
 
@@ -43,9 +45,12 @@ async function TrackableObjectWaitForMove(step, { root, data }) {
   while (true) {
     let state = root.getState()
     if (state == 1 /* STARTED */) {
-      var { pose, retention: newRetention, movedAt: newMovedAt } = getObjectState(objectId)
+      let recentStatus = getObjectState(objectId)
+      let { pose, retention: newRetention, movedAt: newMovedAt } = recentStatus
 
       if (newMovedAt !== oldMovedAt && newRetention > 0 && isValidPose(pose)) {
+        lastStatus = recentStatus
+
         break
       }
       await sleep(Number(duration))
@@ -57,7 +62,7 @@ async function TrackableObjectWaitForMove(step, { root, data }) {
   }
 
   return {
-    data: getObjectState(objectId)
+    data: lastStatus
   }
 }
 

@@ -26,7 +26,6 @@ async function TrackingWorkspaceWaitForROI(step, { root, data }) {
 
   if (!lastObjects) {
     lastObjects = getROIState(roi)
-    await sleep(1000)
   }
 
   while (true) {
