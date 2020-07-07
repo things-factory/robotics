@@ -21,7 +21,8 @@ function isValidPose(pose) {
 }
 
 async function TrackableObjectWaitForMove(step, { root, data }) {
-  var { name: stepName, connection } = step
+  var { name: stepName, connection, params } = step
+  var { duration = 1000 } = params || {}
 
   var object = Connections.getConnection(connection) || {}
   if (!object) {
@@ -34,7 +35,7 @@ async function TrackableObjectWaitForMove(step, { root, data }) {
 
   if (!lastStatus) {
     lastStatus = getObjectState(objectId)
-    await sleep(1000)
+    await sleep(Number(duration))
   }
 
   var { movedAt: oldMovedAt } = lastStatus
@@ -47,9 +48,9 @@ async function TrackableObjectWaitForMove(step, { root, data }) {
       if (newMovedAt !== oldMovedAt && newRetention > 0 && isValidPose(pose)) {
         break
       }
-      await sleep(1000)
+      await sleep(Number(duration))
     } else if (state == 2 /* PAUSED */) {
-      await sleep(1000)
+      await sleep(Number(duration))
     } else {
       throw new Error('scenario stopped unexpectedly')
     }
@@ -60,6 +61,13 @@ async function TrackableObjectWaitForMove(step, { root, data }) {
   }
 }
 
-TrackableObjectWaitForMove.parameterSpec = []
+TrackableObjectWaitForMove.parameterSpec = [
+  {
+    type: 'number',
+    name: 'duration',
+    label: 'duration',
+    placeHolder: 'milli-seconds'
+  }
+]
 
 TaskRegistry.registerTaskHandler('trackable-object-wait-for-move', TrackableObjectWaitForMove)
