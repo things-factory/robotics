@@ -71,7 +71,7 @@ TrackableObjectWaitForMove.parameterSpec = [
     type: 'number',
     name: 'duration',
     label: 'duration',
-    placeHolder: 'milli-seconds'
+    placeholder: 'milli-seconds'
   }
 ]
 
