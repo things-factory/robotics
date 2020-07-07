@@ -10,6 +10,16 @@ function getObjectState(objectId) {
   return trackingStorage.getObjectState(objectId) || {}
 }
 
+function isValidPose(pose) {
+  return (
+    !!pose &&
+    !['x', 'y', 'z', 'u', 'v', 'w'].find(key => {
+      var val = pose[key]
+      return isNaN(val) || val === null || val === ''
+    })
+  )
+}
+
 async function TrackableObjectWaitForMove(step, { root, data }) {
   var { name: stepName, connection } = step
 
@@ -34,12 +44,7 @@ async function TrackableObjectWaitForMove(step, { root, data }) {
     if (state == 1 /* STARTED */) {
       var { pose, retention: newRetention, movedAt: newMovedAt } = getObjectState(objectId)
 
-      if (
-        newMovedAt !== oldMovedAt &&
-        newRetention > 0 &&
-        pose &&
-        !isNaN(pose.x + pose.y + pose.z + pose.u + pose.v + pose.w)
-      ) {
+      if (newMovedAt !== oldMovedAt && newRetention > 0 && isValidPose(pose)) {
         break
       }
       await sleep(1000)
