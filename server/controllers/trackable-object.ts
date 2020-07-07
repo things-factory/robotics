@@ -24,12 +24,12 @@ const isSamePose = (pose1, pose2, threshold) => {
   var { x: tx, y: ty, z: tz, u: tu, v: tv, w: tw } = threshold
 
   return (
-    Math.abs(x1 - x2) < tx &&
-    Math.abs(y1 - y2) < ty &&
-    Math.abs(z1 - z2) < tz &&
-    Math.abs(u1 - u2) < tu &&
-    Math.abs(v1 - v2) < tv &&
-    Math.abs(w1 - w2) < tw
+    Math.abs(x1 - x2) < Number(tx) &&
+    Math.abs(y1 - y2) < Number(ty) &&
+    Math.abs(z1 - z2) < Number(tz) &&
+    Math.abs(u1 - u2) < Number(tu) &&
+    Math.abs(v1 - v2) < Number(tv) &&
+    Math.abs(w1 - w2) < Number(tw)
   )
 }
 
