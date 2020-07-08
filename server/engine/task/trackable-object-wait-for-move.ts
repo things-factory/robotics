@@ -4,6 +4,10 @@ import { getTrackingWorkspace } from './get-tracking-workspace'
 
 function getObjectState(objectId) {
   var workspace = getTrackingWorkspace()
+  if (!workspace) {
+    /* TODO workspace가 없는 경우와, object가 detect되지 않은 상태에 대한 구분처리가 필요하다. */
+    return {}
+  }
   var { engine } = workspace
   var { trackingStorage } = engine
 
@@ -35,7 +39,6 @@ async function TrackableObjectWaitForMove(step, { root, data, logger }) {
 
   if (!lastStatus) {
     lastStatus = getObjectState(objectId)
-    await sleep(Number(duration))
   }
 
   var { movedAt: oldMovedAt } = lastStatus
@@ -51,6 +54,7 @@ async function TrackableObjectWaitForMove(step, { root, data, logger }) {
 
         break
       }
+
       await sleep(Number(duration))
     } else if (state == 2 /* PAUSED */) {
       await sleep(Number(duration))

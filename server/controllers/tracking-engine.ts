@@ -6,6 +6,7 @@ import kill from 'tree-kill'
 
 const visionConfig = config.get('vision', {})
 const program = visionConfig.objectTracker?.program
+const NOOP = () => {}
 
 export class TrackingEngineImpl implements TrackingEngine {
   trackingStorage: TrackingStorage = new ROIStateStorageImpl()
@@ -24,7 +25,7 @@ export class TrackingEngineImpl implements TrackingEngine {
   }
 
   start(options) {
-    var { logger } = options
+    var { onstdout, onstderr, onexit } = options
     var { trackables: trackables, rois: rois } = this.fetchSensors()
     this.trackables = trackables
     this.rois = rois
@@ -33,17 +34,9 @@ export class TrackingEngineImpl implements TrackingEngine {
     var params = [...program.slice(1), this.name]
 
     this.childProcess = spawn(executable, params)
-    this.childProcess.stdout.on('data', function (data) {
-      logger.info('stdout: ' + data)
-    })
-
-    this.childProcess.stderr.on('data', function (data) {
-      logger.error('stderr: ' + data)
-    })
-
-    this.childProcess.on('exit', function (code) {
-      logger.info('exit: ' + code)
-    })
+    this.childProcess.stdout.on('data', onstdout || NOOP)
+    this.childProcess.stderr.on('data', onstderr || NOOP)
+    this.childProcess.on('exit', onexit || NOOP)
 
     // this._interval = setInterval(this.evaluate.bind(this), this.duration)
   }

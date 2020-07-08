@@ -22,7 +22,18 @@ export class TrackingWorkspace implements Connector {
 
     /* IMPROVE-ME 최초 시작시점에 다른 커넥션들이 완료될 시간을 1초 정도 벌어주자. */
     await sleep(1000)
-    engine.start({ logger: Connections.logger })
+    engine.start({
+      onstdout: stdout => {
+        Connections.logger.info(stdout)
+      },
+      onstderr: stderr => {
+        Connections.logger.error(stderr)
+      },
+      onexit: exit => {
+        /* 비정상적 종료시에는 커넥션을 직접 끊어준다. */
+        Connections.getConnection(name) && this.disconnect(name)
+      }
+    })
 
     Connections.logger.info(`tracking-workspace connection(${connection.name}:${connection.endpoint}) is connected`)
   }

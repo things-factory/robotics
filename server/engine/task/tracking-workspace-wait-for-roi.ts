@@ -4,6 +4,11 @@ import { getTrackingWorkspace } from './get-tracking-workspace'
 
 function getROIState(roi) {
   var workspace = getTrackingWorkspace()
+  if (!workspace) {
+    /* TODO workspace가 없는 경우와, ROI가 빈 경우에 대한 구분처리가 필요하다. */
+    return []
+  }
+
   var { engine } = workspace
   var { trackingStorage } = engine
 
