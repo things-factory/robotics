@@ -5,7 +5,7 @@ import { TrackingEngineImpl } from '../../controllers/tracking-engine'
 
 export class TrackingWorkspace implements Connector {
   async ready(connectionConfigs) {
-    await Promise.all(connectionConfigs.map(this.connect))
+    await Promise.all(connectionConfigs.map(this.connect.bind(this)))
 
     Connections.logger.info('tracking-workspace connections are ready')
   }
@@ -22,6 +22,7 @@ export class TrackingWorkspace implements Connector {
 
     /* IMPROVE-ME 최초 시작시점에 다른 커넥션들이 완료될 시간을 1초 정도 벌어주자. */
     await sleep(1000)
+
     engine.start({
       onstdout: stdout => {
         Connections.logger.info(stdout)
@@ -29,7 +30,7 @@ export class TrackingWorkspace implements Connector {
       onstderr: stderr => {
         Connections.logger.error(stderr)
       },
-      onexit: exit => {
+      onexit: exitcode => {
         /* 비정상적 종료시에는 커넥션을 직접 끊어준다. */
         Connections.getConnection(name) && this.disconnect(name)
       }
