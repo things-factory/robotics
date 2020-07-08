@@ -3,7 +3,7 @@ import { VISION_OBJECT_TYPES } from '../../controllers/vision-types'
 
 export class MarkedObject implements Connector {
   async ready(connectionConfigs) {
-    await Promise.all(connectionConfigs.map(this.connect))
+    await Promise.all(connectionConfigs.map(this.connect.bind(this)))
 
     Connections.logger.info('marked-object connections are ready')
   }
