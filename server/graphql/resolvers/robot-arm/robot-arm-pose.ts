@@ -6,7 +6,7 @@ export const robotArmPoseResolver = {
     var connection = Connections.getConnection(name)
 
     if (connection && connection.discriminator == VISION_OBJECT_TYPES.ROBOT_ARM) {
-      return connection.pose
+      return await connection.getTaskPos()
     } else {
       throw Error(`RobotArm '${name}' Not Found`)
     }
