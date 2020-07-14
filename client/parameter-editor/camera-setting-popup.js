@@ -136,7 +136,7 @@ export class CameraSettingPopup extends LitElement {
 
         [stream] {
           flex: 2;
-          padding: 10px;
+          padding: 20px;
           position: relative;
         }
 
@@ -162,9 +162,9 @@ export class CameraSettingPopup extends LitElement {
           display: block;
           min-height: 230px;
           position: absolute;
-          top: 10px;
-          left: 10px;
-          width: calc(100% - 20px);
+          top: 20px;
+          left: 20px;
+          width: calc(100% - 40px);
         }
       `
     ]
