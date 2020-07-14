@@ -8,7 +8,7 @@ import { client } from '@things-factory/shell'
 import { ScrollbarStyles } from '@things-factory/styles'
 import { i18next, localize } from '@things-factory/i18n-base'
 
-import { CameraClient } from '../camera/camera-client'
+// import { CameraClient } from '../camera/camera-client'
 
 import '@material/mwc-icon'
 import '@material/mwc-button'
@@ -99,31 +99,31 @@ export class HandEyeCalibrationPopup extends LitElement {
     this.webcamClient.disconnect()
   }
 
-  firstUpdated() {
-    var device = '0'
-    var canvas = this.renderRoot.querySelector('canvas')
-    var context = canvas.getContext('2d')
-    var count = 0
+  // firstUpdated() {
+  //   var device = '0'
+  //   var canvas = this.renderRoot.querySelector('canvas')
+  //   var context = canvas.getContext('2d')
+  //   var count = 0
 
-    this.webcamClient = new CameraClient(3001, 'webcam', device, {}, data => {
-      if (count++ == 0) {
-        var { width, height } = JSON.parse(data)
-        canvas.width = width
-        canvas.height = height
+  //   this.webcamClient = new CameraClient(3001, 'webcam', device, {}, data => {
+  //     if (count++ == 0) {
+  //       var { width, height } = JSON.parse(data)
+  //       canvas.width = width
+  //       canvas.height = height
 
-        return
-      }
+  //       return
+  //     }
 
-      var image = new Image()
-      image.src = 'data:image/jpeg;base64,' + data
-      image.onload = () => {
-        context.drawImage(image, 0, 0)
-        URL.revokeObjectURL(data)
-      }
-    })
+  //     var image = new Image()
+  //     image.src = 'data:image/jpeg;base64,' + data
+  //     image.onload = () => {
+  //       context.drawImage(image, 0, 0)
+  //       URL.revokeObjectURL(data)
+  //     }
+  //   })
 
-    this.webcamClient.connect()
-  }
+  //   this.webcamClient.connect()
+  // }
 
   render() {
     var { rows = 4, columns = 4, data = [...ZEROS] } = this.value || {}

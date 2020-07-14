@@ -6,12 +6,83 @@ import { LitElement, html, css } from 'lit-element'
 import { ScrollbarStyles } from '@things-factory/styles'
 import { i18next, localize } from '@things-factory/i18n-base'
 
-import { RealsenseClient } from '../camera/realsense/realsense-client'
-import { RealsenseColorStream } from '../camera/realsense/realsense-color-stream'
-import { RealsenseDepthStream } from '../camera/realsense/realsense-depth-stream'
-import { RealsenseInfraredStream } from '../camera/realsense/realsense-infrared-stream'
-
-import { OPTIONS } from '../camera/realsense/realsense-options'
+export const OPTIONS = [
+  {
+    option: 'exposure',
+    value: 8500,
+    range: { minValue: 1, maxValue: 165000, step: 1, defaultValue: 8500 }
+  },
+  {
+    option: 'gain',
+    value: 16,
+    range: { minValue: 16, maxValue: 248, step: 1, defaultValue: 16 }
+  },
+  {
+    option: 'enable-auto-exposure',
+    value: 1
+  },
+  {
+    option: 'visual-preset',
+    value: 0,
+    range: { minValue: 0, maxValue: 6, step: 1, defaultValue: 0 }
+  },
+  {
+    option: 'laser-power',
+    value: 150,
+    range: { minValue: 0, maxValue: 360, step: 30, defaultValue: 150 }
+  },
+  {
+    option: 'emitter-enabled',
+    value: 1,
+    values: [0, 1, 2]
+  },
+  {
+    option: 'frames-queue-size',
+    value: 16,
+    range: { minValue: 0, maxValue: 32, step: 1, defaultValue: 16 }
+  },
+  {
+    option: 'error-polling-enabled',
+    value: 1
+  },
+  {
+    option: 'output-trigger-enabled',
+    value: 0
+  },
+  {
+    option: 'depth-units',
+    value: 0.0010000000474974513,
+    range: {
+      minValue: 9.999999974752427e-7,
+      maxValue: 0.009999999776482582,
+      step: 9.999999974752427e-7,
+      defaultValue: 0.0010000000474974513
+    }
+  },
+  {
+    option: 'stereo-baseline',
+    value: 50.123226165771484,
+    range: {
+      minValue: 50.123226165771484,
+      maxValue: 50.123226165771484,
+      step: 0,
+      defaultValue: 50.123226165771484
+    }
+  },
+  {
+    option: 'inter-cam-sync-mode',
+    value: 0,
+    values: [0, 1, 2]
+  },
+  {
+    option: 'emitter-on-off',
+    value: 0
+  },
+  {
+    option: 'global-time-enabled',
+    value: 1
+  }
+]
 
 import '@material/mwc-icon'
 import '@material/mwc-slider'
@@ -107,7 +178,7 @@ export class RealsenseCameraSettingPopup extends LitElement {
       <content>
         <div settings>
           <label>sensor</label>
-          <select name="sensor" @change=${this.onStreamChange.bind(this)}>
+          <select name="sensor">
             <option value="0">RGB Camera</option>
             <option value="1">Stereo Camera</option>
           </select>
@@ -115,7 +186,7 @@ export class RealsenseCameraSettingPopup extends LitElement {
           ${sensor == '0'
             ? html`
                 <label>stream</label>
-                <select name="stream" @change=${this.onStreamChange.bind(this)}>
+                <select name="stream">
                   <option value="" selected></option>
                   <option>color</option>
                 </select>
@@ -155,7 +226,7 @@ export class RealsenseCameraSettingPopup extends LitElement {
               `
             : html`
                 <label>stream</label>
-                <select name="stream" @change=${this.onStreamChange.bind(this)}>
+                <select name="stream">
                   <option value="" selected></option>
                   <option>depth</option>
                   <option>infrared-1</option>
