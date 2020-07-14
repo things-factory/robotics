@@ -73,12 +73,18 @@ describe('Transform', function () {
   after(function () {
   })
 
-  it('should have connected devices', function () {
+  it('should have an expected result ', function () {
     var base = [0.4462285439792695, -0.07414228467059539, 0.05819768211787435, -3.8335642824988603, 190.42351237184792, -18.225453230706083]
     var offset = [0,0,-0.3,0,0,0]
     var result = transform(base, offset)
-    console.log(result)
+    var finalResult = false
 
-    expect(result[0]).to.equals(10)
+    var expected = [0.4913939945495271, -0.11013105498887751, 0.3525866942867451, 176.16643571750112, -10.423512371847911, 161.77454676929392]
+
+    // TODO: why not to use 'equals'? 
+    finalResult = (JSON.stringify(result) == JSON.stringify(expected))
+    console.log(finalResult)
+
+    expect(finalResult).to.be.true
   })
 })
