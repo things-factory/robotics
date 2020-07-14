@@ -2,25 +2,73 @@ import { Connections, TaskRegistry } from '@things-factory/integration-base'
 import { sleep, access } from '@things-factory/utils'
 import math3d from 'math3d'
 
+function convertXYZABCtoHM(xyzabc) {
+  var H = math3d.Matrix4x4
+  var [x,y,z,a,b,c] = xyzabc
+  a = a*Math.PI/180
+  b = b*Math.PI/180
+  c = c*Math.PI/180
+  var ca = Math.cos(a)
+  var sa = Math.sin(a)
+  var cb = Math.cos(b)
+  var sb = Math.sin(b)
+  var cc = Math.cos(c)
+  var sc = Math.sin(c)    
+  H = new math3d.Matrix4x4([cb*cc, cc*sa*sb - ca*sc, sa*sc + ca*cc*sb, x, cb*sc, ca*cc + sa*sb*sc, ca*sb*sc - cc*sa, y, -sb, cb*sa, ca*cb, z, 0,0,0,1])
+  return H
+}
+
+function convertHMtoXYZABC(hm) {
+  var H = math3d.Matrix4x4
+  var a = 0.0
+  var b = 0.0
+  var c = 0.0
+
+  H = hm
+  var x = H.m14
+  var y = H.m24
+  var z = H.m34
+  if (H.m31 > (1.0 - 1e-10)) {
+    b = -Math.PI/2
+    a = 0
+    c = Math.atan2(-H.m23, H.m22)
+  }
+  else if (H.m31 < -1.0 + 1e-10) {
+    b = Math.PI/2
+    a = 0
+    c = Math.atan2(H.m23, H.m22)
+  }
+  else {
+    b = Math.atan2(-H.m31, Math.sqrt(H.m11*H.m11 + H.m21*H.m21))
+    c = Math.atan2(H.m21, H.m11)
+    a = Math.atan2(H.m32, H.m33)    
+  }
+
+  return [x, y, z, a*180/Math.PI, b*180/Math.PI, c*180/Math.PI]
+}
+
 function transform(base, offset) {
   var Vector3 = math3d.Vector3
   var Quaternion = math3d.Quaternion
   var Transform = math3d.Transform
+  var hmTcp2Base = math3d.Matrix4x4
+  var hmToolOffset = math3d.Matrix4x4
+  var hmRepos = math3d.Matrix4x4
+  var xyzuvw = [0.0, 0.0, 0.0, 0.0, 0.0]
+
+  console.log(offset)
+  console.error(offset)
 
   var [bx, by, bz, bu, bv, bw] = base
-  var [ox, oy, oz, ou, ov, ow] = offset
+  var {x:ox, y:oy, z:oz, u:ou, v:ov, w:ow} = offset
+  
 
-  var t1 = new Transform(new Vector3(bx, by, bz), Quaternion.Euler(bu, bv, bw))
-  var t2 = new Transform()
+  hmTcp2Base = convertXYZABCtoHM(base)
+  hmToolOffset = convertXYZABCtoHM(offset)
+  hmRepos = hmTcp2Base.mul(hmToolOffset)
+  xyzuvw = convertHMtoXYZABC(hmRepos)
 
-  t2.parent = t1
-  t2.translate(new Vector3(ox, oy, oz))
-  t2.rotate(ou, ov, ow, Transform.Space.World)
-
-  var { x, y, z } = t2.position
-  var { u, v, w } = t2.rotation
-
-  return [x, y, z, u, v, w]
+  return xyzuvw
 }
 
 export async function waitForState(client, checkFn) {
@@ -37,11 +85,10 @@ async function IndyDcpMoveToPose(step, { logger, data }) {
     params: { type, accessor, viaWaypoint }
   } = step
 
-  var { client } = Connections.getConnection(connection) || {}
+  var { client, params: { waypointOffset, toolOffset } } = Connections.getConnection(connection) || {}
   if (!client) {
     throw new Error(`no connection : ${connection}`)
   }
-  var { waypointOffset, toolOffset } = client.params || {}
 
   await waitForState(client, status => !status.isBusy)
 
@@ -49,14 +96,27 @@ async function IndyDcpMoveToPose(step, { logger, data }) {
   if (!taskPositions || typeof taskPositions !== 'object') {
     throw new Error(`correct type task-position is not given : ${taskPositions}`)
   }
-
+  
   taskPositions = [
-    taskPositions[0] || taskPositions['x'],
-    taskPositions[1] || taskPositions['y'],
-    taskPositions[2] || taskPositions['z'],
-    taskPositions[3] || taskPositions['u'],
-    taskPositions[4] || taskPositions['v'],
-    taskPositions[5] || taskPositions['w']
+    Number(taskPositions[0] || taskPositions['x']),
+    Number(taskPositions[1] || taskPositions['y']),
+    Number(taskPositions[2] || taskPositions['z']),
+    Number(taskPositions[3] || taskPositions['u']),
+    Number(taskPositions[4] || taskPositions['v']),
+    Number(taskPositions[5] || taskPositions['w'])
+  ]
+
+  taskPositions[3] = -taskPositions[3]
+  taskPositions[4] = taskPositions[4] + 180.0
+
+
+  toolOffset = [
+      Number(toolOffset[0] || toolOffset['x']),
+      Number(toolOffset[1] || toolOffset['y']),
+      Number(toolOffset[2] || toolOffset['z']),
+      Number(toolOffset[3] || toolOffset['u']),
+      Number(toolOffset[4] || toolOffset['v']),
+      Number(toolOffset[5] || toolOffset['w'])
   ]
 
   if (isNaN(taskPositions.reduce((sum, v) => sum + v, 0))) {
