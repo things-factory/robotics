@@ -7,17 +7,20 @@ function transform(base, offset) {
   var Quaternion = math3d.Quaternion
   var Transform = math3d.Transform
 
-  var t1 = new Transform(new Vector3(base.x, base.y, base.z), Quaternion.Euler(base.u, base.v, base.w))
+  var [bx, by, bz, bu, bv, bw] = base
+  var [ox, oy, oz, ou, ov, ow] = offset
+
+  var t1 = new Transform(new Vector3(bx, by, bz), Quaternion.Euler(bu, bv, bw))
   var t2 = new Transform()
 
   t2.parent = t1
-  t2.translate(new Vector3(offset.x, offset.y, offset.z))
-  t2.rotate(offset.u, offset.v, offset.w, Transform.Space.World)
+  t2.translate(new Vector3(ox, oy, oz))
+  t2.rotate(ou, ov, ow, Transform.Space.World)
 
   var { x, y, z } = t2.position
   var { u, v, w } = t2.rotation
 
-  return { x, y, z, u, v, w }
+  return [x, y, z, u, v, w]
 }
 
 export async function waitForState(client, checkFn) {
