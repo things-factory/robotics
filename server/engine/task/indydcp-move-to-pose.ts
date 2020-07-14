@@ -62,7 +62,6 @@ function transform(base, offset) {
   var [bx, by, bz, bu, bv, bw] = base
   var {x:ox, y:oy, z:oz, u:ou, v:ov, w:ow} = offset
   
-
   hmTcp2Base = convertXYZABCtoHM(base)
   hmToolOffset = convertXYZABCtoHM(offset)
   hmRepos = hmTcp2Base.mul(hmToolOffset)
@@ -109,7 +108,6 @@ async function IndyDcpMoveToPose(step, { logger, data }) {
   taskPositions[3] = -taskPositions[3]
   taskPositions[4] = taskPositions[4] + 180.0
 
-
   toolOffset = [
       Number(toolOffset[0] || toolOffset['x']),
       Number(toolOffset[1] || toolOffset['y']),
@@ -118,6 +116,15 @@ async function IndyDcpMoveToPose(step, { logger, data }) {
       Number(toolOffset[4] || toolOffset['v']),
       Number(toolOffset[5] || toolOffset['w'])
   ]
+
+  waypointOffset = [
+    Number(waypointOffset[0] || waypointOffset['x']),
+    Number(waypointOffset[1] || waypointOffset['y']),
+    Number(waypointOffset[2] || waypointOffset['z']),
+    Number(waypointOffset[3] || waypointOffset['u']),
+    Number(waypointOffset[4] || waypointOffset['v']),
+    Number(waypointOffset[5] || waypointOffset['w'])
+]  
 
   if (isNaN(taskPositions.reduce((sum, v) => sum + v, 0))) {
     throw new Error(`correct value task-position is not given : ${taskPositions}`)
@@ -171,7 +178,7 @@ IndyDcpMoveToPose.parameterSpec = [
   {
     type: 'checkbox',
     label: 'viaWaypoint',
-    name: 'via-waypoint'
+    name: 'viaWaypoint'
   }
 ]
 
