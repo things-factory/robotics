@@ -4,13 +4,13 @@ import './engine'
 
 export * from './graphql'
 
-import { config as SystemConfig } from '@things-factory/env'
-import { StreamingServer } from './streaming-server'
+// import { config as SystemConfig } from '@things-factory/env'
+// import { StreamingServer } from './streaming-server'
 
-const DEFAULT_STREAMING_PORT = 3001
+// const DEFAULT_STREAMING_PORT = 3001
 
 process.on('bootstrap-module-start' as any, async ({ app, config, client }: any) => {
-  var visionConfig = SystemConfig.get('vision', {})
-  var streamingServer = new StreamingServer()
-  streamingServer.start(visionConfig.streamingPort || DEFAULT_STREAMING_PORT)
+  // var visionConfig = SystemConfig.get('vision', {})
+  // var streamingServer = new StreamingServer()
+  // streamingServer.start(visionConfig.streamingPort || DEFAULT_STREAMING_PORT)
 })
