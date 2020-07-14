@@ -1,6 +1,5 @@
 module.exports = {
   vision: {
-    streamingPort: 3001,
     camera: {
       cameraCalibrator: {
         program: ['python', '/Users/hatiolab/Documents/python3-work/vision-client-python/sample_camera_calibrator.py']
