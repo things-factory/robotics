@@ -38,6 +38,7 @@
     "await-spawn": "^3.0.0",
     "debug": "^4.1.1",
     "dicer": "^0.3.0",
+    "math3d": "^0.2.2",
     "sharp": "^0.25.3",
     "socket.io": "^2.3.0",
     "tree-kill": "^1.2.2",
