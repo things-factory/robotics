@@ -12,3 +12,4 @@ db.sqlite
 .vscode
 config.development.js
 config.production.js
+Captured/
