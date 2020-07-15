@@ -1,4 +1,4 @@
-import { TrackingEngine, TrackingStorage } from './vision-types'
+import { TrackingEngine, TrackingStorage } from './robotics-types'
 import { ROIStateStorageImpl } from './tracking-storage'
 import { config } from '@things-factory/env'
 import { spawn } from 'child_process'

@@ -1,4 +1,4 @@
-import { Pose, TrackingEvent, TrackableObject, TrackingStorage, DEFAULT_POSE_THRESHOLD } from './vision-types'
+import { Pose, TrackingEvent, TrackableObject, TrackingStorage, DEFAULT_POSE_THRESHOLD } from './robotics-types'
 import { TrackableObjectImpl } from './trackable-object'
 
 export class ROIStateStorageImpl implements TrackingStorage {

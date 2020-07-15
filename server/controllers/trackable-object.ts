@@ -1,4 +1,4 @@
-import { TrackingEvent, TrackableObject, Pose, ROI, TRACKING_EVENT_TYPES } from './vision-types'
+import { TrackingEvent, TrackableObject, Pose, ROI, TRACKING_EVENT_TYPES } from './robotics-types'
 
 const EMPTY_POSE = {
   x: NaN,

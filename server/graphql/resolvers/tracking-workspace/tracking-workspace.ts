@@ -1,5 +1,5 @@
 import { Connections } from '@things-factory/integration-base'
-import { VISION_OBJECT_TYPES } from '../../../controllers/vision-types'
+import { ROBOTICS_OBJECT_TYPES } from '../../../controllers/robotics-types'
 
 import { trackingCamerasResolver } from '../../resolvers/tracking-camera/tracking-cameras'
 import { trackableObjectsResolver } from '../../resolvers/trackable-object/trackable-objects'
@@ -8,7 +8,7 @@ import { robotArmsResolver } from '../../resolvers/robot-arm/robot-arms'
 export const trackingWorkspaceResolver = {
   async trackingWorkspace(_: any, { name }, context: any) {
     var connection = Connections.getConnection(name)
-    if (!connection || connection.discriminator !== VISION_OBJECT_TYPES.WORKSPACE) {
+    if (!connection || connection.discriminator !== ROBOTICS_OBJECT_TYPES.WORKSPACE) {
       throw Error(`TrackingWorkspace '${name}' Not Found`)
     }
 
