@@ -135,23 +135,36 @@ export class CameraSettingPopup extends LitElement {
         }
 
         [stream] {
-          flex: 3;
-
-          margin: auto;
+          flex: 2;
+          padding: 20px;
+          position: relative;
         }
 
         .button-container {
           display: flex;
           margin-left: auto;
         }
-
+        [msg] {
+          background-color: #303030;
+          width: 100%;
+          min-height: 150px;
+          padding-top: 20%;
+          text-align: center;
+          font-size: 0.8em;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: capitalize;
+        }
+        [msg] mwc-icon {
+          display: block;
+          font-size: 36px;
+        }
         canvas {
           display: block;
-          width: 90%;
-
-          margin: auto;
-          border: 3px solid #73ad21;
-          padding: 10px;
+          min-height: 230px;
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          width: calc(100% - 40px);
         }
       `
     ]
@@ -309,6 +322,7 @@ export class CameraSettingPopup extends LitElement {
         </div>
 
         <div stream>
+          <div msg><mwc-icon>camera</mwc-icon>turn on the camera.</div>
           <canvas></canvas>
         </div>
       </content>

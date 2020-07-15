@@ -38,33 +38,51 @@ export class CameraCalibrationPopup extends LitElement {
           flex-direction: row;
 
           overflow: auto;
+          padding: 20px 20px 20px 0;
         }
 
         [calibration] {
           flex: 2;
 
-          padding: 20px;
-
-          overflow-y: auto;
-          overflow-x: none;
+          overflow: auto;
         }
-
+        fieldset {
+          border-width: 0 0 1px 0;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 10px 20px;
+        }
+        fieldset:first-child {
+          padding-top: 0px;
+        }
+        fieldset:nth-child(even) {
+          background-color: var(--main-section-background-color);
+        }
+        legend {
+          float: left;
+          padding: 0;
+          margin-top: -5px;
+          margin-bottom: 5px;
+          text-transform: capitalize;
+          font-weight: bold;
+          color: var(--secondary-text-color);
+        }
+        fieldset > div {
+          clear: both;
+        }
         label {
           display: block;
           text-align: right;
         }
 
         [stream] {
-          flex: 3;
-
-          margin: auto;
+          flex: 2;
+          position: relative;
         }
 
         [matrix] {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          column-gap: 4px;
-          row-gap: 4px;
+          gap: 10px 5px;
         }
 
         [matrix] * {
@@ -73,9 +91,15 @@ export class CameraCalibrationPopup extends LitElement {
 
         [coeff] {
           display: grid;
-          grid-template-columns: 1fr 3fr;
-          column-gap: 4px;
-          row-gap: 4px;
+          grid-template-columns: repeat(12, 1fr);
+          gap: 10px 5px;
+        }
+        [coeff] label {
+          grid-column: span 2 / auto;
+          color: var(--secondary-text-color);
+        }
+        [coeff] input {
+          grid-column: span 4 / auto;
         }
 
         .button-container {
@@ -83,13 +107,36 @@ export class CameraCalibrationPopup extends LitElement {
           margin-left: auto;
         }
 
+        [msg] {
+          background-color: #303030;
+          width: 100%;
+          min-height: 150px;
+          padding-top: 20%;
+          text-align: center;
+          font-size: 0.8em;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: capitalize;
+        }
+        [msg] mwc-icon {
+          display: block;
+          font-size: 36px;
+        }
         canvas {
           display: block;
-          width: 90%;
-
-          margin: auto;
-          border: 3px solid #73ad21;
-          padding: 10px;
+          min-height: 230px;
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          width: calc(100% - 20px);
+        }
+        [button-group] {
+          padding: 10px 0;
+          text-align: right;
+        }
+        [button-group] mwc-button {
+          background-color: var(--secondary-color);
+          border-radius: var(--border-radius);
+          --mdc-theme-primary: #fff;
         }
       `
     ]
@@ -142,20 +189,15 @@ export class CameraCalibrationPopup extends LitElement {
     return html`
       <content>
         <div calibration>
-          <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
-          <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
-          <mwc-button label="Compute" icon="exposure"></mwc-button>
-          <mwc-button label="Calibrate" icon="exposure" @click=${this.calibrateCameraParameter.bind(this)}></mwc-button>
-
-          <div>
-            <h3>camera matrix</h3>
+          <fieldset>
+            <legend>camera matrix</legend>
             <div matrix @change=${e => this.onchange(e)}>
               ${cameraMatrixData.map(value => html` <input type="number" .value=${value} /> `)}
             </div>
-          </div>
+          </fieldset>
 
-          <div>
-            <h3>distortion coeffeicients</h3>
+          <fieldset>
+            <legend>distortion coeffeicients</legend>
             <div coeff @change=${e => this.onchange(e)}>
               <label>k1</label>
               <input type="number" .value=${distCoeffData[0]} />
@@ -168,11 +210,21 @@ export class CameraCalibrationPopup extends LitElement {
               <label>k3</label>
               <input type="number" .value=${distCoeffData[4]} />
             </div>
-            </div>
+          </fieldset>
+
+          <div button-group>
+            <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
+            <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
+            <mwc-button
+              label="Calibrate"
+              icon="exposure"
+              @click=${this.calibrateCameraParameter.bind(this)}
+            ></mwc-button>
           </div>
         </div>
 
         <div stream>
+          <div msg><mwc-icon>camera</mwc-icon>turn on the camera.</div>
           <canvas></canvas>
         </div>
       </content>
