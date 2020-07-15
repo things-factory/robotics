@@ -110,8 +110,8 @@ export class CameraCalibrationPopup extends LitElement {
         [msg] {
           background-color: #303030;
           width: 100%;
-          min-height: 150px;
-          padding-top: 20%;
+          min-height: 180px;
+          padding-top: 120px;
           text-align: center;
           font-size: 0.8em;
           color: rgba(255, 255, 255, 0.5);
@@ -123,20 +123,26 @@ export class CameraCalibrationPopup extends LitElement {
         }
         canvas {
           display: block;
-          min-height: 230px;
+          min-height: 300px;
           position: absolute;
-          top: 20px;
-          left: 20px;
-          width: calc(100% - 20px);
+          top: 0px;
+          left: 0px;
+          width: 100%;
         }
         [button-group] {
-          padding: 10px 0;
+          padding: 10px 20px 0 15px;
           text-align: right;
         }
         [button-group] mwc-button {
+          --mdc-theme-primary: #fff;
           background-color: var(--secondary-color);
           border-radius: var(--border-radius);
-          --mdc-theme-primary: #fff;
+          margin: 0 0 5px 5px;
+          padding-bottom: 2px;
+        }
+        [button-group] .alignL {
+          float: left;
+          background-color: #747474;
         }
       `
     ]
@@ -213,9 +219,10 @@ export class CameraCalibrationPopup extends LitElement {
           </fieldset>
 
           <div button-group>
-            <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
-            <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
+            <mwc-button dense label="Take Snapshot" icon="wallpaper"></mwc-button>
+            <mwc-button dense label="Reset" class="alignL"></mwc-button>
             <mwc-button
+              dense
               label="Calibrate"
               icon="exposure"
               @click=${this.calibrateCameraParameter.bind(this)}
