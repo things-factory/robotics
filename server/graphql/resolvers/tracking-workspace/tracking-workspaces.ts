@@ -1,5 +1,5 @@
 import { Connections } from '@things-factory/integration-base'
-import { VISION_OBJECT_TYPES } from '../../../controllers/vision-types'
+import { ROBOTICS_OBJECT_TYPES } from '../../../controllers/robotics-types'
 
 import { trackingWorkspaceResolver } from './tracking-workspace'
 
@@ -7,7 +7,7 @@ export const trackingWorkspacesResolver = {
   async trackingWorkspaces(_: any, {}, context: any) {
     var items = Object.keys(Connections.getConnections())
       .map(name => Connections.getConnection(name))
-      .filter(connection => connection.discriminator == VISION_OBJECT_TYPES.WORKSPACE)
+      .filter(connection => connection.discriminator == ROBOTICS_OBJECT_TYPES.WORKSPACE)
       .map(connection =>
         trackingWorkspaceResolver.trackingWorkspace(
           _,

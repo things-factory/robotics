@@ -3,12 +3,9 @@
  */
 
 import { LitElement, html, css } from 'lit-element'
-import { i18next, localize } from '@things-factory/i18n-base'
-import { openPopup } from '@things-factory/layout-base'
 import { ThingsEditorProperty, ThingsEditorPropertyStyles } from '@things-factory/modeller-ui'
 import '@material/mwc-button'
 
-const ZEROS = new Array(6).fill(0)
 const LABELS = ['x', 'y', 'z', 'u', 'v', 'w']
 
 export class OffsetPoseEditor extends ThingsEditorProperty {

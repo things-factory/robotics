@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const VisionTypes = gql`
+export const RoboticsTypes = gql`
   type Pose {
     x: Float
     y: Float

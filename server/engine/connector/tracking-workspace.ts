@@ -1,6 +1,6 @@
 import { sleep } from '@things-factory/utils'
 import { Connections, Connector } from '@things-factory/integration-base'
-import { VISION_OBJECT_TYPES } from '../../controllers/vision-types'
+import { ROBOTICS_OBJECT_TYPES } from '../../controllers/robotics-types'
 import { TrackingEngineImpl } from '../../controllers/tracking-engine'
 
 export class TrackingWorkspace implements Connector {
@@ -15,7 +15,7 @@ export class TrackingWorkspace implements Connector {
     var engine = new TrackingEngineImpl(name)
 
     Connections.addConnection(connection.name, {
-      discriminator: VISION_OBJECT_TYPES.WORKSPACE,
+      discriminator: ROBOTICS_OBJECT_TYPES.WORKSPACE,
       ...connection,
       engine
     })

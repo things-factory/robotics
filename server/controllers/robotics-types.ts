@@ -29,7 +29,7 @@ export enum CAMERA_TYPES {
   REALSENSE
 }
 
-export enum VISION_OBJECT_TYPES {
+export enum ROBOTICS_OBJECT_TYPES {
   WORKSPACE = 'workspace',
   ROBOT_ARM = 'robot-arm',
   CAMERA = 'tracking-camera',

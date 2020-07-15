@@ -1,5 +1,5 @@
 import { Connections, Connector } from '@things-factory/integration-base'
-import { VISION_OBJECT_TYPES } from '../../controllers/vision-types'
+import { ROBOTICS_OBJECT_TYPES } from '../../controllers/robotics-types'
 
 export class MarkedObject implements Connector {
   async ready(connectionConfigs) {
@@ -12,7 +12,7 @@ export class MarkedObject implements Connector {
     // var { params } = connection
 
     Connections.addConnection(connection.name, {
-      discriminator: VISION_OBJECT_TYPES.OBJECT,
+      discriminator: ROBOTICS_OBJECT_TYPES.OBJECT,
       ...connection
     })
 

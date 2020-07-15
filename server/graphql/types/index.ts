@@ -1,4 +1,4 @@
-import { VisionTypes } from './vision-types'
+import { RoboticsTypes } from './robotics-types'
 import * as RobotArm from './robot-arm'
 import * as TrackableObject from './trackable-object'
 import * as TrackingCamera from './tracking-camera'
@@ -16,7 +16,7 @@ export const mutations = [
 export const subscriptions = []
 
 export const types = [
-  VisionTypes,
+  RoboticsTypes,
   ...RobotArm.Types,
   ...TrackableObject.Types,
   ...TrackingCamera.Types,

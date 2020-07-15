@@ -1,5 +1,5 @@
 {
-  "name": "@things-factory/vision-base",
+  "name": "@things-factory/robotics",
   "version": "1.0.0",
   "main": "dist-server/index.js",
   "browser": "client/index.js",
@@ -7,8 +7,8 @@
   "license": "MIT",
   "author": "heartyoh&#39;",
   "scripts": {
-    "serve": "things-factory vision-base",
-    "serve:dev": "DEBUG=things-factory:* npm run build:server && things-factory-dev vision-base",
+    "serve": "things-factory robotics",
+    "serve:dev": "DEBUG=things-factory:* npm run build:server && things-factory-dev robotics",
     "start:app": "things-factory-app",
     "start:app:android": "things-factory-app --platform=android",
     "emulate:app": "things-factory-app --emulate",
@@ -27,11 +27,10 @@
     "migration:run": "node ./node_modules/typeorm/cli.js migration:run",
     "migration:revert": "node ./node_modules/typeorm/cli.js migration:revert",
     "stop:dev": "kill $(lsof -t -i:3000,3001)",
-    "stop": "things-factory-stop vision-base",
+    "stop": "things-factory-stop robotics",
     "test": "DEBUG=things-factory:* npx mocha -r ts-node/register ./test/**/*spec.ts"
   },
   "dependencies": {
-    "@things-factory/indydcp-base": "^1.0.6",
     "@things-factory/integration-base": "^2.0.0",
     "@things-factory/modeller-ui": "^2.0.0",
     "await-spawn": "^3.0.0",
@@ -41,6 +40,7 @@
   },
   "devDependencies": {
     "@microsoft/tsdoc": "^0.12.20",
+    "@things-factory/indydcp-base": "^1.0.24",
     "@things-factory/operato-ecs": "^2.0.0",
     "@types/chai": "^4.2.11",
     "@types/http-server": "^0.10.0",
@@ -50,7 +50,6 @@
     "chai": "^4.2.0",
     "mocha": "^7.2.0",
     "request-promise": "^4.2.5",
-    "should": "^13.2.3",
-    "websocket": "^1.0.31"
+    "should": "^13.2.3"
   }
 }
