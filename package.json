@@ -1,5 +1,5 @@
 {
-  "name": "@things-factory/vision-base",
+  "name": "@things-factory/robotics",
   "version": "1.0.0",
   "main": "dist-server/index.js",
   "browser": "client/index.js",
@@ -7,8 +7,8 @@
   "license": "MIT",
   "author": "heartyoh&#39;",
   "scripts": {
-    "serve": "things-factory vision-base",
-    "serve:dev": "DEBUG=things-factory:* npm run build:server && things-factory-dev vision-base",
+    "serve": "things-factory robotics",
+    "serve:dev": "DEBUG=things-factory:* npm run build:server && things-factory-dev robotics",
     "start:app": "things-factory-app",
     "start:app:android": "things-factory-app --platform=android",
     "emulate:app": "things-factory-app --emulate",
@@ -27,7 +27,7 @@
     "migration:run": "node ./node_modules/typeorm/cli.js migration:run",
     "migration:revert": "node ./node_modules/typeorm/cli.js migration:revert",
     "stop:dev": "kill $(lsof -t -i:3000,3001)",
-    "stop": "things-factory-stop vision-base",
+    "stop": "things-factory-stop robotics",
     "test": "DEBUG=things-factory:* npx mocha -r ts-node/register ./test/**/*spec.ts"
   },
   "dependencies": {
