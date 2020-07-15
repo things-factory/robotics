@@ -198,7 +198,7 @@ export class HandEyeCalibrationPopup extends LitElement {
     const response = await client.query({
       mutation: gql`
         mutation($name: String!) {
-          startTeachingMode(name: $name)
+          robotArmStartTeachingMode(name: $name)
         }
       `,
       variables: {
@@ -215,7 +215,7 @@ export class HandEyeCalibrationPopup extends LitElement {
     const response = await client.query({
       mutation: gql`
         mutation($name: String!) {
-          finishTeachingMode(name: $name)
+          robotArmFinishTeachingMode(name: $name)
         }
       `,
       variables: {
