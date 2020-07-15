@@ -36,37 +36,68 @@ export class CameraROIPopup extends LitElement {
           flex-direction: row;
 
           overflow: auto;
+          padding: 20px 20px 20px 0;
         }
 
         [roi-setting] {
           flex: 2;
 
-          padding: 20px;
-
           overflow-y: auto;
           overflow-x: none;
         }
 
-        [roi] {
+        fieldset {
+          border-width: 0 0 1px 0;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 10px 20px;
+        }
+        fieldset:first-child {
+          padding-top: 0px;
+        }
+        fieldset:nth-child(even) {
+          background-color: var(--main-section-background-color);
+        }
+        legend {
+          float: left;
+          padding: 0;
+          margin-top: -5px;
+          margin-bottom: 5px;
+          text-transform: capitalize;
+          font-weight: bold;
+          color: var(--secondary-text-color);
+        }
+        fieldset [roi-cell] {
+          clear: both;
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          column-gap: 4px;
-          row-gap: 4px;
+          grid-template-columns: repeat(8, 1fr);
+          gap: 10px 5px;
+        }
+        fieldset mwc-button {
+          --mdc-theme-primary: #666;
+          float: right;
+        }
+        .mdc-button .mdc-button__icon {
+          margin-right: 0px;
         }
 
         [roi] input {
           min-width: 100px;
+          grid-column: span 3 / auto;
+        }
+        [roi] span {
+          grid-column: span 3 / auto;
         }
 
         label {
           display: block;
           text-align: right;
+          grid-column: span 2 / auto;
+          color: var(--secondary-text-color);
         }
 
         [stream] {
-          flex: 3;
-
-          margin: auto;
+          flex: 2;
+          position: relative;
         }
 
         .button-container {
@@ -74,13 +105,42 @@ export class CameraROIPopup extends LitElement {
           margin-left: auto;
         }
 
+        [msg] {
+          background-color: #303030;
+          width: 100%;
+          min-height: 180px;
+          padding-top: 120px;
+          text-align: center;
+          font-size: 0.8em;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: capitalize;
+        }
+        [msg] mwc-icon {
+          display: block;
+          font-size: 36px;
+        }
         canvas {
           display: block;
-          width: 90%;
-
-          margin: auto;
-          border: 3px solid #73ad21;
-          padding: 10px;
+          min-height: 300px;
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          width: 100%;
+        }
+        [button-group] {
+          padding: 10px 20px 0 15px;
+          text-align: right;
+        }
+        [button-group] mwc-button {
+          --mdc-theme-primary: #fff;
+          background-color: var(--secondary-color);
+          border-radius: var(--border-radius);
+          margin: 0 0 5px 5px;
+          padding-bottom: 2px;
+        }
+        [button-group] .alignL {
+          float: left;
+          background-color: #747474;
         }
       `
     ]
@@ -130,14 +190,7 @@ export class CameraROIPopup extends LitElement {
     return html`
       <content>
         <div roi-setting>
-          <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
-          <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
-          <mwc-button label="Compute" icon="exposure"></mwc-button>
-          <mwc-button label="Detect" icon="exposure" @click=${this.detectROIs.bind(this)}></mwc-button>
-
           <div @change=${e => this.onchange(e)}>
-            <h3>ROI</h3>
-
             ${rois.map(roi => {
               var { id = '', region = {} } = roi
 
@@ -147,36 +200,54 @@ export class CameraROIPopup extends LitElement {
               var y2 = region.rb?.y || 0
 
               return html`
-                <div roi added>
-                  <label>ID</label>
-                  <input type="text" value=${id} />
-                  <span></span>
-                  <label>Left-Top</label>
-                  <input type="number" .value=${x1} placeholder="X" />
-                  <input type="number" .value=${y1} placeholder="Y" />
-                  <label>Right-Bottom</label>
-                  <input type="number" .value=${x2} placeholder="X" />
-                  <input type="number" .value=${y2} placeholder="Y" />
-                </div>
-                <mwc-button @click=${e => this.onClickDelete(e)}>${i18next.t('button.delete')}</mwc-button>
+                <fieldset roi added>
+                  <legend>camera #</legend>
+                  <mwc-button dense @click=${e => this.onClickDelete(e)} icon="highlight_off"
+                    >${i18next.t('button.delete')}</mwc-button
+                  >
+                  <div roi-cell>
+                    <label>ID</label>
+                    <input type="text" value=${id} />
+                    <span></span>
+                    <label>Left-Top</label>
+                    <input type="number" .value=${x1} placeholder="X" />
+                    <input type="number" .value=${y1} placeholder="Y" />
+                    <label>Right-Bottom</label>
+                    <input type="number" .value=${x2} placeholder="X" />
+                    <input type="number" .value=${y2} placeholder="Y" />
+                  </div>
+                </fieldset>
               `
             })}
 
-            <div roi add>
-              <label>ID</label>
-              <input type="text" />
-              <span></span>
-              <label>Left-Top</label>
-              <input type="number" placeholder="X" />
-              <input type="number" placeholder="Y" />
-              <label>Right-Bottom</label>
-              <input type="number" placeholder="X" />
-              <input type="number" placeholder="Y" />
-            </div>
-            <mwc-button @click=${e => this.onClickAdd()}>${i18next.t('button.add')}</mwc-button>
+            <fieldset roi add>
+              <legend>camera #</legend>
+              <mwc-button dense @click=${e => this.onClickAdd()} icon="add_circle_outline"
+                >${i18next.t('button.add')}</mwc-button
+              >
+              <div roi-cell>
+                <label>ID</label>
+                <input type="text" />
+                <span></span>
+                <label>Left-Top</label>
+                <input type="number" placeholder="X" />
+                <input type="number" placeholder="Y" />
+                <label>Right-Bottom</label>
+                <input type="number" placeholder="X" />
+                <input type="number" placeholder="Y" />
+              </div>
+            </fieldset>
+          </div>
+
+          <div button-group>
+            <mwc-button dense label="Take Snapshot" icon="wallpaper"></mwc-button>
+            <mwc-button dense label="Reset" class="alignL"></mwc-button>
+            <mwc-button dense label="Detect" icon="exposure" @click=${this.detectROIs.bind(this)}></mwc-button>
           </div>
         </div>
+
         <div stream>
+          <div msg><mwc-icon>camera</mwc-icon>turn on the camera.</div>
           <canvas></canvas>
         </div>
       </content>
@@ -239,19 +310,19 @@ export class CameraROIPopup extends LitElement {
   }
 
   onClickAdd() {
-    this.value = [...(this.value || []), this.extractRoi(this.renderRoot.querySelector('div[add]'))]
+    this.value = [...(this.value || []), this.extractRoi(this.renderRoot.querySelector('fieldset[add]'))]
 
-    var inputs = this.renderRoot.querySelectorAll('div[add] input')
+    var inputs = this.renderRoot.querySelectorAll('fieldset[add] input')
     Array.from(inputs).forEach(input => (input.value = ''))
   }
 
   onClickDelete(e) {
     var target = e.target
-    var div = target.previousElementSibling
+    var parent = target.parentElement
 
-    var rois = this.renderRoot.querySelectorAll('div[added]')
+    var rois = this.renderRoot.querySelectorAll('fieldset[added]')
     var value = Array.from(rois)
-      .filter(roi => div !== roi)
+      .filter(roi => parent !== roi)
       .map(roi => this.extractRoi(roi))
 
     this.value = value
@@ -271,7 +342,7 @@ export class CameraROIPopup extends LitElement {
       => 
       이런 이유로, Object.assign(...)을 사용하였다.
     */
-    var rois = this.renderRoot.querySelectorAll('div[added]')
+    var rois = this.renderRoot.querySelectorAll('fieldset[added]')
     this.value = Array.from(rois).map(roi => this.extractRoi(roi))
   }
 
