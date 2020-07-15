@@ -6,8 +6,8 @@ export const robotArmStartTeachingMode = {
     var connection = Connections.getConnection(name)
 
     if (connection && connection.discriminator == ROBOTICS_OBJECT_TYPES.ROBOT_ARM) {
-      /* TODO make it neutral robot arm API */
-      var status = await connection.client.startTeachingMode()
+      /* TODO 지금은 indydcp API changeToDirectTeaching를 사용하고 있지만, 로봇암 중립적인 API를 정의해서 사용해야한다. */
+      var status = await connection.client.changeToDirectTeaching()
       return true
     } else {
       throw Error(`RobotArm '${name}' Not Found`)
