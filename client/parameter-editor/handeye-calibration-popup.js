@@ -132,6 +132,16 @@ export class HandEyeCalibrationPopup extends LitElement {
     return html`
       <content>
         <div calibration>
+          <mwc-button
+            label="Start Teaching Mode"
+            icon="flip_camera_android"
+            @click=${this.startTeachingMode.bind(this)}
+          ></mwc-button>
+          <mwc-button
+            label="Finish Teaching Mode"
+            icon="exposure"
+            @click=${this.finishTeachingMode.bind(this)}
+          ></mwc-button>
           <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
           <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
           <mwc-button label="Compute" icon="exposure"></mwc-button>
@@ -178,6 +188,40 @@ export class HandEyeCalibrationPopup extends LitElement {
     var handeyeMatrix = response.data.calibrateHandeyeMatrix
     console.log('calibrated handeye matrix', handeyeMatrix)
     this.value = handeyeMatrix
+  }
+
+  async startTeachingMode() {
+    var {
+      params: { baseRobotArm }
+    } = this.host
+
+    const response = await client.query({
+      mutation: gql`
+        mutation($name: String!) {
+          startTeachingMode(name: $name)
+        }
+      `,
+      variables: {
+        name: baseRobotArm
+      }
+    })
+  }
+
+  async finishTeachingMode() {
+    var {
+      params: { baseRobotArm }
+    } = this.host
+
+    const response = await client.query({
+      mutation: gql`
+        mutation($name: String!) {
+          finishTeachingMode(name: $name)
+        }
+      `,
+      variables: {
+        name: baseRobotArm
+      }
+    })
   }
 
   onchange(e) {

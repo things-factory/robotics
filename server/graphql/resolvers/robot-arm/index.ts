@@ -1,6 +1,8 @@
 import { robotArmResolver } from './robot-arm'
 import { robotArmsResolver } from './robot-arms'
 import { robotArmPoseResolver } from './robot-arm-pose'
+import { robotArmStartTeachingMode } from './robot-arm-start-teaching-mode'
+import { robotArmFinishTeachingMode } from './robot-arm-finish-teaching-mode'
 
 export const Query = {
   ...robotArmsResolver,
@@ -8,4 +10,7 @@ export const Query = {
   ...robotArmPoseResolver
 }
 
-export const Mutation = {}
+export const Mutation = {
+  ...robotArmStartTeachingMode,
+  ...robotArmFinishTeachingMode
+}
