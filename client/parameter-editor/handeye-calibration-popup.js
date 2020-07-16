@@ -192,10 +192,12 @@ export class HandEyeCalibrationPopup extends LitElement {
 
   async startTeachingMode() {
     var {
-      params: { baseRobotArm }
+      params
     } = this.host
 
-    const response = await client.query({
+    var { baseRobotArm } = JSON.parse(params)
+
+    const response = await client.mutate({   // [jw]
       mutation: gql`
         mutation($name: String!) {
           robotArmStartTeachingMode(name: $name)
@@ -209,10 +211,12 @@ export class HandEyeCalibrationPopup extends LitElement {
 
   async finishTeachingMode() {
     var {
-      params: { baseRobotArm }
+      params
     } = this.host
 
-    const response = await client.query({
+    var { baseRobotArm } = JSON.parse(params)
+
+    const response = await client.mutate({   // [jw]
       mutation: gql`
         mutation($name: String!) {
           robotArmFinishTeachingMode(name: $name)
