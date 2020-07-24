@@ -106,6 +106,8 @@ export class CameraSettingPopup extends LitElement {
 
           width: var(--overlay-center-normal-width, 50%);
           height: var(--overlay-center-normal-height, 50%);
+
+          font-size: 14px;
         }
 
         content {
@@ -115,19 +117,41 @@ export class CameraSettingPopup extends LitElement {
           flex-direction: row;
 
           overflow: auto;
+          padding: 20px 20px 20px 0;
         }
 
         [settings] {
           flex: 2;
-
-          padding: 20px;
-
-          overflow-y: auto;
-          overflow-x: none;
+          overflow: auto;
         }
 
+        fieldset {
+          border-width: 0 0 1px 0;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 0 20px 10px 20px;
+        }
         label {
           display: block;
+          text-align: right;
+          color: var(--secondary-text-color);
+          text-transform: capitalize;
+        }
+        fieldset [column1],
+        fieldset [column2] {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 10px 5px;
+          padding-bottom: 10px;
+        }
+        fieldset [column1] label,
+        fieldset [column2] label {
+          grid-column: span 1 / auto;
+        }
+        fieldset [column2] select {
+          grid-column: span 2 / auto;
+        }
+        fieldset [column1] > *:not(label) {
+          grid-column: span 5 / auto;
         }
 
         mwc-slider {
@@ -136,7 +160,6 @@ export class CameraSettingPopup extends LitElement {
 
         [stream] {
           flex: 2;
-          padding: 20px;
           position: relative;
         }
 
@@ -147,7 +170,7 @@ export class CameraSettingPopup extends LitElement {
         [msg] {
           background-color: #303030;
           width: 100%;
-          min-height: 150px;
+          min-height: 180px;
           padding-top: 20%;
           text-align: center;
           font-size: 0.8em;
@@ -160,11 +183,11 @@ export class CameraSettingPopup extends LitElement {
         }
         canvas {
           display: block;
-          min-height: 230px;
+          min-height: 300px;
           position: absolute;
-          top: 20px;
-          left: 20px;
-          width: calc(100% - 40px);
+          top: 0px;
+          left: 0px;
+          width: 100%;
         }
       `
     ]
@@ -212,113 +235,126 @@ export class CameraSettingPopup extends LitElement {
     return html`
       <content>
         <div settings>
-          <label>sensor</label>
-          <select>
-            <option value="0">RGB Camera</option>
-            <option value="1">Stereo Camera</option>
-          </select>
+          <fieldset>
+            <div column2>
+              <label>sensor</label>
+              <select>
+                <option value="0">RGB Camera</option>
+                <option value="1">Stereo Camera</option>
+              </select>
+            </div>
+            ${sensor == '0'
+              ? html`
+                  <div column2>
+                    <label>stream</label>
+                    <select>
+                      <option>color</option>
+                    </select>
 
-          ${sensor == '0'
-            ? html`
-                <label>stream</label>
-                <select>
-                  <option>color</option>
-                </select>
+                    <label>resolution</label>
+                    <select>
+                      <option>1920x1080</option>
+                      <option>1280x720</option>
+                      <option>960x540</option>
+                      <option>848x480</option>
+                      <option>640x480</option>
+                      <option>640x360</option>
+                      <option>424x240</option>
+                      <option>320x240</option>
+                      <option>320x180</option>
+                    </select>
 
-                <label>resolution</label>
-                <select>
-                  <option>1920x1080</option>
-                  <option>1280x720</option>
-                  <option>960x540</option>
-                  <option>848x480</option>
-                  <option>640x480</option>
-                  <option>640x360</option>
-                  <option>424x240</option>
-                  <option>320x240</option>
-                  <option>320x180</option>
-                </select>
+                    <label>format</label>
+                    <select>
+                      <option>rgb8</option>
+                      <option>raw16</option>
+                      <option>y16</option>
+                      <option>bgra8</option>
+                      <option>rgba8</option>
+                      <option>bgr8</option>
+                      <option>yuyv</option>
+                      <option>rgb8</option>
+                    </select>
 
-                <label>format</label>
-                <select>
-                  <option>rgb8</option>
-                  <option>raw16</option>
-                  <option>y16</option>
-                  <option>bgra8</option>
-                  <option>rgba8</option>
-                  <option>bgr8</option>
-                  <option>yuyv</option>
-                  <option>rgb8</option>
-                </select>
+                    <label>FPS</label>
+                    <select>
+                      <option>60</option>
+                      <option>30</option>
+                      <option>15</option>
+                      <option>6</option>
+                    </select>
+                  </div>
+                `
+              : html`
+                  <div column2>
+                    <label>stream</label>
+                    <select>
+                      <option>depth</option>
+                      <option>infrared-1</option>
+                      <option>infrared-2</option>
+                    </select>
 
-                <label>FPS</label>
-                <select>
-                  <option>60</option>
-                  <option>30</option>
-                  <option>15</option>
-                  <option>6</option>
-                </select>
+                    <label>resolution</label>
+                    <select>
+                      <option>1280x800</option>
+                      <option>1280x720</option>
+                      <option>848x480</option>
+                      <option>848x100</option>
+                      <option>640x480</option>
+                      <option>640x400</option>
+                      <option>640x360</option>
+                      <option>480x270</option>
+                      <option>424x240</option>
+                      <option>256x144</option>
+                    </select>
+
+                    <label>format</label>
+                    <select>
+                      <option>z16</option>
+                      <option>y8</option>
+                      <option>y16</option>
+                    </select>
+
+                    <label>FPS</label>
+                    <select>
+                      <option>100</option>
+                      <option>90</option>
+                      <option>60</option>
+                      <option>30</option>
+                      <option>25</option>
+                      <option>15</option>
+                    </select>
+                  </div>
+                `}
+            ${options.map(
+              option => html`
+               <div column1>
+                  <label>${option.option}</label>
+                  ${
+                    option.range
+                      ? html`
+                          <mwc-slider
+                            pin
+                            markers
+                            max=${option.range.maxValue}
+                            min=${option.range.minValue}
+                            value=${option.value}
+                            step=${option.range.step}
+                          ></mwc-slider>
+                        `
+                      : option.values
+                      ? option.values.map(
+                          value =>
+                            html`
+                              <mwc-radio name=${option.option} .checked=${value == option.value}>${value}</mwc-radio>
+                            `
+                        )
+                      : html` <mwc-checkbox .checked=${option.value == 1}></mwc-checkbox> </div>`
+                  }
+                </fieldset>
               `
-            : html`
-                <label>stream</label>
-                <select>
-                  <option>depth</option>
-                  <option>infrared-1</option>
-                  <option>infrared-2</option>
-                </select>
-
-                <label>resolution</label>
-                <select>
-                  <option>1280x800</option>
-                  <option>1280x720</option>
-                  <option>848x480</option>
-                  <option>848x100</option>
-                  <option>640x480</option>
-                  <option>640x400</option>
-                  <option>640x360</option>
-                  <option>480x270</option>
-                  <option>424x240</option>
-                  <option>256x144</option>
-                </select>
-
-                <label>format</label>
-                <select>
-                  <option>z16</option>
-                  <option>y8</option>
-                  <option>y16</option>
-                </select>
-
-                <label>FPS</label>
-                <select>
-                  <option>100</option>
-                  <option>90</option>
-                  <option>60</option>
-                  <option>30</option>
-                  <option>25</option>
-                  <option>15</option>
-                </select>
-              `}
-          ${options.map(
-            option => html`
-              <label>${option.option}</label>
-              ${option.range
-                ? html`
-                    <mwc-slider
-                      pin
-                      markers
-                      max=${option.range.maxValue}
-                      min=${option.range.minValue}
-                      value=${option.value}
-                      step=${option.range.step}
-                    ></mwc-slider>
-                  `
-                : option.values
-                ? option.values.map(
-                    value =>
-                      html` <mwc-radio name=${option.option} .checked=${value == option.value}>${value}</mwc-radio> `
-                  )
-                : html` <mwc-checkbox .checked=${option.value == 1}></mwc-checkbox> `}
-            `
-          )}
+            )}
+          </fieldset>
         </div>
 
         <div stream>

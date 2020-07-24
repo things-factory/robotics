@@ -72,6 +72,7 @@ export class CameraCalibrationPopup extends LitElement {
         label {
           display: block;
           text-align: right;
+          text-transform: capitalize;
         }
 
         [stream] {

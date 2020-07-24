@@ -38,33 +38,44 @@ export class HandEyeCalibrationPopup extends LitElement {
           flex-direction: row;
 
           overflow: auto;
+          padding: 20px 20px 20px 0;
         }
 
         [calibration] {
           flex: 2;
 
-          padding: 20px;
-
           overflow-y: auto;
           overflow-x: none;
         }
+        fieldset {
+          border-width: 0 0 1px 0;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 10px 20px;
+        }
+        fieldset:first-child {
+          padding-top: 0px;
+        }
 
-        label {
-          display: block;
-          text-align: right;
+        legend {
+          float: left;
+          padding: 0;
+          margin-top: -5px;
+          margin-bottom: 5px;
+          text-transform: capitalize;
+          font-weight: bold;
+          color: var(--secondary-text-color);
         }
 
         [stream] {
-          flex: 3;
-
-          margin: auto;
+          flex: 2;
+          position: relative;
         }
 
         [matrix] {
+          clear: both;
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          column-gap: 4px;
-          row-gap: 4px;
+          gap: 10px 5px;
         }
 
         [matrix] * {
@@ -75,14 +86,42 @@ export class HandEyeCalibrationPopup extends LitElement {
           display: flex;
           margin-left: auto;
         }
-
+        [msg] {
+          background-color: #303030;
+          width: 100%;
+          min-height: 180px;
+          padding-top: 120px;
+          text-align: center;
+          font-size: 0.8em;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: capitalize;
+        }
+        [msg] mwc-icon {
+          display: block;
+          font-size: 36px;
+        }
         canvas {
           display: block;
-          width: 90%;
-
-          margin: auto;
-          border: 3px solid #73ad21;
-          padding: 10px;
+          min-height: 300px;
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          width: 100%;
+        }
+        [button-group] {
+          padding: 10px 20px 0 15px;
+          text-align: right;
+        }
+        [button-group] mwc-button {
+          --mdc-theme-primary: #fff;
+          background-color: var(--secondary-color);
+          border-radius: var(--border-radius);
+          margin: 0 0 5px 5px;
+          padding-bottom: 2px;
+        }
+        [button-group] .alignL {
+          float: left;
+          background-color: #747474;
         }
       `
     ]
@@ -132,30 +171,39 @@ export class HandEyeCalibrationPopup extends LitElement {
     return html`
       <content>
         <div calibration>
-          <mwc-button
-            label="Start Teaching Mode"
-            icon="flip_camera_android"
-            @click=${this.startTeachingMode.bind(this)}
-          ></mwc-button>
-          <mwc-button
-            label="Finish Teaching Mode"
-            icon="exposure"
-            @click=${this.finishTeachingMode.bind(this)}
-          ></mwc-button>
-          <mwc-button label="Take Snapshot" icon="wallpaper"></mwc-button>
-          <mwc-button label="Reset" icon="flip_camera_android"></mwc-button>
-          <mwc-button label="Compute" icon="exposure"></mwc-button>
-          <mwc-button label="Calibrate" icon="exposure" @click=${this.calibrateHandeyeMatrix.bind(this)}></mwc-button>
-
-          <div>
-            <h3>handeye matrix</h3>
+          <fieldset>
+            <legend>handeye matrix</legend>
             <div matrix @change=${e => this.onchange(e)}>
               ${values.map(value => html` <input type="number" .value=${value} /> `)}
             </div>
+          </fieldset>
+
+          <div button-group>
+            <mwc-button
+              dense
+              label="Start Teaching"
+              icon="play_circle_outline"
+              @click=${this.startTeachingMode.bind(this)}
+            ></mwc-button>
+            <mwc-button
+              dense
+              label="Finish Teaching"
+              icon="pause_circle_outline"
+              @click=${this.finishTeachingMode.bind(this)}
+            ></mwc-button>
+            <mwc-button dense label="Take Snapshot" icon="wallpaper"></mwc-button>
+            <mwc-button dense label="Reset" class="alignL"></mwc-button>
+            <mwc-button
+              dense
+              label="Calibrate"
+              icon="exposure"
+              @click=${this.calibrateHandeyeMatrix.bind(this)}
+            ></mwc-button>
           </div>
         </div>
 
         <div stream>
+          <div msg><mwc-icon>camera</mwc-icon>turn on the camera.</div>
           <canvas></canvas>
         </div>
       </content>
@@ -191,13 +239,12 @@ export class HandEyeCalibrationPopup extends LitElement {
   }
 
   async startTeachingMode() {
-    var {
-      params
-    } = this.host
+    var { params } = this.host
 
     var { baseRobotArm } = JSON.parse(params)
 
-    const response = await client.mutate({   // [jw]
+    const response = await client.mutate({
+      // [jw]
       mutation: gql`
         mutation($name: String!) {
           robotArmStartTeachingMode(name: $name)
@@ -210,13 +257,12 @@ export class HandEyeCalibrationPopup extends LitElement {
   }
 
   async finishTeachingMode() {
-    var {
-      params
-    } = this.host
+    var { params } = this.host
 
     var { baseRobotArm } = JSON.parse(params)
 
-    const response = await client.mutate({   // [jw]
+    const response = await client.mutate({
+      // [jw]
       mutation: gql`
         mutation($name: String!) {
           robotArmFinishTeachingMode(name: $name)
