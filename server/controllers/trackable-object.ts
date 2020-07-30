@@ -1,4 +1,5 @@
 import { TrackingEvent, TrackableObject, Pose, ROI, TRACKING_EVENT_TYPES } from './robotics-types'
+import { logger } from '@things-factory/env'
 
 const EMPTY_POSE = {
   x: NaN,
@@ -33,6 +34,25 @@ const isSamePose = (pose1, pose2, threshold) => {
   )
 }
 
+const isInvalidValue = value => {
+  return (isNaN(value) || (value == null) || (value == undefined))
+}
+
+const isValidPose = pose => {
+  if (!pose) {
+    return false
+  }
+
+  var { x, y, z, u, v, w } = pose
+  return ([x, y, z, u, v, w].findIndex(x => isInvalidValue(x) ) === -1)
+}
+
+export enum TrackableObjectState {
+  UNDETERMIN = -1,
+  MOVING = 0,
+  STABLE = 1
+}
+
 export class TrackableObjectImpl implements TrackableObject {
   /**
    * TrackableObject의 id, eg) tag id
@@ -42,22 +62,27 @@ export class TrackableObjectImpl implements TrackableObject {
   pose: Pose
   updatedAt: number
   movedAt: number
+
   /**
    * ROI내 특정 위치에 체류한 시간
    */
   retention: number
+  unknownRetention: number = 0
+  //   state: TrackableObjectState = TrackableObjectState.UNDETERMIN
 
   constructor(id) {
     this.id = id
   }
 
   update(roi, pose, threshold) {
-    if (!roi) {
-      roi = ''
+    if (!isValidPose(pose)) {
+      this.unknownRetention++
+      return null
+      //   pose = EMPTY_POSE
     }
 
-    if (!pose) {
-      pose = EMPTY_POSE
+    if (!roi) {
+      roi = ''
     }
 
     var from = {
@@ -78,7 +103,7 @@ export class TrackableObjectImpl implements TrackableObject {
     if (this.roi !== roi) {
       /* roi가 바뀌었다면 movein/out 중이다 */
       movein = !!roi
-      moveout == !!this.roi
+      moveout = !!this.roi
     } else {
       moving = !isSamePose(this.pose, pose, threshold)
     }
@@ -94,7 +119,8 @@ export class TrackableObjectImpl implements TrackableObject {
 
     this.roi = roi || ''
     this.pose = pose || EMPTY_POSE
-    this.retention = moving ? 0 : this.retention + 1
+    this.retention = moving ? 0 : this.retention + this.unknownRetention + 1
+    this.unknownRetention = 0
     this.updatedAt = Date.now()
     if (moving) {
       this.movedAt = this.updatedAt
@@ -122,7 +148,11 @@ export class TrackableObjectImpl implements TrackableObject {
     return events
   }
 
-  get state() {
-    return this.retention > 1
+  get state(): TrackableObjectState {
+    return this.unknownRetention > 0
+      ? TrackableObjectState.UNDETERMIN
+      : this.retention > 1
+      ? TrackableObjectState.STABLE
+      : TrackableObjectState.MOVING
   }
 }

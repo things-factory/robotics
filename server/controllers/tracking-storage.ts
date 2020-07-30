@@ -37,7 +37,8 @@ export class ROIStateStorageImpl implements TrackingStorage {
         : DEFAULT_POSE_THRESHOLD
     )
 
-    changes.forEach(change => this.publish(change))
+    if(changes !== null)
+      changes.forEach(change => this.publish(change))
   }
 
   publish(event: TrackingEvent) {
