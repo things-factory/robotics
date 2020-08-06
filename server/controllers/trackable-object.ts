@@ -34,17 +34,13 @@ const isSamePose = (pose1, pose2, threshold) => {
   )
 }
 
-const isInvalidValue = value => {
-  return (isNaN(value) || (value == null) || (value == undefined))
-}
-
 const isValidPose = pose => {
   if (!pose) {
     return false
   }
 
   var { x, y, z, u, v, w } = pose
-  return ([x, y, z, u, v, w].findIndex(x => isInvalidValue(x) ) === -1)
+  return ([x, y, z, u, v, w].findIndex(x => isNaN(x) || x === null || x === '') === -1)
 }
 
 export enum TrackableObjectState {

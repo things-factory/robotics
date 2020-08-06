@@ -14,14 +14,13 @@ function getObjectState(objectId) {
   return trackingStorage.getObjectState(objectId)
 }
 
-function isValidPose(pose) {
-  return (
-    !!pose &&
-    !['x', 'y', 'z', 'u', 'v', 'w'].find(key => {
-      var val = pose[key]
-      return isNaN(val) || val === null || val === ''
-    })
-  )
+const isValidPose = pose => {
+  if (!pose) {
+    return false
+  }
+
+  var { x, y, z, u, v, w } = pose
+  return ([x, y, z, u, v, w].findIndex(x => isNaN(x) || x === null || x === '') === -1)
 }
 
 async function TrackableObjectWaitForMove(step, { root, data, logger }) {
